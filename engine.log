@@ -1,0 +1,526 @@
+[2026-08-10 13:58:36] [I] LuaSTG Sub v0.20.13
+[2026-08-10 13:58:36] [I] [luastg] 初始化引擎
+[2026-08-10 13:58:36] [I] [luastg] 初始化luajit引擎
+[2026-08-10 13:58:36] [I] [luajit] LuaJIT 2.1.0-beta3
+[2026-08-10 13:58:36] [I] [luajit] 注册标准库与内置包
+[2026-08-10 13:58:36] [I] [luajit] 储存命令行参数
+[2026-08-10 13:58:36] [I] [luajit] [0] D:\GitHub\BUPTSTG\LuaSTGSub.exe
+[2026-08-10 13:58:36] [I] [luastg] 加载初始化脚本
+[2026-08-10 13:58:36] [I] [luastg] 加载脚本'lib/Lapi.lua'
+[2026-08-10 13:58:36] [I] [luastg] 加载脚本'lib/Lkeycode.lua'
+[2026-08-10 13:58:36] [I] [luastg] 加载脚本'lib/Luserdata.lua'
+[2026-08-10 13:58:36] [I] [luastg] 加载脚本'lib/Lsetting.lua'
+[2026-08-10 13:58:36] [I] [luastg] 加载脚本'launch'
+[2026-08-10 13:58:36] [I] [core] System Windows 10 22H2
+[2026-08-10 13:58:36] [I] [core] Kernel NT OS Kernel 10.0.19041.6456 Kernel32 10.0.19041.6456
+[2026-08-10 13:58:36] [I] [core] CPU GenuineIntel Intel(R) Core(TM) i5-8300H CPU @ 2.30GHz
+[2026-08-10 13:58:36] [I] [core] High Resolution Waitable Timer available, enable SteadyFrameRateController
+[2026-08-10 13:58:36] [I] [core] 系统内存使用情况：
+    使用百分比：59%
+    总物理内存：15.88 GiB
+    剩余物理内存：6.42 GiB
+    当前进程可提交内存限制：23.88 GiB
+    当前进程剩余的可提交内存：9.60 GiB
+    当前进程用户模式内存空间限制*1：2.00 GiB
+    当前进程剩余的用户模式内存空间：1.89 GiB
+        *1 此项反映此程序实际上能用的最大内存，在 32 位应用程序上此项一般为 2 GB，修改 Windows 操作系统注册表后可能为 1 到 3 GB
+[2026-08-10 13:58:36] [I] [core] 开始创建图形组件
+[2026-08-10 13:58:36] [I] [core] 开始创建基本 DXGI 组件
+[2026-08-10 13:58:36] [I] [core] DXGI 组件功能支持：
+    立即刷新：支持
+[2026-08-10 13:58:36] [I] [core] 枚举所有图形设备
+[2026-08-10 13:58:36] [I] [core] 图形设备[0]：
+    设备名称：Intel(R) UHD Graphics 630
+    Direct3D 功能级别：12.1
+    设备类型：硬件设备
+    专用显存：128.00 MiB
+    专用内存：0 B
+    共享内存：3.87 GiB
+    供应商 ID：0x00008086
+    设备 ID：0x00003E9B
+    子系统 ID：0x39FE17AA
+    修订号：0x00000000
+    设备 LUID：00000000-0000EC57
+[2026-08-10 13:58:36] [I] [core] 图形设备[0] - 显示输出设备[0]：
+    连接状态：已连接
+    显示区域：(0, 0) (1920 x 1080)
+    旋转：无
+    硬件表面合成：无
+[2026-08-10 13:58:36] [I] [core] 图形设备[1]：
+    设备名称：NVIDIA GeForce GTX 1050
+    Direct3D 功能级别：12.1
+    设备类型：硬件设备
+    专用显存：1.92 GiB
+    专用内存：0 B
+    共享内存：2.08 GiB
+    供应商 ID：0x000010DE
+    设备 ID：0x00001C8D
+    子系统 ID：0x39FE17AA
+    修订号：0x000000A1
+    设备 LUID：00000000-0000EF95
+[2026-08-10 13:58:36] [I] [core] 图形设备[2]：
+    设备名称：Microsoft Basic Render Driver
+    Direct3D 功能级别：12.1
+    设备类型：软件设备（警告：软件或远程设备性能不足流畅运行程序）
+    专用显存：0 B
+    专用内存：0 B
+    共享内存：4.00 GiB
+    供应商 ID：0x00001414
+    设备 ID：0x0000008C
+    子系统 ID：0x00000000
+    修订号：0x00000000
+    设备 LUID：00000000-0000EF53
+[2026-08-10 13:58:36] [I] [core] 已选择图形设备：Intel(R) UHD Graphics 630
+[2026-08-10 13:58:36] [I] [core] 已创建基本 DXGI 组件
+[2026-08-10 13:58:36] [I] [core] 开始创建基本 Direct3D 11 组件
+[2026-08-10 13:58:36] [I] [core] Direct3D 11 设备功能支持：
+    Direct3D 功能级别：12.1
+    R8G8B8A8 格式：
+        用于顶点缓冲区：支持
+        创建二维纹理：支持
+        创建立方体纹理：支持
+        着色器采样：支持
+        创建多级渐进纹理：支持
+        自动生成多级渐进纹理：支持
+        绑定为渲染目标：支持
+        像素颜色混合操作：支持
+        绑定为深度、模板缓冲区：不支持
+        被 CPU 锁定、读取：支持
+        解析多重采样：支持
+        用于显示输出：支持
+        创建多重采样渲染目标：支持
+        像素颜色逻辑混合操作：不支持
+        资源可分块：支持
+        资源可共享：支持
+        多平面叠加：不支持
+    R8G8B8A8 sRGB 格式：
+        用于顶点缓冲区：不支持
+        创建二维纹理：支持
+        创建立方体纹理：支持
+        着色器采样：支持
+        创建多级渐进纹理：支持
+        自动生成多级渐进纹理：支持
+        绑定为渲染目标：支持
+        像素颜色混合操作：支持
+        绑定为深度、模板缓冲区：不支持
+        被 CPU 锁定、读取：支持
+        解析多重采样：支持
+        用于显示输出：支持
+        创建多重采样渲染目标：支持
+        像素颜色逻辑混合操作：不支持
+        资源可分块：支持
+        资源可共享：支持
+        多平面叠加：不支持
+    B8G8R8A8 格式：
+        用于顶点缓冲区：支持
+        创建二维纹理：支持
+        创建立方体纹理：支持
+        着色器采样：支持
+        创建多级渐进纹理：支持
+        自动生成多级渐进纹理：支持
+        绑定为渲染目标：支持
+        像素颜色混合操作：支持
+        绑定为深度、模板缓冲区：不支持
+        被 CPU 锁定、读取：支持
+        解析多重采样：支持
+        用于显示输出：支持
+        创建多重采样渲染目标：支持
+        像素颜色逻辑混合操作：不支持
+        资源可分块：支持
+        资源可共享：支持
+        多平面叠加：不支持
+    B8G8R8A8 sRGB 格式：
+        用于顶点缓冲区：不支持
+        创建二维纹理：支持
+        创建立方体纹理：支持
+        着色器采样：支持
+        创建多级渐进纹理：支持
+        自动生成多级渐进纹理：支持
+        绑定为渲染目标：支持
+        像素颜色混合操作：支持
+        绑定为深度、模板缓冲区：不支持
+        被 CPU 锁定、读取：支持
+        解析多重采样：支持
+        用于显示输出：支持
+        创建多重采样渲染目标：支持
+        像素颜色逻辑混合操作：不支持
+        资源可分块：支持
+        资源可共享：支持
+        多平面叠加：不支持
+    D24 S8 格式：
+        用于顶点缓冲区：不支持
+        创建二维纹理：支持
+        创建立方体纹理：支持
+        着色器采样：不支持
+        创建多级渐进纹理：支持
+        自动生成多级渐进纹理：不支持
+        绑定为渲染目标：不支持
+        像素颜色混合操作：不支持
+        绑定为深度、模板缓冲区：支持
+        被 CPU 锁定、读取：支持
+        解析多重采样：不支持
+        用于显示输出：不支持
+        创建多重采样渲染目标：支持
+        像素颜色逻辑混合操作：不支持
+        资源可分块：不支持
+        资源可共享：不支持
+        多平面叠加：不支持
+    最大二维纹理尺寸：16384x16384
+    多线程架构：异步资源创建
+    渲染架构：Immediate Mode Rendering (IMR)
+    统一内存架构（UMA）：支持
+[2026-08-10 13:58:36] [I] [core] 图形设备[0] - 显示输出设备[0]：
+    连接状态：已连接
+    显示区域：(0, 0) (1920 x 1080)
+    旋转：无
+    多平面叠加：不支持
+    多平面叠加功能：无
+    硬件表面合成：无
+[2026-08-10 13:58:36] [I] [core] 已创建基本 Direct3D 11 组件
+[2026-08-10 13:58:36] [I] [core] 已创建图形组件
+[2026-08-10 13:58:36] [I] [core] Graphics Device: Intel(R) UHD Graphics 630
+    Direct Flip Support: true
+    Independent Flip Support: true
+    Present Allow Tearing: true
+[2026-08-10 13:58:36] [I] [core] 开始创建渲染器
+[2026-08-10 13:58:36] [I] [core] 已创建渲染器
+[2026-08-10 13:58:36] [I] [luastg] 初始化对象池，容量32768
+[2026-08-10 13:58:36] [I] [luastg] 成功创建了 0 个控制器
+[2026-08-10 13:58:36] [I] [core] Display Output: Intel(R) UHD Graphics 630 -> \\.\DISPLAY1
+    Overlays Support: false
+    Multi Plane Overlay:
+        Support: true
+        Max Planes: 1
+        Max RGB Planes: 1
+        Max YUV Planes: 1
+        Overlay Capabilities:
+            Rotation: false
+            Rotation Without Independent Flip: false
+            Vertical Flip: false
+            Horizontal Flip: false
+            Stretch RGB: false
+            Stretch YUV: false
+            Bilinear Filter: false
+            High Filter: false
+            Shared: false
+            Immediate: false
+            Plane 0 For Virtual Mode Only: false
+            Version 3 DDI Support: true
+        Max Stretch Factor: 0.00x
+        Max Shrink Factor: 0.00x
+    Hardware Composition:
+        Fullscreen: false
+        Windowed: false
+        Cursor Stretched: false
+[2026-08-10 13:58:37] [I] [core] 开始创建 SwapChain
+[2026-08-10 13:58:37] [I] [core] 已创建 SwapChain：
+    显示模式：1280x960@桌面刷新率
+    独占全屏：禁用
+    交换链模式：快速交换模式
+    立即刷新：启用
+    低延迟呈现：启用
+[2026-08-10 13:58:37] [I] [luastg] 显示模式切换成功：窗口 -> 窗口
+[2026-08-10 13:58:37] [I] [luastg] 加载入口点脚本
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'gconfig.lua'
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'lib/Llog.lua'
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'lib/Lglobal.lua'
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'lib/Lmath.lua'
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'plus/plus.lua'
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'plus/Utility.lua'
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'plus/NativeAPI.lua'
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'plus/IO.lua'
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'plus/Replay.lua'
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'lib/Lobject.lua'
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'lib/Lresources.lua'
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'lib/Lscreen.lua'
+[2026-08-10 13:58:37] [I] [luastg] CreateRenderTarget: 已创建渲染目标和深度缓冲区 'rt:screen-white' (64x64) (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'rt:screen-white' 创建图片精灵 'img:screen-white' (global)
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'lib/Linput.lua'
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'lib/Ltask.lua'
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'lib/Lstage.lua'
+[2026-08-10 13:58:37] [I] [luastg] 已清空资源池 'stage'
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'lib/Ltext.lua'
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'lib/Lscoredata.lua'
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'lib/Lplugin.lua'
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'ColliCheck.lua'
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'render_colli.png' 加载纹理 'Collision_render' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Collision_render' 创建图片精灵 'collision_rect' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Collision_render' 创建图片精灵 'collision_rect1' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Collision_render' 创建图片精灵 'collision_rect2' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Collision_render' 创建图片精灵 'collision_rect3' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Collision_render' 创建图片精灵 'collision_ring' (global)
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'lib/debug/_debug.lua'
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'extra_lib/Hana_AI_v_1.lua'
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'extra_lib/Ldistortion.lua'
+[2026-08-10 13:58:37] [I] [luastg] CreateRenderTarget: 已创建渲染目标和深度缓冲区 'rt:distortion' (global)
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'extra_lib/RenderTargetExtension.lua'
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/misc/Muki_AiC_white.png' 加载纹理 'AiC_white' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'AiC_white' 创建图片精灵 'AiC_white' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'AiC_white' 创建图片精灵 'IMG:BLACK:8180' (global)
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'AiC/AiC.lua'
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'AiC/utils/AiC_string.lua'
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'AiC/utils/AiC_function.lua'
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'AiC/utils/AiC_table.lua'
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'AiC/utils/AiC_math.lua'
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'AiC/utils/AiC_class.lua'
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'AiC/utils/AiC_exception.lua'
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'AiC/input/AiC_input.lua'
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'AiC/input/AiC_dinput.lua'
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'AiC/AiC_debug.lua'
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'AiC/AiC_3d.lua'
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'AiC/AiC_misc.lua'
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/Muki_AiC_opening_scene.png' 加载纹理 'Muki_AiC_opening_scene' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_opening_scene' 创建图片精灵 'Muki_AiC_opening_scene' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/Muki_AiC_square_empty.png' 加载纹理 'Muki_AiC_square_empty' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_square_empty' 创建图片精灵 'Muki_AiC_square_empty' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/Muki_AiC_square_middle.png' 加载纹理 'Muki_AiC_square_middle' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_square_middle' 创建图片精灵 'Muki_AiC_square_middle' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/loading/Muki_AiC_loading_sign1.png' 加载纹理 'Muki_AiC_loading_sign1' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_loading_sign1' 创建图片精灵 'Muki_AiC_loading_sign1' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/loading/Muki_AiC_loading_sign2.png' 加载纹理 'Muki_AiC_loading_sign2' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_loading_sign2' 创建图片精灵 'Muki_AiC_loading_sign2' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/loading/Muki_AiC_loading_sign3.png' 加载纹理 'Muki_AiC_loading_sign3' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_loading_sign3' 创建图片精灵 'Muki_AiC_loading_sign3' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/loading/Muki_AiC_loading_sign4.png' 加载纹理 'Muki_AiC_loading_sign4' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_loading_sign4' 创建图片精灵 'Muki_AiC_loading_sign4' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadFX: 已从 'THlib/shader/glitch.hlsl' 加载后处理特效 'fx:glitch' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadFX: 已从 'THlib/shader/coloring.hlsl' 加载后处理特效 'fx:coloring' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadFX: 已从 'THlib/shader/inner_glow.hlsl' 加载后处理特效 'fx:inner_glow' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadFX: 已从 'THlib/shader/outer_glow.hlsl' 加载后处理特效 'fx:outer_glow' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/Muki_AiC_spell_history.png' 加载纹理 'Muki_AiC_spell_history' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_spell_history' 创建图片精灵 'Muki_AiC_spell_history' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/Muki_AiC_spell_bonus.png' 加载纹理 'Muki_AiC_spell_bonus' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_spell_bonus' 创建图片精灵 'Muki_AiC_spell_bonus' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/party_parrot/Muki_AiC_party_parrot1.png' 加载纹理 'Muki_AiC_party_parrot1' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_party_parrot1' 创建图片精灵 'Muki_AiC_party_parrot1' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/party_parrot/Muki_AiC_party_parrot2.png' 加载纹理 'Muki_AiC_party_parrot2' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_party_parrot2' 创建图片精灵 'Muki_AiC_party_parrot2' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/party_parrot/Muki_AiC_party_parrot3.png' 加载纹理 'Muki_AiC_party_parrot3' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_party_parrot3' 创建图片精灵 'Muki_AiC_party_parrot3' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/party_parrot/Muki_AiC_party_parrot4.png' 加载纹理 'Muki_AiC_party_parrot4' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_party_parrot4' 创建图片精灵 'Muki_AiC_party_parrot4' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/party_parrot/Muki_AiC_party_parrot5.png' 加载纹理 'Muki_AiC_party_parrot5' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_party_parrot5' 创建图片精灵 'Muki_AiC_party_parrot5' (global)
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'AiC/AiC_pmode.lua'
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'AiC/AiC_l10n.lua'
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'AiC/localization/en_us/AiC_dialog_text.lua'
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'AiC/localization/en_us/AiC_ui_text.lua'
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'AiC/localization/en_us/AiC_general_text.lua'
+[2026-08-10 13:58:37] [I] [lua] [l10n] Successfully loaded language: en_us
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'AiC/localization/zh_tc/AiC_dialog_text.lua'
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'AiC/localization/zh_tc/AiC_ui_text.lua'
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'AiC/localization/zh_tc/AiC_general_text.lua'
+[2026-08-10 13:58:37] [I] [lua] [l10n] Successfully loaded language: zh_tc
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'AiC/localization/ja_jp/AiC_dialog_text.lua'
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'AiC/localization/ja_jp/AiC_ui_text.lua'
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'AiC/localization/ja_jp/AiC_general_text.lua'
+[2026-08-10 13:58:37] [I] [lua] [l10n] Successfully loaded language: ja_jp
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'AiC/localization/zh_cn/AiC_dialog_text.lua'
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'AiC/localization/zh_cn/AiC_ui_text.lua'
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'AiC/localization/zh_cn/AiC_general_text.lua'
+[2026-08-10 13:58:37] [I] [lua] [l10n] Successfully loaded language: zh_cn
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'AiC/AiC_custom_dialog.lua'
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'AiC/AiC_menu.lua'
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'AiC/menu/title.lua'
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'AiC/menu/practice.lua'
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'AiC/menu/spell_practice.lua'
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'AiC/menu/replay.lua'
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'AiC/menu/library.lua'
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'AiC/menu/music_room.lua'
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'AiC/menu/option.lua'
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'AiC/menu/manual.lua'
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'AiC/menu/difficulty_select.lua'
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'AiC/menu/player_select.lua'
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'AiC/menu/enhancer_select.lua'
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'AiC/menu/name_regist.lua'
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'AiC/menu/save_replay.lua'
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'AiC/menu/player_data.lua'
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'AiC/menu/ending.lua'
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/menu/difficulty_select/Muki_AiC_menu_difficulty_select1.png' 加载纹理 'Muki_AiC_menu_difficulty_select1' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_menu_difficulty_select1' 创建图片精灵 'Muki_AiC_menu_difficulty_select1' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/menu/difficulty_select/Muki_AiC_menu_difficulty_select2.png' 加载纹理 'Muki_AiC_menu_difficulty_select2' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_menu_difficulty_select2' 创建图片精灵 'Muki_AiC_menu_difficulty_select2' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/menu/difficulty_select/Muki_AiC_menu_difficulty_select3.png' 加载纹理 'Muki_AiC_menu_difficulty_select3' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_menu_difficulty_select3' 创建图片精灵 'Muki_AiC_menu_difficulty_select3' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/menu/difficulty_select/Muki_AiC_menu_difficulty_select4.png' 加载纹理 'Muki_AiC_menu_difficulty_select4' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_menu_difficulty_select4' 创建图片精灵 'Muki_AiC_menu_difficulty_select4' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/menu/player_select/Muki_AiC_menu_player_select1.png' 加载纹理 'Muki_AiC_menu_player_select1' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_menu_player_select1' 创建图片精灵 'Muki_AiC_menu_player_select1' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/menu/player_select/Muki_AiC_menu_player_select2.png' 加载纹理 'Muki_AiC_menu_player_select2' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_menu_player_select2' 创建图片精灵 'Muki_AiC_menu_player_select2' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/menu/player_select/Muki_AiC_menu_player_select3.png' 加载纹理 'Muki_AiC_menu_player_select3' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_menu_player_select3' 创建图片精灵 'Muki_AiC_menu_player_select3' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/menu/player_select/Muki_AiC_menu_player_select4.png' 加载纹理 'Muki_AiC_menu_player_select4' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_menu_player_select4' 创建图片精灵 'Muki_AiC_menu_player_select4' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/menu/player_select/Muki_AiC_menu_player_select5.png' 加载纹理 'Muki_AiC_menu_player_select5' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_menu_player_select5' 创建图片精灵 'Muki_AiC_menu_player_select5' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/menu/player_select/Muki_AiC_menu_player_select6.png' 加载纹理 'Muki_AiC_menu_player_select6' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_menu_player_select6' 创建图片精灵 'Muki_AiC_menu_player_select6' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/menu/player_select/Muki_AiC_menu_player_select7.png' 加载纹理 'Muki_AiC_menu_player_select7' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_menu_player_select7' 创建图片精灵 'Muki_AiC_menu_player_select7' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/menu/player_select/Muki_AiC_menu_player_select8.png' 加载纹理 'Muki_AiC_menu_player_select8' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_menu_player_select8' 创建图片精灵 'Muki_AiC_menu_player_select8' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/menu/enhancer_select/Muki_AiC_menu_enhancer_select1.png' 加载纹理 'Muki_AiC_menu_enhancer_select1' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_menu_enhancer_select1' 创建图片精灵 'Muki_AiC_menu_enhancer_select1' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/menu/enhancer_select/Muki_AiC_menu_enhancer_select2.png' 加载纹理 'Muki_AiC_menu_enhancer_select2' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_menu_enhancer_select2' 创建图片精灵 'Muki_AiC_menu_enhancer_select2' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/menu/enhancer_select/Muki_AiC_menu_enhancer_select3.png' 加载纹理 'Muki_AiC_menu_enhancer_select3' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_menu_enhancer_select3' 创建图片精灵 'Muki_AiC_menu_enhancer_select3' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/menu/enhancer_select/Muki_AiC_menu_enhancer_select4.png' 加载纹理 'Muki_AiC_menu_enhancer_select4' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_menu_enhancer_select4' 创建图片精灵 'Muki_AiC_menu_enhancer_select4' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/menu/enhancer_select/Muki_AiC_menu_enhancer_select5.png' 加载纹理 'Muki_AiC_menu_enhancer_select5' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_menu_enhancer_select5' 创建图片精灵 'Muki_AiC_menu_enhancer_select5' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/menu/enhancer_select/Muki_AiC_menu_enhancer_select6.png' 加载纹理 'Muki_AiC_menu_enhancer_select6' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_menu_enhancer_select6' 创建图片精灵 'Muki_AiC_menu_enhancer_select6' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/menu/enhancer_select/Muki_AiC_menu_enhancer_select7.png' 加载纹理 'Muki_AiC_menu_enhancer_select7' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_menu_enhancer_select7' 创建图片精灵 'Muki_AiC_menu_enhancer_select7' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/menu/enhancer_select/Muki_AiC_menu_enhancer_select8.png' 加载纹理 'Muki_AiC_menu_enhancer_select8' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_menu_enhancer_select8' 创建图片精灵 'Muki_AiC_menu_enhancer_select8' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/menu/enhancer_select/Muki_AiC_menu_enhancer_select9.png' 加载纹理 'Muki_AiC_menu_enhancer_select9' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_menu_enhancer_select9' 创建图片精灵 'Muki_AiC_menu_enhancer_select9' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/menu/enhancer_select/Muki_AiC_menu_enhancer_select10.png' 加载纹理 'Muki_AiC_menu_enhancer_select10' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_menu_enhancer_select10' 创建图片精灵 'Muki_AiC_menu_enhancer_select10' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/menu/enhancer_select/Muki_AiC_menu_enhancer_select11.png' 加载纹理 'Muki_AiC_menu_enhancer_select11' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_menu_enhancer_select11' 创建图片精灵 'Muki_AiC_menu_enhancer_select11' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/menu/enhancer_select/Muki_AiC_menu_enhancer_select12.png' 加载纹理 'Muki_AiC_menu_enhancer_select12' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_menu_enhancer_select12' 创建图片精灵 'Muki_AiC_menu_enhancer_select12' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/menu/enhancer_select/Muki_AiC_menu_enhancer_select13.png' 加载纹理 'Muki_AiC_menu_enhancer_select13' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_menu_enhancer_select13' 创建图片精灵 'Muki_AiC_menu_enhancer_select13' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/menu/enhancer_select/Muki_AiC_menu_enhancer_select14.png' 加载纹理 'Muki_AiC_menu_enhancer_select14' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_menu_enhancer_select14' 创建图片精灵 'Muki_AiC_menu_enhancer_select14' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/menu/enhancer_select/Muki_AiC_menu_enhancer_select15.png' 加载纹理 'Muki_AiC_menu_enhancer_select15' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_menu_enhancer_select15' 创建图片精灵 'Muki_AiC_menu_enhancer_select15' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/menu/enhancer_select/Muki_AiC_menu_enhancer_select16.png' 加载纹理 'Muki_AiC_menu_enhancer_select16' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_menu_enhancer_select16' 创建图片精灵 'Muki_AiC_menu_enhancer_select16' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/menu/enhancer_select/Muki_AiC_menu_enhancer_select_slot.png' 加载纹理 'Muki_AiC_menu_enhancer_select_slot' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_menu_enhancer_select_slot' 创建图片精灵 'Muki_AiC_menu_enhancer_select_slot1' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_menu_enhancer_select_slot' 创建图片精灵 'Muki_AiC_menu_enhancer_select_slot2' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_menu_enhancer_select_slot' 创建图片精灵 'Muki_AiC_menu_enhancer_select_slot3' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/menu/enhancer_select/Muki_AiC_menu_enhancer_select_bg.png' 加载纹理 'Muki_AiC_menu_enhancer_select_bg' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_menu_enhancer_select_bg' 创建图片精灵 'Muki_AiC_menu_enhancer_select_bg' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/menu/enhancer_select/Muki_AiC_menu_enhancer_select_cursor.png' 加载纹理 'Muki_AiC_menu_enhancer_select_cursor' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_menu_enhancer_select_cursor' 创建图片精灵 'Muki_AiC_menu_enhancer_select_cursor' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/pause_menu/help/Muki_AiC_help1.png' 加载纹理 'Muki_AiC_help1' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_help1' 创建图片精灵 'Muki_AiC_help1' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/pause_menu/help/Muki_AiC_help_menu1.png' 加载纹理 'Muki_AiC_help_menu1' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_help_menu1' 创建图片精灵 'Muki_AiC_help_menu1' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/pause_menu/help/Muki_AiC_help2.png' 加载纹理 'Muki_AiC_help2' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_help2' 创建图片精灵 'Muki_AiC_help2' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/pause_menu/help/Muki_AiC_help_menu2.png' 加载纹理 'Muki_AiC_help_menu2' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_help_menu2' 创建图片精灵 'Muki_AiC_help_menu2' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/pause_menu/help/Muki_AiC_help3.png' 加载纹理 'Muki_AiC_help3' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_help3' 创建图片精灵 'Muki_AiC_help3' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/pause_menu/help/Muki_AiC_help_menu3.png' 加载纹理 'Muki_AiC_help_menu3' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_help_menu3' 创建图片精灵 'Muki_AiC_help_menu3' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/pause_menu/help/Muki_AiC_help4.png' 加载纹理 'Muki_AiC_help4' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_help4' 创建图片精灵 'Muki_AiC_help4' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/pause_menu/help/Muki_AiC_help_menu4.png' 加载纹理 'Muki_AiC_help_menu4' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_help_menu4' 创建图片精灵 'Muki_AiC_help_menu4' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/pause_menu/help/Muki_AiC_help5.png' 加载纹理 'Muki_AiC_help5' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_help5' 创建图片精灵 'Muki_AiC_help5' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/pause_menu/help/Muki_AiC_help_menu5.png' 加载纹理 'Muki_AiC_help_menu5' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_help_menu5' 创建图片精灵 'Muki_AiC_help_menu5' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/pause_menu/help/Muki_AiC_help6.png' 加载纹理 'Muki_AiC_help6' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_help6' 创建图片精灵 'Muki_AiC_help6' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/pause_menu/help/Muki_AiC_help_menu6.png' 加载纹理 'Muki_AiC_help_menu6' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_help_menu6' 创建图片精灵 'Muki_AiC_help_menu6' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/pause_menu/help/Muki_AiC_help7.png' 加载纹理 'Muki_AiC_help7' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_help7' 创建图片精灵 'Muki_AiC_help7' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/pause_menu/help/Muki_AiC_help_menu7.png' 加载纹理 'Muki_AiC_help_menu7' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_help_menu7' 创建图片精灵 'Muki_AiC_help_menu7' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/pause_menu/help/Muki_AiC_help8.png' 加载纹理 'Muki_AiC_help8' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_help8' 创建图片精灵 'Muki_AiC_help8' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/pause_menu/help/Muki_AiC_help_menu8.png' 加载纹理 'Muki_AiC_help_menu8' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_help_menu8' 创建图片精灵 'Muki_AiC_help_menu8' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/pause_menu/help/Muki_AiC_help9.png' 加载纹理 'Muki_AiC_help9' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_help9' 创建图片精灵 'Muki_AiC_help9' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/pause_menu/help/Muki_AiC_help_menu9.png' 加载纹理 'Muki_AiC_help_menu9' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_help_menu9' 创建图片精灵 'Muki_AiC_help_menu9' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/pause_menu/help/Muki_AiC_help10.png' 加载纹理 'Muki_AiC_help10' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_help10' 创建图片精灵 'Muki_AiC_help10' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/pause_menu/help/Muki_AiC_help_menu10.png' 加载纹理 'Muki_AiC_help_menu10' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_help_menu10' 创建图片精灵 'Muki_AiC_help_menu10' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/pause_menu/help/Muki_AiC_help11.png' 加载纹理 'Muki_AiC_help11' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_help11' 创建图片精灵 'Muki_AiC_help11' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/pause_menu/help/Muki_AiC_help_menu11.png' 加载纹理 'Muki_AiC_help_menu11' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_help_menu11' 创建图片精灵 'Muki_AiC_help_menu11' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/pause_menu/help/Muki_AiC_help12.png' 加载纹理 'Muki_AiC_help12' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_help12' 创建图片精灵 'Muki_AiC_help12' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/pause_menu/help/Muki_AiC_help_menu12.png' 加载纹理 'Muki_AiC_help_menu12' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_help_menu12' 创建图片精灵 'Muki_AiC_help_menu12' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/menu/replay/Muki_AiC_Primula_face_smile.png' 加载纹理 'Muki_AiC_menu_replay_Primula' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_menu_replay_Primula' 创建图片精灵 'Muki_AiC_menu_replay_Primula' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/menu/subtitle/Muki_AiC_subtitle_bg.png' 加载纹理 'Muki_AiC_subtitle_bg' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_subtitle_bg' 创建图片精灵 'Muki_AiC_subtitle_bg' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/menu/bg/Muki_AiC_menu_bg.png' 加载纹理 'Muki_AiC_menu_bg' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_menu_bg' 创建图片精灵 'Muki_AiC_menu_bg' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/menu/bg/Muki_AiC_menu_bg_music_room.png' 加载纹理 'Muki_AiC_menu_bg_music_room' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_menu_bg_music_room' 创建图片精灵 'Muki_AiC_menu_bg_music_room' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/menu/bg/Muki_AiC_menu_bg_Noel.png' 加载纹理 'Muki_AiC_menu_bg_Noel' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_menu_bg_Noel' 创建图片精灵 'Muki_AiC_menu_bg_Noel' (global)
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'AiC/AiC_ui.lua'
+[2026-08-10 13:58:37] [I] [luastg] CreateRenderTarget: 已创建渲染目标和深度缓冲区 'rt:gradient_text' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateRenderTarget: 已创建渲染目标和深度缓冲区 'rt:gradient_stroke' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateRenderTarget: 已创建渲染目标和深度缓冲区 'rt:shader_text1' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateRenderTarget: 已创建渲染目标和深度缓冲区 'rt:shader_stroke1' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateRenderTarget: 已创建渲染目标和深度缓冲区 'rt:shader_text2' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateRenderTarget: 已创建渲染目标和深度缓冲区 'rt:shader_stroke2' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/Muki_AiC_lifebar.png' 加载纹理 'Muki_AiC_lifebar' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_lifebar' 创建图片精灵 'Muki_AiC_lifebar1' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_lifebar' 创建图片精灵 'Muki_AiC_lifebar2' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/Muki_AiC_timebar.png' 加载纹理 'Muki_AiC_timebar' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_timebar' 创建图片精灵 'Muki_AiC_timebar1' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_timebar' 创建图片精灵 'Muki_AiC_timebar2' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/Muki_AiC_bossbar_node.png' 加载纹理 'Muki_AiC_bossbar_node' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_bossbar_node' 创建图片精灵 'Muki_AiC_bossbar_node' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/Muki_AiC_bossname_Noel Cornehl.png' 加载纹理 'Muki_AiC_bossname_Noel Cornehl' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_bossname_Noel Cornehl' 创建图片精灵 'Muki_AiC_bossname_Noel Cornehl' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/Muki_AiC_bossname_Noel Cornehl & Ixia Polystachya.png' 加载纹理 'Muki_AiC_bossname_Noel Cornehl & Ixia Polystachya' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_bossname_Noel Cornehl & Ixia Polystachya' 创建图片精灵 'Muki_AiC_bossname_Noel Cornehl & Ixia Polystachya' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/Muki_AiC_bossname_Primula.png' 加载纹理 'Muki_AiC_bossname_Primula' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_bossname_Primula' 创建图片精灵 'Muki_AiC_bossname_Primula' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/UI/Muki_AiC_bossname_Alma Opfebaum.png' 加载纹理 'Muki_AiC_bossname_Alma Opfebaum' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_bossname_Alma Opfebaum' 创建图片精灵 'Muki_AiC_bossname_Alma Opfebaum' (global)
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'AiC/AiC_rpg.lua'
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'AiC/AiC_ext.lua'
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'AiC/AiC_sys.lua'
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/misc/Muki_AiC_Tamaki_weapon.png' 加载纹理 'Muki_AiC_Tamaki_weapon' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_Tamaki_weapon' 创建图片精灵 'Muki_AiC_Tamaki_weapon' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/misc/particles.png' 加载纹理 'particles' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'particles' 创建图片精灵 'parimg1' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'particles' 创建图片精灵 'parimg2' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'particles' 创建图片精灵 'parimg3' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'particles' 创建图片精灵 'parimg4' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'particles' 创建图片精灵 'parimg5' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'particles' 创建图片精灵 'parimg6' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'particles' 创建图片精灵 'parimg7' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'particles' 创建图片精灵 'parimg8' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'particles' 创建图片精灵 'parimg9' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'particles' 创建图片精灵 'parimg10' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'particles' 创建图片精灵 'parimg11' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'particles' 创建图片精灵 'parimg12' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'particles' 创建图片精灵 'parimg13' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'particles' 创建图片精灵 'parimg14' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'particles' 创建图片精灵 'parimg15' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'particles' 创建图片精灵 'parimg16' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadParticle: 已从 'THlib/misc/Muki_AiC_Tamaki_weapon_ef.psi' 创建粒子特效 'Muki_AiC_Tamaki_weapon_ef' (global)
+[2026-08-10 13:58:37] [I] [luastg] LoadTexture: 已从 'THlib/misc/Muki_AiC_border.png' 加载纹理 'Muki_AiC_border' (global)
+[2026-08-10 13:58:37] [I] [luastg] CreateSprite: 已从纹理 'Muki_AiC_border' 创建图片精灵 'Muki_AiC_border' (global)
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'AiC/AiC_api.lua'
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'extra_lib/limit_func_ETC.lua'
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'core.lua'
+[2026-08-10 13:58:37] [I] [luastg] 初始化完成
+[2026-08-10 13:58:37] [I] [luastg] 加载脚本'root.lua'
+[2026-08-10 13:58:37] [E] [luastg] 无法加载文件'root.lua'
+[2026-08-10 13:58:37] [E] [luajit] 调用全局函数'GameInit'时出错：[string "lib/Lresources.lua"]:24: can't load file 'root.lua'
+stack traceback:
+	[C]: in function 'DoFile'
+	[string "lib/Lresources.lua"]:24: in function 'Include'
+	[string "core.lua"]:140: in function <[string "core.lua"]:135>
+[2026-08-10 13:58:40] [I] [luastg] 清空对象池
+[2026-08-10 13:58:40] [I] [luastg] 关闭luajit引擎
+[2026-08-10 13:58:40] [I] [luastg] 已清空资源池 'global'
+[2026-08-10 13:58:40] [I] [luastg] 已清空资源池 'stage'
+[2026-08-10 13:58:40] [I] [luastg] 清空所有游戏资源
+[2026-08-10 13:58:40] [I] [luastg] 卸载所有资源包
+[2026-08-10 13:58:40] [I] [luastg] 引擎关闭

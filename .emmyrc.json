@@ -1,0 +1,115 @@
+{
+  "codeAction": {
+    "insertSpace": false
+  },
+  "codeLens": {
+    "enable": true
+  },
+  "completion": {
+    "autoRequire": true,
+    "autoRequireFunction": "require",
+    "autoRequireNamingConvention": "keep",
+    "autoRequireSeparator": ".",
+    "baseFunctionIncludesName": true,
+    "callSnippet": false,
+    "enable": true,
+    "postfix": "@"
+  },
+  "diagnostics": {
+    "diagnosticInterval": 500,
+    "disable": [
+      "unnecessary-if",
+      "duplicate-type",
+      "missing-return",
+      "missing-parameter",
+      "undefined-global",
+      "need-check-nil",
+      "type-not-found",
+      "access-invisible",
+      "duplicate-set-field",
+      "inject-field",
+      "undefined-field",
+      "assign-type-mismatch",
+      "unbalanced-assignments",
+      "missing-return-value",
+      "return-type-mismatch",
+      "redundant-return-value",
+      "redundant-parameter",
+      "await-in-sync",
+      "unnecessary-assert",
+      "annotation-usage-error",
+      "missing-fields",
+      "param-type-mismatch"
+    ],
+    "enable": true,
+    "enables": [],
+    "globals": [],
+    "globalsRegex": []
+  },
+  "doc": {
+    "knownTags": [],
+    "privateName": []
+  },
+  "documentColor": {
+    "enable": true
+  },
+  "hint": {
+    "enable": true,
+    "enumParamHint": false,
+    "indexHint": true,
+    "localHint": true,
+    "metaCallHint": true,
+    "overrideHint": true,
+    "paramHint": true
+  },
+  "hover": {
+    "enable": true
+  },
+  "inlineValues": {
+    "enable": true
+  },
+  "references": {
+    "enable": true,
+    "fuzzySearch": true,
+    "shortStringSearch": false
+  },
+  "resource": {
+    "paths": []
+  },
+  "runtime": {
+    "classDefaultCall": {
+      "forceNonColon": false,
+      "forceReturnSelf": false,
+      "functionName": ""
+    },
+    "extensions": [],
+    "frameworkVersions": [],
+    "requireLikeFunction": [],
+    "requirePattern": [],
+    "version": "LuaLatest"
+  },
+  "semanticTokens": {
+    "enable": true
+  },
+  "signature": {
+    "detailSignatureHelper": true
+  },
+  "strict": {
+    "arrayIndex": true,
+    "docBaseConstMatchBaseType": false,
+    "metaOverrideFileDefine": true,
+    "requirePath": false,
+    "typeCall": false
+  },
+  "workspace": {
+    "enableReindex": false,
+    "encoding": "utf-8",
+    "ignoreDir": [],
+    "ignoreGlobs": [],
+    "library": [],
+    "moduleMap": [],
+    "preloadFileSize": 0,
+    "reindexDuration": 5000,
+    "workspaceRoots": []
+  }
+}

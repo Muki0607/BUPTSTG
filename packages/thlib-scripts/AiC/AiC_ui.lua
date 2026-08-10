@@ -1,0 +1,1401 @@
+---=====================================
+---THLoOP UI v1.00a
+---东方梦摇篮UI v1.00a
+---=====================================
+
+---版本更新记录
+---v1.00a
+---初始版本
+
+---@class aic.ui @东方梦摇篮UI
+aic.ui = {}
+local lib = aic.ui
+
+COLOR_BLACK = 17
+COLOR_WHITE = 18
+---lstg默认弹型颜色对应Color，增加了常用的黑色与白色
+lib.Color = {
+    Color(255, 140, 0, 0), Color(255, 255, 0, 0), Color(255, 70, 0, 140), Color(255, 255, 0, 255), 
+    Color(255, 0, 0, 140), Color(255, 0, 0, 255), Color(255, 0, 255, 255), Color(255, 0, 178, 133), 
+    Color(255, 0, 255, 0), Color(255, 35, 140, 0), Color(255, 255, 255, 0), Color(255, 166, 255, 77), 
+    Color(255, 255, 128, 0), Color(255, 255, 255, 115), Color(255, 102, 102, 102), Color(255, 34, 34, 34), 
+    Color(255, 0, 0, 0), Color(255, 255, 255, 255)
+}
+
+---获取lstg默认弹型颜色对应Color
+---@param color number @颜色编号
+---@param alpha number @透明度
+---@overload fun(color:number):lstg.Color
+---@return lstg.Color
+function lib.color(color, alpha)
+    color = min(max((color or 18), 1), 18)
+    alpha = min(max((alpha or 255), 0), 255)
+    local co = lib.Color[color]
+    local a, r, g, b = co:ARGB()
+    return Color(alpha, r, g, b)
+end
+
+---HSV转RGB，from sjdygc
+---@param h number
+---@param s number
+---@param v number
+function lib.HSVToRGB(h, s, v)
+    -- 确保h在0-360范围内
+    h = h % 360
+    s = min(100, max(0, s)) / 100
+    v = min(100, max(0, v)) / 100
+    
+    local c = v * s
+    local x = c * (1 - abs((h / 60) % 2 - 1))
+    local m = v - c
+    
+    local r1, g1, b1
+
+    if h < 60 then
+        r1, g1, b1 = c, x, 0
+    elseif h < 120 then
+        r1, g1, b1 = x, c, 0
+    elseif h < 180 then
+        r1, g1, b1 = 0, c, x
+    elseif h < 240 then
+        r1, g1, b1 = 0, x, c
+    elseif h < 300 then
+        r1, g1, b1 = x, 0, c
+    else
+        r1, g1, b1 = c, 0, x
+    end
+    
+    local r = int((r1 + m) * 255)
+    local g = int((g1 + m) * 255)
+    local b = int((b1 + m) * 255)
+    
+    return r, g, b
+end
+
+lib.RenderTargetList = {}
+
+--- 创建渲染目标并记录，重复创建时自动中止 
+---@param rtname string
+function lib.CreateRT(rtname)
+    for _, v in ipairs(lib.RenderTargetList) do
+        if v == rtname then return end
+    end
+    table.insert(lib.RenderTargetList, rtname)
+    CreateRenderTarget(rtname)
+end
+
+function lib.RenderRT(rtname, x, y, rot, hscale, vscale)
+    x = x or screen.width / 2
+    y = y or screen.height / 2
+    hscale = hscale or 1
+    vscale = vscale or hscale
+    local self = RenderTargetClass.Create(rtname)
+    local w, h = GetTextureSize(rtname)
+    local sw, sh = screen.width, screen.height
+    self:uv('uv', w / 2, h / 2, 0, w / 2, h / 2)
+    self:xy('ui', x, y, rot, hscale, vscale)--不要问为啥，我也想知道为啥
+    self:render()
+end
+
+function lib.RenderRTRect(rtname, l, r, b, t, rot)
+    local self = RenderTargetClass.Create(rtname)
+    local w, h = GetTextureSize(rtname)
+    local sw, sh = screen.width, screen.height
+    self:uvRect('uv', 0, w, h, 0, 0)
+    self:xyRect('ui', l, r, b, t, rot)
+    self:render()
+end
+
+--[[
+---简化的RenderTarget渲染,已用RT扩展代替
+---@param rendertarget string @rendertarget
+---@param x1 number
+---@param x2 number
+---@param y1 number
+---@param y2 number
+---@deprecated_AiC
+function lib.RenderRT(rendertarget, x1, x2, y1, y2)
+    local w, h = GetTextureSize(rendertarget)
+    local white = color()
+    x1 = x1 or 0
+    x2 = x2 or w
+    y1 = y1 or 0
+    y2 = y2 or h
+    local viewmode = lstg.viewmode
+    SetViewMode('ui')
+    RenderTexture(rendertarget, '',
+        { x1, y2, 0.5, 0, 0, white },
+        { x2, y2, 0.5, w, 0, white },
+        { x2, y1, 0.5, w, h, white },
+        { x1, y1, 0.5, 0, h, white }
+    )
+    SetViewMode(viewmode)
+end
+--]]
+
+---@alias align 'left' | 'center' | 'right' | 'top' | 'vcenter' | 'bottom' | 'wordbreak' | 'singleline' | 'expantextabs' | 'noclip' | 'calcrect' | 'rtlreading' | 'paragraph' | 'centerpoint'
+
+---通用文字渲染，带描边
+---
+---'paragraph'等效于同时取'left'、'top'和'wordbreak'
+---
+---'centerpoint' 等效于同时取'center'、'vcenter'和'noclip'
+---@param font string @字体
+---@param text string @渲染文字
+---@param x number @x坐标
+---@param y number @y坐标
+---@param s number @缩放比例
+---@param co1 lstg.Color @文字颜色
+---@param co2 lstg.Color @描边颜色
+---@vararg align @对齐方式
+function lib.DrawText(font, text, x, y, s, co1, co2, ...)
+    font = font or "main_font_zh_cn"
+    text = tostring(text)
+    s = s or 1
+    co1 = co1 or Color(255, 255, 255, 255)
+    local alpha = co1:ARGB()
+    co2 = co2 or Color(alpha, 0, 0, 0)
+    local _x, _y
+    if CheckRes('fnt', font) then
+        SetFontState(font, '', co2)
+        for i = 1, 8 do
+            _x = x + sqrt(2) * cos(i * 45)
+            _y = y + sqrt(2) * sin(i * 45)
+            RenderText(font, text, _x, _y, s, ...)
+        end
+        SetFontState(font, '', co1)
+        RenderText(font, text, x, y, s, ...)
+    else
+        for i = 1, 8 do
+            _x = x + sqrt(2) * cos(i * 45)
+            _y = y + sqrt(2) * sin(i * 45)
+            RenderTTF2(font, text, _x, _x, _y, _y, s, co2, ...)
+        end
+        RenderTTF2(font, text, x, x, y, y, s, co1, ...)
+    end
+end
+
+---带文字效果渲染文字
+---只能使用很少的一部分文字效果，color与Color效果也不好
+---@param font string @字体
+---@param text string @渲染文字
+---@param x number @x坐标
+---@param y number @y坐标
+---@param s number @缩放比例
+---@param co1 lstg.Color @文字颜色
+---@param co2 lstg.Color @描边颜色
+---@vararg align @对齐方式
+function lib.DrawTextEX(font, text, x, y, s, co1, co2, ...)
+    s = s or 1
+    co1 = co1 or Color(255, 255, 255, 255)
+    local alpha = co1:ARGB()
+    co2 = co2 or Color(alpha, 0, 0, 0)
+    local _x, _y
+    local fulltext = aic.custom_dialog.MultiGetTextEffect(text)
+    local ttfdrawer = aic.custom_dialog.TTFDrawer(fulltext, { rawtext = text, fulltext = fulltext })
+    local fmt = 0
+    local arg = { ... }
+    for i = 1, #arg do
+        fmt = fmt + ENUM_TTF_FMT[arg[i]]
+    end
+    for i = 0, 8 do
+        _x = x + sqrt(2) * cos(i * 45)
+        _y = y + sqrt(2) * sin(i * 45)
+        ttfdrawer:render(font,
+            x, x, y, y, 12 * s, 32 * s, 0, 0,
+            s, co2, fmt)  
+    end
+    ttfdrawer:render(font,
+        x, x, y, y, 12 * s, 32 * s, 0, 0,
+        s, co1, fmt)  
+end
+
+---通用文字渲染，不带描边
+---@param font string @字体
+---@param text string @渲染文字
+---@param x number @x坐标
+---@param y number @y坐标
+---@param s number @缩放比例
+---@param co lstg.Color @文字颜色
+---@vararg align @对齐方式
+function lib.DrawTextWithoutStroke(font, text, x, y, s, co, ...)
+    font = font or "main_font_zh_cn"
+    text = tostring(text)
+    s = s or 1
+    co = co or Color(255, 255, 255, 255)
+    local _x, _y
+    if CheckRes('fnt', font) then
+        RenderText(font, text, x, y, s, ...)
+    else
+        RenderTTF2(font, text, x, x, y, y, s, co, ...)
+    end
+end
+
+---单独渲染描边
+---@param font string @字体
+---@param text string @渲染文字
+---@param x number @x坐标
+---@param y number @y坐标
+---@param s number @缩放比例
+---@param co lstg.Color @描边颜色
+---@vararg align @对齐方式
+function lib.DrawStroke(font, text, x, y, s, co, ...)
+    font = font or "main_font_zh_cn"
+    text = tostring(text)
+    s = s or 1
+    co = co or Color(255, 0, 0, 0)
+    local _x, _y
+    if CheckRes('fnt', font) then
+        SetFontState(font, '', co)
+        for i = 1, 8 do
+            _x = x + sqrt(2) * cos(i * 45)
+            _y = y + sqrt(2) * sin(i * 45)
+            RenderText(font, text, _x, _y, s, ...)
+        end
+    else
+        for i = 1, 8 do
+            _x = x + sqrt(2) * cos(i * 45)
+            _y = y + sqrt(2) * sin(i * 45)
+            RenderTTF2(font, text, _x, _x, _y, _y, s, co, ...)
+        end
+    end
+end
+
+---渐变色文字渲染用到的RenderTarget
+lib.CreateRT('rt:gradient_text')
+
+---渐变色文字渲染（默认带描边，只能在UI系下使用，对齐方式固定为centerpoint）
+---@param font string @字体
+---@param text string @渲染文字
+---@param x number @x坐标（屏幕坐标）
+---@param y number @y坐标（屏幕坐标）
+---@param s number @缩放比例
+---@param colors lstg.Color[] @四个顶点的颜色
+---@param charWidth number @单个ASCII字符宽度
+---@param charHeight number @单个字符高度
+---@param lineSpacing number @行间距
+---@param nostroke boolean @是否不带描边
+function lib.DrawGradientText(font, text, x, y, s, colors, charWidth, charHeight, lineSpacing, nostroke)
+    local param = aic.l10n.font_param[setting.locale] or { 10, 18, 4 }
+    charWidth = charWidth or param[1]
+    charHeight = charHeight or param[2]
+    lineSpacing = lineSpacing or param[3]
+    
+    --计算实际尺寸（考虑缩放）
+    local actualCharWidth = charWidth * s
+    local actualCharHeight = charHeight * s
+    local actualLineSpacing = lineSpacing * s
+    
+    --拆分文本为行
+    local lines = {}
+    for line in text:gmatch("[^\n]+") do
+        table.insert(lines, line)
+    end
+    
+    --如果没有有效行，插入空行
+    if #lines == 0 then
+        table.insert(lines, "")
+    end
+    
+    --计算最大行宽度
+    local maxLineLength = 0
+    for _, line in ipairs(lines) do
+        local lineLen = aic.string.GetLength(line)
+        if lineLen > maxLineLength then
+            maxLineLength = lineLen
+        end
+    end
+    
+    --计算文本总宽度和高度（像素）
+    local textWidth = maxLineLength * actualCharWidth
+    local textHeight = #lines * actualCharHeight + (#lines - 1) * actualLineSpacing
+    
+    --清空RenderTarget
+    PushRenderTarget('rt:gradient_text')
+    RenderClear(Color(0, 0, 0, 0))
+    
+    --计算RenderTarget中心位置
+    local rtCenterX = screen.width / 2
+    local rtCenterY = screen.height / 2
+    
+    lib.DrawTextWithoutStroke(font, text, rtCenterX, rtCenterY, s, 
+        Color(255, 255, 255, 255), 
+        "centerpoint")
+
+    PopRenderTarget()
+    
+    --计算文本在屏幕上的实际渲染位置
+    --由于是centerpoint对齐，(x,y)是文本中心点
+    local x1, y1 = x - textWidth / 2, y + textHeight / 2
+    local x2, y2 = x + textWidth / 2, y + textHeight / 2
+    local x3, y3 = x + textWidth / 2, y - textHeight / 2
+    local x4, y4 = x - textWidth / 2, y - textHeight / 2
+
+    --准备顶点颜色
+    local color1 = colors[1] or Color(255, 255, 255, 255)
+    local color2 = colors[2] or Color(255, 255, 255, 255)
+    local color3 = colors[3] or Color(255, 255, 255, 255)
+    local color4 = colors[4] or Color(255, 255, 255, 255)
+
+    --计算顶点
+    local v1 = { x1, y1, 0.5, rtCenterX - textWidth / 2, rtCenterY + textHeight / 2, color1 }
+    local v2 = { x2, y2, 0.5, rtCenterX + textWidth / 2, rtCenterY + textHeight / 2, color2 }
+    local v3 = { x3, y3, 0.5, rtCenterX + textWidth / 2, rtCenterY - textHeight / 2, color3 }
+    local v4 = { x4, y4, 0.5, rtCenterX - textWidth / 2, rtCenterY - textHeight / 2, color4 }
+    --上面算出来的是全是ui系坐标，要转一遍坐标系
+    v1[4], v1[5] = aic.math.PosTrans(v1[4], v1[5], 'ui', 'uv')
+    v2[4], v2[5] = aic.math.PosTrans(v2[4], v2[5], 'ui', 'uv')
+    v3[4], v3[5] = aic.math.PosTrans(v3[4], v3[5], 'ui', 'uv')
+    v4[4], v4[5] = aic.math.PosTrans(v4[4], v4[5], 'ui', 'uv')
+
+    if not nostroke then
+        lib.DrawStroke(font, text, x, y, s, 
+            Color(255, 0, 0, 0), 
+            "centerpoint")
+    end
+    --使用RenderTexture渲染渐变色文本
+    RenderTexture('rt:gradient_text', '', v1, v2, v3, v4)
+end
+
+---渐变色文字描边渲染用到的RenderTarget
+lib.CreateRT('rt:gradient_stroke')
+
+---渐变色文字描边渲染（只能在UI系下使用，对齐方式固定为centerpoint）
+---@param font string @字体
+---@param text string @渲染文字
+---@param x number @x坐标（屏幕坐标）
+---@param y number @y坐标（屏幕坐标）
+---@param s number @缩放比例
+---@param colors lstg.Color[] @四个顶点的颜色
+---@param charWidth number @单个ASCII字符宽度
+---@param charHeight number @单个字符高度
+---@param lineSpacing number @行间距
+function lib.DrawGradientStroke(font, text, x, y, s, colors, charWidth, charHeight, lineSpacing)
+    local param = aic.l10n.font_param[setting.locale] or { 10, 18, 4 }
+    charWidth = charWidth or param[1]
+    charHeight = charHeight or param[2]
+    lineSpacing = lineSpacing or param[3]
+    
+    --计算实际尺寸（考虑缩放）
+    local actualCharWidth = charWidth * s
+    local actualCharHeight = charHeight * s
+    local actualLineSpacing = lineSpacing * s
+    
+    --拆分文本为行
+    local lines = {}
+    for line in text:gmatch("[^\n]+") do
+        table.insert(lines, line)
+    end
+    
+    --如果没有有效行，插入空行
+    if #lines == 0 then
+        table.insert(lines, "")
+    end
+    
+    --计算最大行宽度
+    local maxLineLength = 0
+    for _, line in ipairs(lines) do
+        local lineLen = aic.string.GetLength(line)
+        if lineLen > maxLineLength then
+            maxLineLength = lineLen
+        end
+    end
+    
+    --计算文本总宽度和高度（像素）
+    local textWidth = maxLineLength * actualCharWidth
+    local textHeight = #lines * actualCharHeight + (#lines - 1) * actualLineSpacing
+    
+    --清空RenderTarget
+    PushRenderTarget('rt:gradient_stroke')
+    RenderClear(Color(0, 0, 0, 0))
+    
+    --计算在RenderTarget中心位置
+    local rtCenterX = screen.width / 2
+    local rtCenterY = screen.height / 2
+    
+    lib.DrawStroke(font, text, rtCenterX, rtCenterY, s, 
+        Color(255, 255, 255, 255), 
+        "centerpoint")
+    
+    PopRenderTarget()
+    
+    --计算文本在屏幕上的实际渲染位置
+    --由于是centerpoint对齐，(x,y)是文本中心点
+    local x1, y1 = x - textWidth / 2, y + textHeight / 2
+    local x2, y2 = x + textWidth / 2, y + textHeight / 2
+    local x3, y3 = x + textWidth / 2, y - textHeight / 2
+    local x4, y4 = x - textWidth / 2, y - textHeight / 2
+
+    --准备顶点颜色
+    local color1 = colors[1] or Color(255, 255, 255, 255)
+    local color2 = colors[2] or Color(255, 255, 255, 255)
+    local color3 = colors[3] or Color(255, 255, 255, 255)
+    local color4 = colors[4] or Color(255, 255, 255, 255)
+
+    --计算顶点
+    local v1 = { x1, y1, 0.5, rtCenterX - textWidth / 2, rtCenterY + textHeight / 2, color1 }
+    local v2 = { x2, y2, 0.5, rtCenterX + textWidth / 2, rtCenterY + textHeight / 2, color2 }
+    local v3 = { x3, y3, 0.5, rtCenterX + textWidth / 2, rtCenterY - textHeight / 2, color3 }
+    local v4 = { x4, y4, 0.5, rtCenterX - textWidth / 2, rtCenterY - textHeight / 2, color4 }
+    --上面算出来的是全是ui系坐标，要转一遍坐标系
+    v1[4], v1[5] = aic.math.PosTrans(v1[4], v1[5], 'ui', 'uv')
+    v2[4], v2[5] = aic.math.PosTrans(v2[4], v2[5], 'ui', 'uv')
+    v3[4], v3[5] = aic.math.PosTrans(v3[4], v3[5], 'ui', 'uv')
+    v4[4], v4[5] = aic.math.PosTrans(v4[4], v4[5], 'ui', 'uv')
+
+    RenderTexture('rt:gradient_text', '', v1, v2, v3, v4)
+end
+
+---设置DrawTextWithShader所需调用shader的参数列表和混合模式
+---@param shadername1 string @为文本调用shader的名称
+---@param paramlist1 table @为文本调用shader的参数列表
+---@param blend1 string @为文本调用shader的混合模式
+---@param shadername2 string @为描边调用shader的名称
+---@param paramlist2 table @为描边调用shader的参数列表
+---@param blend2 string @为描边调用shader的混合模式
+---@overload fun(shadername:string, paramlist:table, blend:string)
+function lib.SetPostEffectParam(shadername1, paramlist1, blend1, shadername2, paramlist2, blend2)
+    lib.shader_name1 = shadername1
+    lib.shader_paramlist1 = paramlist1
+    lib.shader_blend1 = blend1 or ''
+    lib.shader_name2 = shadername2
+    lib.shader_paramlist2 = paramlist2
+    lib.shader_blend2 = blend2 or ''
+end
+
+---shader文字渲染和描边渲染用到的RenderTarget
+lib.CreateRT('rt:shader_text1')
+lib.CreateRT('rt:shader_stroke1')
+lib.CreateRT('rt:shader_text2')
+lib.CreateRT('rt:shader_stroke2')
+
+---使用shader的文字渲染（默认带描边，只能在UI系下使用，对齐方式固定为centerpoint）
+---@param font string @字体
+---@param text string @渲染文字
+---@param x number @x坐标（屏幕坐标）
+---@param y number @y坐标（屏幕坐标）
+---@param s number @缩放比例
+---@param co lstg.Color @四个顶点的颜色
+---@param charWidth number @单个ASCII字符宽度
+---@param charHeight number @单个字符高度
+---@param lineSpacing number @行间距
+---@param nostroke boolean @是否不带描边
+function lib.DrawTextWithShader(font, text, x, y, s, co, charWidth, charHeight, lineSpacing, nostroke)
+    local param = aic.l10n.font_param[setting.locale] or { 10, 18, 4 }
+    charWidth = charWidth or param[1]
+    charHeight = charHeight or param[2]
+    lineSpacing = lineSpacing or param[3]
+    
+    --计算实际尺寸（考虑缩放）
+    local actualCharWidth = charWidth * s
+    local actualCharHeight = charHeight * s
+    local actualLineSpacing = lineSpacing * s
+    
+    --拆分文本为行
+    local lines = {}
+    for line in text:gmatch("[^\n]+") do
+        table.insert(lines, line)
+    end
+    
+    --如果没有有效行，插入空行
+    if #lines == 0 then
+        table.insert(lines, "")
+    end
+    
+    --计算最大行宽度
+    local maxLineLength = 0
+    for _, line in ipairs(lines) do
+        local lineLen = aic.string.GetLength(line)
+        if lineLen > maxLineLength then
+            maxLineLength = lineLen
+        end
+    end
+    
+    --计算文本总宽度和高度
+    local textWidth = maxLineLength * actualCharWidth
+    local textHeight = #lines * actualCharHeight + (#lines - 1) * actualLineSpacing
+
+    --RenderTarget中心位置
+    local rtCenterX = screen.width / 2
+    local rtCenterY = screen.height / 2
+
+    --渲染描边
+    if not nostroke then
+        if (lib.shader_name2) then
+            PushRenderTarget('rt:shader_stroke1')
+            RenderClear(Color(0, 0, 0, 0))
+            lib.DrawStroke(font, text, rtCenterX, rtCenterY, s, 
+                Color(255, 0, 0, 0), 
+                "centerpoint")
+            PopRenderTarget()
+        else
+            lib.DrawStroke(font, text, x, y, s, 
+                Color(255, 0, 0, 0), 
+                "centerpoint")
+        end
+    end
+
+    --渲染文本
+    PushRenderTarget('rt:shader_text1')
+    RenderClear(Color(0, 0, 0, 0))
+    lib.DrawTextWithoutStroke(font, text, rtCenterX, rtCenterY, s, 
+        Color(255, 255, 255, 255), 
+        "centerpoint")
+    PopRenderTarget()
+
+    --将使用shader渲染的描边和文本再次捕获
+    if not nostroke then
+        if (lib.shader_name2) then
+            PushRenderTarget('rt:shader_stroke2')
+            RenderClear(Color(0, 0, 0, 0))
+            PostEffect(
+                lib.shader_name2,
+                'rt:shader_stroke1',
+                6,
+                lib.shader_blend2,
+                lib.shader_paramlist2
+            )
+            PopRenderTarget()
+        end
+    end
+
+    PushRenderTarget('rt:shader_text2')
+    RenderClear(Color(0, 0, 0, 0))
+    PostEffect(
+        lib.shader_name1,
+        'rt:shader_text1',
+        6,
+        lib.shader_blend1,
+        lib.shader_paramlist1
+    )
+    PopRenderTarget()
+    
+    --计算文本在屏幕上的实际渲染位置
+    --由于是centerpoint对齐，(x,y)是文本渲染区域的中心点
+    local x1, y1 = x - textWidth / 2, y + textHeight / 2
+    local x2, y2 = x + textWidth / 2, y + textHeight / 2
+    local x3, y3 = x + textWidth / 2, y - textHeight / 2
+    local x4, y4 = x - textWidth / 2, y - textHeight / 2
+
+    --计算顶点
+    local v1 = { x1, y1, 0.5, rtCenterX - textWidth / 2, rtCenterY + textHeight / 2, co }
+    local v2 = { x2, y2, 0.5, rtCenterX + textWidth / 2, rtCenterY + textHeight / 2, co }
+    local v3 = { x3, y3, 0.5, rtCenterX + textWidth / 2, rtCenterY - textHeight / 2, co }
+    local v4 = { x4, y4, 0.5, rtCenterX - textWidth / 2, rtCenterY - textHeight / 2, co }
+    --上面算出来的是全是ui系坐标，要转一遍坐标系
+    v1[4], v1[5] = aic.math.PosTrans(v1[4], v1[5], 'ui', 'uv')
+    v2[4], v2[5] = aic.math.PosTrans(v2[4], v2[5], 'ui', 'uv')
+    v3[4], v3[5] = aic.math.PosTrans(v3[4], v3[5], 'ui', 'uv')
+    v4[4], v4[5] = aic.math.PosTrans(v4[4], v4[5], 'ui', 'uv')
+
+    if not nostroke then
+        RenderTexture('rt:shader_stroke2', '', v1, v2, v3, v4)
+    end
+    RenderTexture('rt:shader_text2', '', v1, v2, v3, v4)
+end
+
+---渲染椭圆环
+---花了大半天总算保证部分渲染输入任意角都不会有问题了
+---@param img string @渲染图像
+---@param x number @中心x坐标
+---@param y number @中心y坐标
+---@param ra1 number @内径a
+---@param ra2 number @外径a
+---@param n number @分割数
+---@param rot number @倾斜角度
+---@param rb1 number @内径b
+---@param rb2 number @外径b
+---@param rot1 number @部分渲染起始角度
+---@param rot2 number @部分渲染结束角度
+---@param z number @基本用不到的z坐标
+---@return number startx @起始点x坐标
+---@return number starty @起始点y坐标
+---@return number endx @结束点x坐标
+---@return number endy @结束点y坐标
+---| 渲染圆环
+---@overload fun(img:string, x:number, y:number, r1:number, r2:number, n:number):number, number, number, number
+function lib.RenderEclipseRing(img, x, y, ra1, ra2, n, rot, rb1, rb2, rot1, rot2, z)
+    n = n or 90
+    local da = 360 / n
+    rot = rot or 0
+    rb1 = rb1 or ra1
+    rb2 = rb2 or ra2
+    rot1 = rot1 or 0
+    rot2 = rot2 or 360 - da
+    rot1 = aic.math.AngleFormat(rot1)
+    rot2 = aic.math.AngleFormat(rot2)
+    if rot1 == rot2 then
+        rot1, rot2 = 0, 360 - da --渲染整圆时从哪开始都没区别
+    elseif rot1 > rot2 then
+        rot1, rot2 = rot2, rot1
+    end
+    local n1 = int(n * rot1 / 360)
+    local n2 = int(n * rot2 / 360)
+    z = z or 0.5
+    local a = rot1
+    local startx, starty, endx, endy
+    for i = n1, n2 do
+        local x1, y1 = rotate(x + ra2 * cos(a + da), y + rb2 * sin(a + da), rot, x, y)
+        local x2, y2 = rotate(x + ra2 * cos(a), y + rb2 * sin(a), rot, x, y)
+        local x3, y3 = rotate(x + ra1 * cos(a), y + rb1 * sin(a), rot, x, y)
+        local x4, y4 = rotate(x + ra1 * cos(a + da), y + rb1 * sin(a + da), rot, x, y)
+        Render4V(
+            img,
+            x1, y1, z,
+            x2, y2, z,
+            x3, y3, z,
+            x4, y4, z
+        )
+        if i == n1 then
+            local ra = (ra1 + ra2) / 2
+            local rb = (rb1 + rb2) / 2
+            startx, starty = rotate(x + ra * cos(a + da / 2), y + rb * sin(a + da / 2), rot, x, y)
+        end
+        local ra = (ra1 + ra2) / 2
+        local rb = (rb1 + rb2) / 2
+        endx, endy = rotate(x + ra * cos(a + da / 2), y + rb * sin(a + da / 2), rot, x, y)
+        a = a + da
+    end
+    return startx, starty, endx, endy
+end
+
+---渲染实心椭圆
+---@param img string @渲染图像
+---@param x number @中心x坐标
+---@param y number @中心y坐标
+---@param ra number @半长轴
+---@param rb number @半短轴
+---@param n number @分割数
+---@param rot number @倾斜角度
+---@param rot1 number @部分渲染起始角度
+---@param rot2 number @部分渲染结束角度
+---@param z number @基本用不到的z坐标
+---@return number startx @起始点x坐标
+---@return number starty @起始点y坐标
+---@return number endx @结束点x坐标
+---@return number endy @结束点y坐标
+---| 渲染实心圆
+---@overload fun(img:string, x:number, y:number, r:number):number, number, number, number
+function lib.RenderEclipse(img, x, y, ra, rb, n, rot, rot1, rot2, z)
+    n = n or 90
+    local da = 360 / n
+    rot = rot or 0
+    rb = rb or ra
+    rot1 = rot1 or 0
+    rot2 = rot2 or 360 - da
+    rot1 = aic.math.AngleFormat(rot1)
+    rot2 = aic.math.AngleFormat(rot2)
+    if rot1 == rot2 then
+        rot1, rot2 = 0, 360 - da --渲染整圆时从哪开始都没区别
+    elseif rot1 > rot2 then
+        rot1, rot2 = rot2, rot1
+    end
+    local n1 = int(n * rot1 / 360)
+    local n2 = int(n * rot2 / 360)
+    z = z or 0.5
+    local a = rot1
+    local startx, starty, endx, endy
+    for i = n1, n2 do
+        local x1, y1 = rotate(x + ra * cos(a + da), y + rb * sin(a + da), rot, x, y)
+        local x2, y2 = rotate(x + ra * cos(a), y + rb * sin(a), rot, x, y)
+        Render4V(
+            img,
+            x1, y1, z,
+            x2, y2, z,
+            x, y, z,
+            x, y, z
+        )
+        if i == n1 then
+            startx, starty = rotate(x + ra * cos(a + da / 2), y + rb * sin(a + da / 2), rot, x, y)
+        end
+        endx, endy = rotate(x + ra * cos(a + da / 2), y + rb * sin(a + da / 2), rot, x, y)
+        a = a + da
+    end
+    return startx, starty, endx, endy
+end
+
+---player 下标
+lib.player_pointer = Class(object)
+
+function lib.player_pointer:init()
+    self.scale = 1
+    self.x = 0
+    self.y = 0
+    self.layer = LAYER_TOP + 0.1
+    self.bound = false
+end
+
+function lib.player_pointer:render()
+    SetViewMode('ui')
+    local w = lstg.world
+    SetRenderRect(w.l, w.r, w.b - max(16 * self.scale, 0), w.t,
+        w.scrl, w.scrr, w.scrb - max(16 * self.scale, 0), w.scrt)
+    local x, y = player.x, lstg.world.b
+    SetImageState("player_pointer", "", Color(150, 255, 255, 255))
+    Render("player_pointer", x, y, 0, self.scale)
+    SetViewMode('world')
+end
+
+---控制玩家相关UI显示
+---@param pointer boolean @是否显示位置指示器
+---@param spellname boolean @是否显示玩家符卡名
+function lib.SetPlayerUI(pointer, spellname)
+    lstg.ui.player_pointer.hide = not pointer
+    lstg.ui.player_spellname_hide = not spellname
+end
+
+--符卡类型
+---@alias card_type ' "normal" = 普通符卡 '|' "great" = 大型符卡 '|' "time" = 耐久符卡'
+
+---更改剩余符卡显示类型
+---@param num number @符卡编号
+---@param type card_type @符卡类型
+function lib.SetCardLeft(num, type)
+    type = type or ''
+    _sc_left_type = _sc_left_type or {}
+    _sc_left_type[num] = type
+end
+
+local function Muki_stroke(font, text, x, y, co, ...)
+    local _x, _y
+    for i = 0, 8 do
+        _x = x + sqrt(2) * cos(i * 45)
+        _y = y + sqrt(2) * sin(i * 45)
+        RenderTTF(font, text,
+            _x, _x, _y, _y,
+            co,
+            ...)
+    end
+end
+
+---新建符卡名
+---@param boss lstg.GameObject @符卡名所属boss
+---@param name string @符卡名
+---@param slot number @符卡名槽位（从1开始）
+---@param xc number @x坐标偏移量
+---@param yu number @y坐标偏移量
+---@param IsPlayer boolean @是否为玩家符卡名
+---@param t number @持续时间（仅玩家符卡名时有效）
+---@param layer number @图层
+---@param score number @SCB分数
+---@param font string @符卡字体
+function lib.NewSpellname(boss, name, slot, xc, yu, IsPlayer, t, layer, score, font)
+    boss = boss or _boss
+    if (not boss or not IsValid(boss)) and not IsPlayer then return end
+    name = name or ' '
+    slot = slot or 1
+    xc = xc or 0
+    yu = yu or -5
+    score = score or 200000000
+    layer = layer or LAYER_TOP + 446
+    if not IsPlayer then t = nil end
+    return New(lib.spellname, boss, name, slot, score, layer, xc, yu, IsPlayer, t, font)
+end
+
+
+--在我的努力修改下已经变成屎山了（指到处塞满调参用变量）
+--From OWQzd3Rn2
+--Arranged by Muki
+---符卡名（玩家符卡名及boss符卡名）
+lib.spellname = Class(object)
+
+function lib.spellname:init(b, name, slot, score, lay, xc, yu, IsPlayer, t, font)
+    self.x, self.y = 0, 0
+    self.img = "img_void"
+    self.layer = lay
+    self.group = GROUP_NONTJT
+    self.xc = xc
+    self.yu = yu
+    self.IsPlayer = IsPlayer
+    if self.IsPlayer then
+        self.align = 'left'
+    else
+        self.align = 'right'
+    end
+
+    if self.IsPlayer then
+        self.spell_name_bg = 'player_spell_name_bg'
+    else
+        self.spell_name_bg = 'boss_spell_name_bg'
+    end
+
+    if score == nil then
+        score = true
+    end
+    self.layer = lay
+    self.boss = b
+    self.name = name or ""
+    self.slot = slot or 1
+    self.score = score
+    self.xp = -8
+    self.yp = 0
+    self.ybot = 345
+    self.xoffset = 200
+    self.xoffset2 = 0
+    self.yoffset = -self.ybot
+    self.waitx = 500
+    self.default_waitx = self.waitx
+    self._dy = 0
+    self._dy2 = 0
+    self.t = t
+    self.font = font or 'main_font_zh_cn'
+    if self.IsPlayer then
+        self.waitx = 1000
+        self.default_waitx = self.waitx
+        self.xc = self.xc - 175
+        self.yu = self.yu + 120
+        self.yp = -185
+        self.slot = 1
+        self.xoffset = -200
+        self._dy2 = -130
+    end
+    if self.name == "" then
+        RawDel(self)
+    end
+    self.x = 192 + self.xc
+    self.y = 200 + self.yu - (self.slot - 2) * 44
+    self.bound = false
+    self.flag = 0
+    self._scale = 1
+    self._scale2 = 1
+    self._alpha = 0
+    self.talpha = 0
+    self.talpha2 = 0
+end
+
+function lib.spellname:frame()
+    if self.t and self.timer >= self.t and not self.delsign then Del(self) end
+    task.Do(self)
+    local b = self.boss
+    if not b and not self.IsPlayer then return end
+    local sc_hist = 0
+    if IsValid(b) then
+        sc_hist = b._sc_hist
+    end
+    self.sc_hist = sc_hist
+    local t, t1, t2, ct, t3 = 60, 30, 30, 10, 40
+    local etc = abs(t2 - t3) - 0
+    if IsValid(b) then
+        local dy = (b.ui_slot - 1) * 44
+        self._dy = dy
+        local bonus, aic_bonus
+        if b.sc_bonus then
+            bonus = string.format("0%.0f", b.sc_bonus - b.sc_bonus % 10)
+            aic_bonus = string.format(b.sc_bonus - b.sc_bonus % 10)
+        else
+            aic_bonus = "FAILED"
+            bonus = "FAILED"
+        end
+        self.bonus = bonus
+        self.aic_bonus = aic_bonus
+        local players
+        if Players then
+            players = Players(b)
+        else
+            players = { player }
+        end
+        local _flag = false
+        local x = self.x
+        local y = self.y + self.yoffset + dy
+        for _, p in pairs(players) do
+            if IsValid(p) and abs(p.x - x) <= 180
+                and abs(p.y - y) <= 60
+                and self.timer > 100 + etc + t1 then
+                _flag = true
+                break
+            end
+        end
+        if _flag then
+            self.flag = self.flag + 1
+        else
+            self.flag = self.flag - 1
+        end
+    else
+        self.flag = 0
+        self._dy = 0
+    end
+    self.flag = min(max(0, self.flag), 18)
+    if not (self.death) then
+        if self.IsPlayer then
+            if self.timer > 30 then
+                self.xoffset = min(self.xoffset + 10, 0)
+            end
+        else
+            if self.timer > 30 then
+                self.xoffset = max(self.xoffset - 10, 0)
+            end
+        end
+        self.xoffset2 = 0
+        local _t = self.timer - 60
+        local _t1 = 100 + etc
+        local _t2 = _t1 + t1
+        local _t3 = 60 + etc
+        local _t4 = _t3 + t
+        local _t5 = t3 - ct
+        local _t6 = _t5 + t2
+        if self.timer > _t1 and self.timer < _t2 then
+            self.talpha = min(self.talpha + (1 / t1), 1)
+        end
+        if self.timer > _t3 and self.timer < _t4 then
+            local tmp = (90 / t) * (_t - etc)
+            self.yoffset = -self.ybot + (self.ybot + self.yp + self._dy2) * sin(tmp * sin(tmp))
+        end
+        if self.timer > _t5 and self.timer < _t6 then
+            self.talpha2 = min(self.talpha2 + (1 / t2), 1)
+            self._scale2 = max(1 - sin((90 / t2) * (self.timer - t3 + ct)), 0)
+        end
+        if self.timer < t3 then
+            self._scale = max(150 - 120 * sin((90 / t3) * self.timer), 30) / 30
+        end
+        self._alpha = min(self.timer / t3, 1)
+        if not self.IsPlayer then
+            self.waitx = self.default_waitx * max(0, (1 - (self.timer - _t6) / 60)) --为了解决SCB和history莫名奇妙先出来的问题
+        end
+    else
+        if IsValid(b) and b.is_exploding and not (self.explodeFlag) then
+            self.timer = -60
+            self.explodeFlag = true
+        end
+        if self.timer > 0 then
+            self.xoffset = min(self.xoffset + 8 + self.xp, 220)
+        end
+        self.xoffset2 = self.xoffset
+        self._scale = 1
+        self._alpha = 1
+        if self.timer > 60 then
+            RawDel(self)
+        end
+    end
+end
+
+function lib.spellname:render()
+    local b = self.boss
+    if (IsValid(b) and b.hp > 0) or self.IsPlayer then
+        local sc_hist = self.sc_hist or { 0, 0 }
+        if self.IsPlayer then sc_hist = { 0, 0 } end
+        --local sc_hist = {100,1000} --想看master效果的自己改这个
+        local bonus = self.bonus
+        local aic_bonus = self.aic_bonus
+        local dy = self._dy
+        local x = self.x + self.xoffset + self.xp
+        local y = self.y + self.yoffset - dy + self.yp
+        local alpha = 1 - self.flag / 30
+        local alpha2 = alpha * self._alpha
+        local s = GetImageScale()
+        SetImageState(self.spell_name_bg, "",
+            Color(alpha * 255 * self.talpha2, 255, 255, 255))
+        x = self.x + self.xoffset2
+        if self.IsPlayer then
+            Render(self.spell_name_bg, x - 200, y - 15, 0, 1 + 0.5 * self._scale2)
+        else
+            Render(self.spell_name_bg, x, y - 15, 0, 1 + 0.5 * self._scale2)
+        end
+        x = self.x + self.xoffset2 + self.xp
+        y = y - 25
+        local aicx, aicy = x, y
+        SetImageScale(s * self._scale)
+        if self.IsPlayer then
+            if self.delsign then
+                Muki_stroke(self.font, self.name, aicx - 180, aicy - 2, Color(alpha * 255 * self.talpha2, 0, 0, 0), self.align,
+                    "noclip")
+                RenderTTF(self.font, self.name,
+                    aicx - 180, aicx - 180, aicy - 2, aicy - 2,
+                    Color(alpha * 255 * self.talpha2, 255, 255, 255),
+                    self.align, "noclip")
+            else
+                Muki_stroke(self.font, self.name, aicx - 180, aicy - 2, Color(alpha2 * 255, 0, 0, 0), self.align,
+                    "noclip")
+                RenderTTF(self.font, self.name,
+                    aicx - 180, aicx - 180, aicy - 2, aicy - 2,
+                    Color(alpha2 * 255, 255, 255, 255),
+                    self.align, "noclip")
+            end
+        else
+            Muki_stroke(self.font, self.name, aicx, aicy - 2, Color(alpha2 * 255, 0, 0, 0), self.align,
+                "noclip")
+            RenderTTF(self.font, self.name,
+                aicx, aicx, aicy - 2, aicy - 2,
+                Color(alpha2 * 255, 255, 255, 255),
+                self.align, "noclip")
+        end
+        SetImageScale(s)
+        local a = alpha * 255 * self.talpha
+        local shift
+        if sc_hist[1] >= 10 and sc_hist[2] >= 100 then shift = true end --history是否偏移
+        if self.score and not self.Isplayer then
+            --local fontsize = 0.5
+            local xm, ym = 4, -1 --字符坐标偏移值
+            x = self.x + self.xoffset - 5 + self.xp + self.waitx
+            y = self.y - dy - 31 + self.yp
+            aicx = self.x + self.xoffset - 5 + self.xp + 10 + self.waitx
+            aicy = self.y - dy - 31 + self.yp - 13
+            SetFontState("bonus2", "", Color(a, 0, 0, 0))
+            --RenderText("bonus2", bonus, x - 90, y, fontsize, "right")
+            --RenderText("bonus2", string.format("%d/%d", sc_hist[1], sc_hist[2]), x, y, fontsize, "right")
+            --RenderText("bonus", "BONUS          HISTORY", x - 40, y, 0.5, "right")
+            SetImageState("cardui_history", "", Color(a, 255, 255, 255))
+            SetImageState("cardui_bonus", "", Color(a, 255, 255, 255))
+            SetFontState("bonus2", "", Color(a, 255, 255, 255))
+            --x = x - 1
+            --y = y + 1
+            --RenderTTF("pixel", "Bonus                           History", aicx - 55, aicx - 55, aicy, aicy, Color(255, 0, 255, 255), "right")
+            if shift then
+                Render("Muki_AiC_spell_history", x - 58 + self.xp, y - 18 + self.yp, 0, 0.5)
+            else
+                Render("Muki_AiC_spell_history", x - 38 + self.xp, y - 18 + self.yp, 0, 0.5)
+            end
+            Render("Muki_AiC_spell_bonus", x - 151 + self.xp, y - 18 + self.yp, 0, 0.5)
+
+
+            if not self.IsPlayer and (not (self.death) or (self.death and IsValid(b) and b.is_exploding and self.timer <= 0)) then
+                x = x + xm + 4 + self.xp
+                y = y + ym + self.yp
+                aicx = aicx + xm + 4 + self.xp - 5
+                aicy = aicy + ym + self.yp + 6
+                if bonus ~= "FAILED" then
+                    if shift then
+                        Muki_stroke("pixel", aic_bonus, aicx - 90, aicy, Color(255, 0, 0, 0), "right")
+                        RenderTTF("pixel", aic_bonus, aicx - 90, aicx - 90, aicy, aicy,
+                            Color(255, 255, 255, 255), "right")
+                    else
+                        Muki_stroke("pixel", aic_bonus, aicx - 70, aicy, Color(255, 0, 0, 0), "right")
+                        RenderTTF("pixel", aic_bonus, aicx - 70, aicx - 70, aicy, aicy,
+                            Color(255, 255, 255, 255), "right")
+                    end
+                else
+                    if shift then
+                        Muki_stroke("pixel", "Failed", aicx - 90, aicy, Color(255, 0, 0, 0), "right")
+                        RenderTTF("pixel", "Failed", aicx - 90, aicx - 90, aicy, aicy,
+                            Color(255, 255, 255, 255), "right")
+                    else
+                        Muki_stroke("pixel", "Failed", aicx - 70, aicy, Color(255, 0, 0, 0), "right")
+                        RenderTTF("pixel", "Failed", aicx - 70, aicx - 70, aicy, aicy,
+                            Color(255, 255, 255, 255), "right")
+                    end
+                end
+                if sc_hist[2] < 1000 then
+                    --对history显示实在相化
+                    --悲报：实在相支持三位数history显示（
+                    if shift then
+                        Muki_stroke("pixel", string.format(sc_hist[1] .. "/" .. sc_hist[2]), aicx - 10,
+                            aicy, Color(255, 0, 0, 0), "right")
+                        RenderTTF("pixel", string.format(sc_hist[1] .. "/" .. sc_hist[2]), aicx - 10,
+                            aicx - 10, aicy, aicy, Color(255, 255, 255, 255), "right")
+                    else
+                        Muki_stroke("pixel", string.format(sc_hist[1] .. "/" .. sc_hist[2]), aicx, aicy,
+                            Color(255, 0, 0, 0), "right")
+                        RenderTTF("pixel", string.format(sc_hist[1] .. "/" .. sc_hist[2]), aicx, aicx,
+                            aicy, aicy, Color(255, 255, 255, 255), "right")
+                    end
+                elseif sc_hist[1] <= 99 then
+                    Muki_stroke("pixel", string.format(sc_hist[1] .. "/999+"), aicx - 5, aicy,
+                        Color(255, 0, 0, 0), "right")
+                    RenderTTF("pixel", string.format(sc_hist[1] .. "/999+"), aicx - 5, aicx - 5, aicy,
+                        aicy, Color(255, 255, 255, 255), "right")
+                elseif sc_hist[1] > 99 then
+                    --由于我没有闲到去把哪张卡收一百次，所以我只能猜实在相也是一百次就master
+                    --虽然实在相有没有master都是个问题
+                    Muki_stroke("pixel", 'MASTER', aicx - 8, aicy, Color(255, 0, 0, 0), "right")
+                    RenderTTF("pixel", 'MASTER', aicx - 8, aicx - 8, aicy, aicy,
+                        Color(255, 255, 255, 255), "right")
+                end
+                --[[if self.yp == 0 then
+                    if sc_hist[2] < 1000 then
+                        --对history显示实在相化
+                        --悲报：实在相支持三位数history显示（
+                        if shift then
+                            Muki_stroke("pixel", string.format(sc_hist[1] .. "/" .. sc_hist[2]), aicx - 10,
+                                aicy, Color(255, 0, 0, 0), "right")
+                            RenderTTF("pixel", string.format(sc_hist[1] .. "/" .. sc_hist[2]), aicx - 10,
+                                aicx - 10, aicy, aicy, Color(255, 255, 255, 255), "right")
+                        else
+                            Muki_stroke("pixel", string.format(sc_hist[1] .. "/" .. sc_hist[2]), aicx, aicy,
+                                Color(255, 0, 0, 0), "right")
+                            RenderTTF("pixel", string.format(sc_hist[1] .. "/" .. sc_hist[2]), aicx, aicx,
+                                aicy, aicy, Color(255, 255, 255, 255), "right")
+                        end
+                    elseif sc_hist[1] <= 99 then
+                        Muki_stroke("pixel", string.format(sc_hist[1] .. "/999+"), aicx - 5, aicy,
+                            Color(255, 0, 0, 0), "right")
+                        RenderTTF("pixel", string.format(sc_hist[1] .. "/999+"), aicx - 5, aicx - 5, aicy,
+                            aicy, Color(255, 255, 255, 255), "right")
+                    elseif sc_hist[1] > 99 then
+                        --由于我没有闲到去把哪张卡收一百次，所以我只能猜实在相也是一百次就master
+                        --虽然实在相有没有master都是个问题
+                        Muki_stroke("pixel", 'MASTER', aicx - 8, aicy, Color(255, 0, 0, 0), "right")
+                        RenderTTF("pixel", 'MASTER', aicx - 8, aicx - 8, aicy, aicy,
+                            Color(255, 255, 255, 255), "right")
+                    end
+                else
+                    x = x - 52
+                    Muki_stroke("pixel", string.format(sc_hist[1] .. "/" .. sc_hist[2]), x, y,
+                        Color(255, 0, 0, 0), "left")
+                    RenderTTF("pixel", string.format(sc_hist[1] .. "/" .. sc_hist[2]), x, x, y, y,
+                        Color(255, 255, 255, 255), "left")
+                end]]
+            end
+        end
+    else
+        RawDel(self)
+    end
+end
+
+function lib.spellname:kill()
+    self.class.del(self)
+end
+
+function lib.spellname:del()
+    PreserveObject(self)
+    if self.t then
+        self.delsign = true
+        task.New(self, function()
+            for i = 1, 30 do
+                self._alpha = (30 - i) / 30
+                self.talpha2 = (30 - i) / 30
+                task.Wait()
+            end
+            RawDel(self)
+        end)
+    else
+        if not (self.death) then
+            self.death = true
+            self.timer = -1
+        end
+    end
+end
+
+--周末活血条，费了老大劲把它竖过来
+--在原本的基础上加上了阶段血条支持
+--总喜欢在别人的东西上修修改改的屑（
+lib.hpbar = plus.Class()
+function lib.hpbar:init(ui, system)
+    self.group = GROUP_GHOST
+    self.layer = LAYER_TOP + 114514
+    self.ui = ui
+    self.system = system
+    self.timer2 = 0
+    self.timer3 = 0
+end
+
+function lib.hpbar:frame()
+    boss.hpbar.frame(self)
+    task.Do(self)
+    local _ui = self.ui
+    local b = self.system.boss
+    if not (_ui.drawhp) or not (IsValid(b)) then
+        self._mode = -1
+        return
+    end
+    if not (_ui.hpbarcolor1) and not (_ui.hpbarcolor2) and not (b.time_sc) then
+        self._mode = -1
+    else
+        self._mode = 0
+    end
+end
+function lib.hpbar:render()
+    SetViewMode('ui')
+    local color_full_white = Color(0xFFFFFFFF)
+    --local color_full_dark = Color(0xFF000000)
+    local _ui = self.ui
+    local b = self.system.boss
+    if not (_ui.drawhp) or not (IsValid(b)) then
+        return
+    end
+
+    if self._mode == nil or self._mode == -1 then
+        return
+    end
+
+    local tex = "Muki_AiC_lifebar"
+    local rate = b.hpbarlen
+    if b.time_sc and b.t3 then
+        tex = "Muki_AiC_timebar"
+        rate = 1 - b.timer / b.t3
+    end
+
+    local p1, p2, p3, p4
+    --local w = lstg.world
+    local b, t, l, r = 0, screen.height, -20, 0
+    local height = t - b
+    --local l, r, t, t2 = w.l, w.r, w.t, w.t - 20
+    --local width = r - l
+    local boss = self.system.boss
+
+    local open_time_rate = min(1, boss.timer / 30)
+    local offset_x = 20 * open_time_rate
+    rate = open_time_rate * rate
+    l = l + offset_x
+    r = r + offset_x
+    p1 = { l, height * rate, 0.5, 0, 672 * (1 - rate), color_full_white }
+    p2 = { r, height * rate, 0.5, 40, 672 * (1 - rate), color_full_white }
+    p3 = { r, b, 0.5, 40, 672, color_full_white }
+    p4 = { l, b, 0.5, 0, 672, color_full_white }
+    RenderTexture(tex, "", p1, p2, p3, p4)
+
+    p1 = { l, t, 0.5, 40, 0, color_full_white }
+    p2 = { r, t, 0.5, 80, 0, color_full_white }
+    p3 = { r, b, 0.5, 80, 672, color_full_white }
+    p4 = { l, b, 0.5, 40, 672, color_full_white }
+    RenderTexture(tex, "mul+add", p1, p2, p3, p4)
+    if not (boss.time_sc and boss.t3) then
+        local text = int(max(0, boss.hp)) .. "/" .. boss.maxhp
+        local co = boss.hp_co or Color(open_time_rate * 255, 0, 0, 0)
+        DrawText('menuttf', text, 25, 5, 0.75, Color(open_time_rate * 255, 255, 255, 255), co, 'paragraph', 'bottom')
+    end
+
+    if boss._sp_point_auto and #boss._sp_point_auto ~= 0 then
+        local p, h
+        for i = 1, #boss._sp_point_auto do
+            p = boss._sp_point_auto[i]
+            if not (boss.time_sc and boss.t3) then
+                h = (1 - p.dmg / boss.maxhp) * height    
+            else
+                h = (1 - p.timer / boss.t3) * height
+            end
+            SetImageState("Muki_AiC_bossbar_node", '', Color(open_time_rate * 255, 255, 255, 255))
+            Render("Muki_AiC_bossbar_node", (l + r) / 2, h, 0, 0.1)
+            SetImageState("Muki_AiC_bossbar_node", 'mul+add', Color(open_time_rate * 255, 255, 255, 255))
+            Render("Muki_AiC_bossbar_node", (l + r) / 2, h, 0, 0.1)
+        end
+    end
+
+    --这一堆屎山简直没眼看
+    --什么时候等我脑袋清醒点再过来优化这个逻辑
+    self.lastname = self.lastname or boss.name
+    if boss.name ~= self.lastname then
+        self.tempname = boss.name
+        boss.name = self.lastname
+        self.timer2 = 30
+        self.timer3 = 30
+    elseif self.tempname and self.timer2 == 0 then
+        self.lastname = self.tempname
+        boss.name = self.tempname
+    end
+    self.timer2 = max(0, self.timer2 - 1)
+    if self.timer2 == 0 then self.timer3 = max(0, self.timer3 - 1) end
+
+    if _ui.drawname and boss.name and not FullScreen_Flag then
+        local name = 'Muki_AiC_bossname_' .. boss.name
+        if CheckRes('img', name) then
+            if self.timer2 > 0 then
+                SetImageState(name, '', Color(min(open_time_rate, self.timer2 / 30) * 255, 255, 255, 255))
+                Render(name, 47, 5, 0, 0.3)
+                SetImageState(name, 'mul+add', Color(min(open_time_rate, self.timer2 / 30) * 50, 255, 255, 255))
+                Render(name, 47, 5, 0, 0.3)
+            else
+                SetImageState(name, '', Color(min(open_time_rate, 1 - (self.timer3 / 30)) * 255, 255, 255, 255))
+                Render(name, 47, 5, 0, 0.3)
+                SetImageState(name, 'mul+add', Color(min(open_time_rate, 1 - (self.timer3 / 30)) * 50, 255, 255, 255))
+                Render(name, 47, 5, 0, 0.3)
+            end
+        end
+    end
+
+    SetViewMode('world')
+
+    --[[
+    p1 = { r, t, 0.5, 672, 0, color_full_white }
+    p2 = { r - width * rate, t, 0.5, 672 - 672 * rate, 0, color_full_white }
+    p3 = { r - width * rate, t2, 0.5, 672 - 672 * rate, 40, color_full_white }
+    p4 = { r, t2, 0.5, 672, 40, color_full_white }
+    RenderTexture(tex, "", p1, p2, p3, p4)
+
+    p1 = { r, t, 0.5, 672, 40, color_full_white }
+    p2 = { r - width, t, 0.5, 0, 40, color_full_white }
+    p3 = { r - width, t2, 0.5, 0, 80, color_full_white }
+    p4 = { r, t2, 0.5, 672, 80, color_full_white }
+    RenderTexture(tex, "mul+add", p1, p2, p3, p4)
+
+    if boss.show_hp then
+        local text = int(max(0, b.hp)) .. "/" .. b.maxhp
+        SetFontState("bonus", "", color_full_dark)
+        RenderText("bonus", text, -1, t2 + 12, 0.6, "centerpoint")
+        RenderText("bonus", text, 0, t2 + 12, 0.6, "centerpoint")
+        RenderText("bonus", text, 1, t2 + 12, 0.6, "centerpoint")
+        RenderText("bonus", text, -1, t2 + 11, 0.6, "centerpoint")
+        RenderText("bonus", text, 1, t2 + 11, 0.6, "centerpoint")
+        RenderText("bonus", text, -1, t2 + 10, 0.6, "centerpoint")
+        RenderText("bonus", text, 0, t2 + 10, 0.6, "centerpoint")
+        RenderText("bonus", text, 1, t2 + 10, 0.6, "centerpoint")
+        SetFontState("bonus", "", color_full_white)
+        RenderText("bonus", text, 0, t2 + 11, 0.6, "centerpoint")
+    end]]
+end
+
+---增加一个auto阶段点
+---@param dmg number @目标损失血量
+---@param timer number @目标计时器
+---@param current boolean @是否使用真实帧数计时
+function lib.AddSPPoint(dmg, timer, current)
+    local b = _boss
+    if not (b and IsValid(b)) then return end
+    if b._sp_point_auto == nil then
+        b._sp_point_auto = {}
+    end
+    local point = {
+        dmg = dmg,
+        timer = timer,
+        current = current,
+    }
+    table.insert(b._sp_point_auto, point)
+end
+
+---增加一个auto阶段点（按剩余百分比计算）
+---@param percent number @目标剩余血量/时间百分比
+---@param maxhp number @最大血量
+---@param t3 number @符卡时长（帧）
+---@param current boolean @是否使用真实帧数计时
+function lib.AddSPPoint2(percent, maxhp, t3, current)
+    maxhp = maxhp or _infinite
+    t3 = t3 or _infinite
+    local b = _boss
+    if not (b and IsValid(b)) then return end
+    if b._sp_point_auto == nil then
+        b._sp_point_auto = {}
+    end
+    local point = {
+        dmg = maxhp * (1 - percent),
+        timer = t3 * (1 - percent),
+        current = current,
+    }
+    table.insert(b._sp_point_auto, point)
+end
+
+---检查剩余auto阶段点数量
+---@param num number @检查阶段点数量
+---@return boolean @剩余阶段点数量是否小于num
+function lib.CheckSPPoint(num)
+    local b = _boss
+    if not (b and IsValid(b)) then return end
+    return #b._sp_point_auto < num
+end
+
+---重绘UI，用于解决跨层使用shader导致UI消失的问题
+---@param frame boolean @是否重绘UI框（默认为true）
+---@param score boolean @是否重绘分数（默认为true）
+function lib.RedrawUI(frame, score)
+    if frame or frame == nil then
+        lstg.ui_obj.ui:drawFrame()
+    end
+    if score or score == nil then
+        lstg.ui_obj.ui:drawScore()
+    end
+end
+
+----------------------------------------
+---资源（部分资源在UI.lua中）
+
+--boss血条
+LoadImageGroupFromFile("Muki_AiC_lifebar", "THlib/UI/Muki_AiC_lifebar.png", false, 2, 1)
+LoadImageGroupFromFile("Muki_AiC_timebar", "THlib/UI/Muki_AiC_timebar.png", false, 2, 1)
+LoadImageFromFile("Muki_AiC_bossbar_node", "THlib/UI/Muki_AiC_bossbar_node.png")
+
+--boss名
+LoadImageFromFile("Muki_AiC_bossname_Noel Cornehl", "THlib/UI/Muki_AiC_bossname_Noel Cornehl.png")
+SetImageCenter("Muki_AiC_bossname_Noel Cornehl", 100, 500)
+LoadImageFromFile("Muki_AiC_bossname_Noel Cornehl & Ixia Polystachya", "THlib/UI/Muki_AiC_bossname_Noel Cornehl & Ixia Polystachya.png")
+SetImageCenter("Muki_AiC_bossname_Noel Cornehl & Ixia Polystachya", 100, 1280)
+LoadImageFromFile("Muki_AiC_bossname_Primula", "THlib/UI/Muki_AiC_bossname_Primula.png")
+SetImageCenter("Muki_AiC_bossname_Primula", 100, 320)
+LoadImageFromFile("Muki_AiC_bossname_Alma Opfebaum", "THlib/UI/Muki_AiC_bossname_Alma Opfebaum.png")
+SetImageCenter("Muki_AiC_bossname_Alma Opfebaum", 100, 720)
