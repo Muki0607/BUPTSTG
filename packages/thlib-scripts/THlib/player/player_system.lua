@@ -89,13 +89,6 @@ player_lib.defaultKeyEvent = defaultKeyEvent
 local defaultFrameEvent = {
     ["frame.updateDeathState"] = { 100, function(self)
         if (self.death == 0 or self.death > 90) and (not self.lock) and not (self.time_stop) then
-            if _debug.pmode and CheckEnhancer(12) and aic.pmode.InitializedSign and self.death > 90 then
-                --aic.pmode.Load()
-                ext.pop_pause_menu = true
-                --lstg.tmpvar.death = true
-                lstg.tmpvar.pause_menu_text = { 'Return to Waypoint', 'Return to Title', 'Manual' }
-                ext.pmode_flag = true
-            end
             self.__death_state = 0
         elseif self.death == 90 then
             self.__death_state = 1
@@ -128,12 +121,9 @@ local defaultFrameEvent = {
                     system:shoot()
                 end
                 local cost = 100
-                if CheckEnhancer(4) then cost = cost * 1.1 end
-                if not _debug.pmode and CheckEnhancer(12) then cost = cost * 0.4 end
                 --这年头想放个b是真的难
                 if self.__spell_flag and self.nextspell <= 0 and
-                    (lstg.var.exmp >= cost or (lstg.var.exmp + lstg.var.power >= cost and CheckEnhancer(4)))
-                    and not CheckEnhancer(15) and not lstg.var.block_spell then
+                    lstg.var.exmp >= cost and not lstg.var.block_spell then
                     if lstg.var.mp_active then
                         if lstg.var.mp_active > 0 then
                             lstg.var.mp_active = lstg.var.mp_active - 1
@@ -143,7 +133,7 @@ local defaultFrameEvent = {
                         system:spell()
                     end
                 end
-                if self.__special_flag and self.nextsp <= 0 and not CheckEnhancer(15) then
+                if self.__special_flag and self.nextsp <= 0 then
                     system:special()
                 end
             else
@@ -206,7 +196,7 @@ local defaultFrameEvent = {
     end },
     ["frame.itemCollect"] = { 95, function(self)
         if self.__death_state == 0 then
-            if self.y > self.collect_line and not CheckEnhancer(2) then
+            if self.y > self.collect_line then
                 for _, o in ObjList(GROUP_ITEM) do
                     local flag = false
                     if o.attract < 8 then
@@ -259,8 +249,6 @@ local defaultFrameEvent = {
                 lstg.tmpvar.hit_count = lstg.tmpvar.hit_count or 0
 
                 local percent = plist[scoredata.difficulty_select]
-                if CheckEnhancer(15) then percent = percent * 0.5 end
-                if lstg.var.enhancer_overload then percent = percent * 2 end
                 dmg = dmg * percent
                 if not CheckDiff(3) then
                     local maxp
@@ -287,9 +275,6 @@ local defaultFrameEvent = {
                         lstg.var.temp_hp = 0
                         lstg.var.hp = 0
                     end
-                end
-                if CheckDiff(4) and lstg.var.enhancer_overload then
-                    lstg.var.hp = 0
                 end
                 item.PlayerMiss(self)
             end
@@ -397,63 +382,6 @@ local defaultFrameEvent = {
         if self.time_stop then
             self.timer = self.timer - 1
         end
-    end },
-    ["frame.AiC"] = { 87, function(self)
-        --魔力流失
-        if lstg.var.power > lstg.var.maxpower and self.timer % 12 == 0 then
-            lstg.var.power = lstg.var.power - 1
-        end
-        if lstg.var.power > lstg.var.maxpower2 and self.timer % 12 == 0 then
-            lstg.var.power = lstg.var.power - 1
-        end
-        
-        --临时血量回复
-        if lstg.var.temp_hp > 0 and self.timer % 24 == 0 then
-            lstg.var.temp_hp = lstg.var.temp_hp - 1
-            lstg.var.hp = lstg.var.hp + 1
-        end
-
-        --简单难度下低血量时缓慢回血
-        if lstg.var.hp < 100 and CheckDiff(1, true) and self.timer % 180 == 0 then
-            lstg.var.hp = lstg.var.hp + 1
-        end
-
-        --防止超限
-        lstg.var.hp = min(lstg.var.hp, lstg.var.maxhp)
-        lstg.var.dodge = min(600, lstg.var.dodge)
-
-        --双重闪避冷却
-        if self.nextsp2 then
-            self.nextsp2 = max(0, self.nextsp2 - 1)
-        end
-
-        --子弹大小增大
-        if CheckEnhancer(6) then
-            for _, o in ObjList(GROUP_PLAYER_BULLET) do
-                if IsValid(o) and not o.enhanced and o.a and o.b then
-                    o.enhanced = true
-                    o.a = o.a * 1.5
-                    o.b = o.b * 1.5
-                    o.hscale = o.hscale * 1.5
-                    o.vscale = o.vscale * 1.5
-                end
-            end
-        end
-
-        --收点保护
-        self.next_collect_protect = self.next_collect_protect or 0
-        self.next_collect_protect = max(0, self.next_collect_protect - 1)
-        if CheckEnhancer(11) and self.y > self.collect_line and self.next_collect_protect <= 0 then
-            self.next_collect_protect = 300
-            self.protect = max(self.protect, 60)
-            PlaySound('lgods1', 0.5)
-        end
-
-        --[[local keypretwi = aic.sys.KeyIsPressedTwice
-        if player.nextsp <= 0 and ((keypretwi('up') or keypretwi('down') or keypretwi('left') or keypretwi('right'))
-                and lstg.var.dodge >= 100 or (lstg.var.dodge >= 75 and CheckEnhancer(3))) then
-            player._playersys:special()
-        end]]
     end },
     -----------------------------------------------
     --debug tool
@@ -755,21 +683,13 @@ function system:spell()
     item.PlayerSpell()
     local cost = 100
     local before = int(lstg.var.exmp / 100)
-    if CheckEnhancer(4) then cost = cost * 1.1 end
-    if not _debug.pmode and CheckEnhancer(12) then cost = cost * 0.4 end
-    if CheckEnhancer(4) and lstg.var.exmp < cost then
-        local d = cost - lstg.var.exmp
-        lstg.var.exmp = 0
-        lstg.var.power = lstg.var.power - d
-    else
-        lstg.var.exmp = lstg.var.exmp - cost
-    end
+    lstg.var.exmp = lstg.var.exmp - cost
     local after = int(lstg.var.exmp / 100)
     if after < before then
         lstg.var.exmp_int = lstg.var.exmp_int - 1
     end
     local spellname = l10n.ui.player_scname[p.name]
-    if p.class.spell and not (not _debug.pmode and CheckEnhancer(12)) then
+    if p.class.spell then
         p.class.spell(p)
         if p.spellname then
             if p.death > 90 and p.have_death_spell then
@@ -796,145 +716,12 @@ function system:spell()
     p.nextcollect = 90
 end
 
----闪避函数
----@param a number @角度
----@param d number @距离
----@param IsSecond boolean @是否为第二次闪避
-local function dodge(a, d, IsSecond)
-    --好高级循环，爱来自sharp
-    --翻译：
-    --[[
-    repeat t times
-    |---variables
-    |   |---x:player.x => player.x + cos(a) * d (Precisely), deaccelerate
-    |   |---y:player.y => player.y + sin(a) * d (Precisely), deaccelerate
-    |---player.x = x
-    |---player.y = y
-    |---Wait 1 frame(s)
-    --]]
-    local t = 15
-    local _beg_x = player.x
-    local x = _beg_x
-    local _end_x = player.x + cos(a) * d
-    local _w_x = 0
-    local _d_w_x = 1 / (t - 1)
-    local _beg_y = player.y
-    local y = _beg_y
-    local _end_y = player.y + sin(a) * d
-    local _w_y = 0
-    local _d_w_y = 1 / (t - 1)
-    player.protect = max(player.protect, t)
-    for _ = 1, t do
-        if CheckEnhancer(5) or not KeyIsDown('special') then break end
-        player.x = max(-192, min(192, x))
-        player.y = max(-224, min(224, y))
-        task.Wait()
-        _w_x = _w_x + _d_w_x
-        --x = (_beg_x - _end_x) * (_w_x - 1) ^ 2 + _end_x
-        x = max(-192, min(192, (_beg_x - _end_x) * (_w_x - 1) ^ 2 + _end_x)) --防止越界
-        _w_y = _w_y + _d_w_y
-        --y = (_beg_y - _end_y) * (_w_y - 1) ^ 2 + _end_y
-        y = max(-224, min(224, (_beg_y - _end_y) * (_w_y - 1) ^ 2 + _end_y)) --防止越界
-    end
-    if lstg.var.dodge >= 75 and CheckEnhancer(3) and KeyIsDown('special') and not IsSecond then
-        lstg.var.dodge = lstg.var.dodge - 75
-        dodge(a, d, true)
-    end
-end
-
----@return number @八向角度
----获取闪避方向
-local function get8dir()
-    local u, d, l, r, a = KeyIsDown('up'), KeyIsDown('down'), KeyIsDown('left'), KeyIsDown('right')
-    if u then
-        if r then a = 45
-        elseif l then a = 135
-        else a = 90 end
-    elseif d then
-        if r then a = 315
-        elseif l then a = 225
-        else a = 270
-        end
-    elseif l then a = 180
-    elseif r then a = 0
-    end
-    return a
-end
-
---又是一堆屎山，插满了各种条件判断
 ---Special事件
 function system:special()
-    --[[local p = self.player
+    local p = self.player
     if p.class.special then
         p.class.special(p)
-    end]]
-
-    local cost = 100
-    if CheckEnhancer(3) then cost = 75 end
-    if FullScreen_Flag then cost = 0 end --LSC允许无限闪避
-
-    if lstg.var.dodge >= cost and not player.dodge then
-        New(tasker, function()
-            --获取方向
-            local a = get8dir()
-            if not a and not CheckEnhancer(5) then return end
-
-            --支持决死
-            if player.death > 90 then
-                player.death = 0
-                player.deathtime = max(0, player.deathtime - 4)
-            elseif player.death == 0 then
-            else
-                return
-            end
-
-            --变量变更
-            lstg.var.dodge = lstg.var.dodge - cost
-            player.dodge = true
-
-            --隐藏player
-            local hide --兼容自机闪避前就处于hide状态的情况
-            if player.hide then hide = true end
-            player.hide = true
-            player.grazer.hide = true
-            New(aic.misc.dodge_player)
-
-            --闪避
-            if CheckEnhancer(5) then 
-                a = nil
-                dodge(0, 0)
-            end
-            if a then
-                if CheckEnhancer(14) then
-                    dodge(a, (300 - 100 * player.slow))
-                else
-                    dodge(a, (150 - 50 * player.slow))
-                end
-            end
-
-            --变量变更
-            local t
-            if CheckEnhancer(1) then t = 60
-            else t = 30 end
-            player.protect = max(player.protect, t)
-            player.nextsp = 90
-            if FullScreen_Flag then player.nextsp = 45 end --LSC闪避cd缩短
-            task.Wait(t)
-            player.dodge = false
-
-            --取消隐藏
-            if not hide then
-                player.hide = false
-                player.grazer.hide = false
-            end
-        end)
     end
-end
-
-function system:sphit()
-    local p = self.player
-    aic.ui.NewSpellname(nil, l10n.ui.sphit_name, nil, nil, nil, true, 120)
-    aic.sys.SpHit(p)
 end
 
 ---碰撞回调事件
@@ -943,11 +730,7 @@ function system:colli(other)
     if (not _debug.cheat) or (not cheat) then
         if p.death == 0 and not p.dialog then
             if p.protect == 0 then
-                if CheckEnhancer(1) and other.group ~= GROUP_ENEMY_BULLET and other.group ~= GROUP_INDES then
-                    return
-                end
                 PlaySound("pldead00", 0.5)
-                if FullScreen_Flag and not AIAllowedFlag then return end --LSC中自机无敌
                 self.taking_damage = other.damage or 50
                 p.death = 100
                 if p.deathtime then p.death = 90 + p.deathtime end

@@ -1,4 +1,5 @@
 ---THLoOP Arranged
+---这里是一切的起始点
 local opening
 stage_init = stage.New('init', true, true)
 function stage_init:init()
@@ -33,7 +34,7 @@ function stage_menu:init()
         New(mask_fader, 'open')
     end
     New(mask_fader, 'open')
-    New(aic.menu.title)
+    New(aic.menu.pretitle)
     --[[
     if stage.IsReplay then
         --rep播放后返回rep菜单 add by OLC
@@ -81,26 +82,6 @@ end
 
 if _debug.old_title then
     function stage_menu:init()
-        ---勉强让原菜单支持一下插件
-        if not scoredata.enhancer_select then
-            scoredata.enhancer_select = {}
-        end
-        if not scoredata.enhancer_slot then
-            scoredata.enhancer_slot = 4
-        end
-        lstg.var.enhancer_select = {}
-        --由于scoredata的元表特性table系的函数（insert，remove，unpack）全部不能用，只能点对点赋值
-        for i = 1, 8 do
-            if scoredata.enhancer_select[i] then
-                lstg.var.enhancer_select[i] = scoredata.enhancer_select[i]
-                --防止莫名其妙的bug导致插件重复
-                for k1, v1 in ipairs(lstg.var.enhancer_select) do
-                    for k2, v2 in ipairs(lstg.var.enhancer_select) do
-                        if k1 ~= k2 and v1 == v2 then lstg.var.enhancer_select[k2] = nil end
-                    end
-                end
-            end
-        end
         local menu_title, menu_player_select, menu_difficulty_select, menu_difficulty_select_pr, menu_replay_loader, menu_replay_saver, menu_items, menu_sc_pr
         local menu_list = {}
         local menu_practice = {}

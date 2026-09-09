@@ -16,7 +16,6 @@ _debug = {
     collicheck = true, --~键开启判定显示
     skip_opening = true, --跳过开场加载界面（也可按ESC键跳过）
     skip_loading = true, --跳过转场加载界面（也可按S键跳过）
-    enhancer_debug = false, --插件选择界面debug，显示光标位置与插件编号
     bgm_debug = false, --bgm名debug，显示所有bgm名
     music_room_debug = false, --音乐室debug，显示相关信息
     full_window_title = true, --显示完整窗口标题信息（包括FPS，Obj数信息）

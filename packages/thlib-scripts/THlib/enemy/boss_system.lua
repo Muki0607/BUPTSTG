@@ -1130,15 +1130,13 @@ function system:endChipBonus(x, y)
     end
     if b.chip_bonus and b.bombchip_bonus then
         New(item_chip, x - 20, y)
-        --New(item_bombchip, x + 20, y)
+        New(item_bombchip, x + 20, y)
     else
         if b.chip_bonus then
             New(item_chip, x, y)
         end
         if b.bombchip_bonus then
-            _drop_item(item_power_full, 5, x, y)
-            --未完成，需要加入bonus
-            --New(item_bombchip, x, y)
+            New(item_bombchip, x, y)
         end
     end
 end

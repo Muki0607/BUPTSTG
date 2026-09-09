@@ -61,7 +61,6 @@ lib.rep_info = {
     version = "游戏版本",
     player = "自机",
     difficulty = "难度",
-    enhancer_select = "携带插件",
     unknown_player = "未知自机",
     unknown_version = "未知版本",
     unknown_difficulty = "未知难度"

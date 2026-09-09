@@ -35,7 +35,6 @@ getpos = aic.misc.GetPos
 
 --东方梦摇篮系统
 
-CheckEnhancer = aic.sys.CheckEnhancer
 CheckDiff = aic.sys.CheckDiff
 GetDiff = aic.sys.GetDiff
 safeDel = aic.sys.SafeDel

@@ -28,7 +28,7 @@ end
 
 ---THLoOP Added
 local aic_sounds = {
-    'exmp', 'heal', 'enhancer_equip', 'enhancer_unequip',
+    'exmp', 'heal', 
     'opening', 'opening_new', 'sphit_use', 'sphit_explode',
     'battle_end', 'game_finished', 'ok', 'cancel',
     'setting_limited', 'setting_move', 'setting_scroll',

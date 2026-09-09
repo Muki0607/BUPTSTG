@@ -1,4 +1,3 @@
----THLoOP Arranged
 ---=====================================
 ---stage group
 ---=====================================
@@ -10,7 +9,7 @@ stage.group = {}
 stage.groups = {}
 
 gamecontinueflag = false
-local bgmname --疮痍时暂存bgm名
+local deathmusic = DeathMusic--疮痍曲
 
 function stage.group.New(title, stages, name, item_init, allow_practice, difficulty)
     local sg = { ['title'] = title, number = #stages }
@@ -76,52 +75,31 @@ function stage.group.frame(self)
         error('Player data has not been initialized. (Call function item.PlayerInit.)')
     end
     --
-    --当无按键输入时判定录像结束，支持中途退出存录像,同时预防炸rep造成其他问题
-    if ext.replay.IsReplay() and (replayReader._read >= replayReader._count) and not aic.pmode.LoadingSign then
-        ext.pop_pause_menu = true
-        ext.rep_over = true
-        lstg.tmpvar.pause_menu_text = { 'Replay Again', 'Return to Title', nil }
-    end
-    if lstg.var.hp <= 0 and lstg.var.temp_hp <= 0 then
+    if lstg.var.lifeleft <= -1 then
         if ext.replay.IsReplay() then
             ext.pop_pause_menu = true
             ext.rep_over = true
             lstg.tmpvar.pause_menu_text = { 'Replay Again', 'Return to Title', nil }
         else
-            if EndingBFlag then
-                EndingBFlag = false
-                lstg.tmpvar.pause_menu_text = { 'Watch Ending', 'Return to Title', 'Manual' }
-            else
-                if not CheckRes('bgm', DeathMusic) then
-                    LoadMusicRecord(DeathMusic)
-                end
-                PlayMusic(DeathMusic, 0.8)
-                bgmname = aic.misc.GetCurrentBGM()
-                PauseMusic(bgmname)
-                ext.pop_pause_menu = true
-                lstg.tmpvar.death = true
-                lstg.tmpvar.pause_menu_text = { 'Continue', 'Return to Title', 'Manual', 'Option', 'Quit and Save Replay' }
-            end
+            PlayMusic(deathmusic, 0.8)
+            ext.pop_pause_menu = true
+            lstg.tmpvar.death = true
+            lstg.tmpvar.pause_menu_text = { 'Continue', 'Quit and Save Replay', 'Restart' }
         end
-        lstg.var.hp = 1
+        lstg.var.lifeleft = 0
     end
     --
     if ext.GetPauseMenuOrder() == 'Return to Title' then
         lstg.var.timeslow = nil
-        aic.sys.SetFullScreen(false)
         stage.group.ReturnToTitle(false, 0)
     end
     if ext.GetPauseMenuOrder() == 'Replay Again' then
         lstg.var.timeslow = nil
-        aic.sys.SetFullScreen(false)
         stage.Restart()
     end
     if ext.GetPauseMenuOrder() == 'Give up and Retry' then
-        if CheckRes('bgm', DeathMusic) then
-            StopMusic(DeathMusic)
-        end
+        StopMusic(deathmusic)
         lstg.var.timeslow = nil
-        aic.sys.SetFullScreen(false)
         if lstg.var.is_practice then
             stage.group.PracticeStart(self.name)
         else
@@ -130,13 +108,9 @@ function stage.group.frame(self)
     end
     if ext.GetPauseMenuOrder() == 'Continue' then
         lstg.var.timeslow = nil
-        if CheckRes('bgm', DeathMusic) then
-            StopMusic(DeathMusic)
-        end
+        StopMusic(deathmusic)
         if not Extramode then
-            ResumeMusic(bgmname)
             gamecontinueflag = true
-            aic.menu.EndingFlag = 'B'
             if lstg.var.block_spell then
                 if lstg.var.is_practice then
                     stage.group.PracticeStart(self.name)
@@ -160,8 +134,7 @@ function stage.group.frame(self)
                 if lstg.var.is_practice then
                     stage.group.PracticeStart(self.name)
                 else
-                    --stage.stages[stage.current_stage.group.title].save_replay = nil
-                    aic.menu.last_replay = nil
+                    stage.stages[stage.current_stage.group.title].save_replay = nil
                 end
             end
         else
@@ -174,12 +147,9 @@ function stage.group.frame(self)
         lstg.tmpvar.pause_menu_text = nil
         lstg.tmpvar.death = true
         lstg.var.timeslow = nil
-        aic.sys.SetFullScreen(false)
     end
     if ext.GetPauseMenuOrder() == 'Restart' then
-        if CheckRes('bgm', DeathMusic) then
-            StopMusic(DeathMusic)
-        end
+        StopMusic(deathmusic)
         if lstg.var.is_practice then
             stage.group.PracticeStart(self.name)
         else
@@ -187,11 +157,6 @@ function stage.group.frame(self)
         end
         lstg.tmpvar.pause_menu_text = nil
         lstg.var.timeslow = nil
-        aic.sys.SetFullScreen(false)
-    end
-    if ext.GetPauseMenuOrder() == 'Return to Waypoint' then
-        aic.pmode.Load()
-        self.death = 0
     end
 end
 
@@ -203,22 +168,22 @@ function stage.group.frame_sc_pr(self)
     if not lstg.var.init_player_data then
         error('Player data has not been initialized. (Call function item.PlayerInit)')
     end
-    if lstg.var.hp <= 0 and lstg.var.temp_hp <= 0 then
+    if lstg.var.lifeleft <= -1 then
         if ext.replay.IsReplay() then
             ext.pop_pause_menu = true
             ext.rep_over = true
-            lstg.tmpvar.pause_menu_text = { 'Replay Again', 'Return to Title', 'Manual', 'Option', nil }
+            lstg.tmpvar.pause_menu_text = { 'Replay Again', 'Return to Title', nil }
         elseif stage.group.sc_pr_auto_retry then
             stage.Restart()
             lstg.var.timeslow = nil
         else
             ext.pop_pause_menu = true
             lstg.tmpvar.death = true
-            lstg.tmpvar.pause_menu_text = { 'Continue', 'Quit and Save Replay', 'Return to Title', 'Manual', 'Option' }
+            lstg.tmpvar.pause_menu_text = { 'Continue', 'Quit and Save Replay', 'Return to Title' }
         end
-        lstg.var.hp = 1
+        lstg.var.lifeleft = 0
     end
-    if ext.GetPauseMenuOrder() == 'Give up and Retry' or ext.GetPauseMenuOrder() == 'Restart' or (stage.group.sc_pr_fast_retry and aic.input.CheckLastKey('retry')) then
+    if ext.GetPauseMenuOrder() == 'Give up and Retry' or ext.GetPauseMenuOrder() == 'Restart' or (stage.group.sc_pr_fast_retry and lstg.GetLastKey() == KEY.R) then
         stage.Restart()
         lstg.tmpvar.pause_menu_text = nil
         lstg.var.timeslow = nil
@@ -226,7 +191,6 @@ function stage.group.frame_sc_pr(self)
     if ext.GetPauseMenuOrder() == 'Return to Title' then
         stage.group.ReturnToTitle(false, 0)
         lstg.var.timeslow = nil
-        lstg.var.bgm_playing = false
     end
     if ext.GetPauseMenuOrder() == 'Replay Again' then
         stage.Restart()
@@ -242,22 +206,9 @@ function stage.group.frame_sc_pr(self)
         lstg.tmpvar.death = true
         lstg.var.timeslow = nil
     end
-    if ext.GetPauseMenuOrder() == 'Return to Waypoint' then
-        --aic.pmode.Load()
-        stage.Restart()
-        lstg.tmpvar.pause_menu_text = nil
-        lstg.var.timeslow = nil
-    end
-    if ext.GetPauseMenuOrder() == 'Watch Ending' then
-        aic.menu.EndingFlag = 'B'
-        stage.group.ReturnToTitle(false, 0)
-        lstg.var.timeslow = nil
-        lstg.var.bgm_playing = false
-    end
 end
 
 function stage.group.render(self)
-    SetViewMode 'ui'
     ui.DrawFrame(self)
     if lstg.var.init_player_data then
         ui.DrawScore(self)
@@ -269,15 +220,13 @@ end
 function stage.group.Start(group)
     lstg.var.is_practice = false
     stage.Set(group[1], 'save')
-    --stage.stages[group.title].save_replay = { group[1] }
-    aic.menu.last_replay = { group[1] }
+    stage.stages[group.title].save_replay = { group[1] }
 end
 
 function stage.group.PracticeStart(stagename)
     lstg.var.is_practice = true
     stage.Set(stagename, 'save')
-    --stage.stages[stage.stages[stagename].group.title].save_replay = { stagename }
-    aic.menu.last_replay = { stagename }
+    stage.stages[stage.stages[stagename].group.title].save_replay = { stagename }
 end
 
 function stage.group.FinishStage()
@@ -303,13 +252,8 @@ function stage.group.FinishStage()
         else
             -- 载入关卡并开始保存录像
             stage.Set(group[self.number + 1], 'save')
-            --[[
             if stage.stages[group.title].save_replay then
                 table.insert(stage.stages[group.title].save_replay, group[self.number + 1])
-            end
-            --]]
-            if aic.menu.last_replay then
-                table.insert(aic.menu.last_replay, group[self.number + 1])
             end
         end
     end
@@ -348,13 +292,8 @@ function stage.group.GoToStage(number)
             stage.Set(group[number], 'load', ext.replay.GetReplayFilename())
         else
             stage.Set(group[number], 'save')
-            --[[
             if stage.stages[group.title].save_replay then
                 table.insert(stage.stages[group.title].save_replay, group[number])
-            end
-            --]]
-            if aic.menu.last_replay then
-                table.insert(aic.menu.last_replay, group[number])
             end
         end
     end
@@ -365,62 +304,17 @@ function stage.group.FinishGroup()
 end
 
 function stage.group.ReturnToTitle(save_rep, finish)
-    if CheckRes('bgm', DeathMusic) then
-        StopMusic(DeathMusic)
-    end
-    
+    StopMusic(deathmusic)
+    gamecontinueflag = false
     local self = stage.current_stage
-    --local title = stage.stages[self.group.title]
-    --title.finish = finish or 0
-    
-    local m = aic.menu
+    local title = stage.stages[self.group.title]
+    title.finish = finish or 0
     if ext.replay.IsReplay() then
-        --title.save_replay = nil
-        m.last_replay = nil
+        title.save_replay = nil
     elseif not save_rep then
-        --title.save_replay = nil
-        m.last_replay = nil
+        title.save_replay = nil
         moveoverflag = true
     end
-    
-    --累加游玩次数
-    scoredata.player_data[lstg.var.player_name].played_num = scoredata.player_data[lstg.var.player_name].played_num or 0
-    scoredata.player_data[lstg.var.player_name].played_num = scoredata.player_data[lstg.var.player_name].played_num + 1
-    if finish == 1 and not gamecontinueflag then
-        --首次通关增加插件槽数
-        local fin = scoredata.player_data[lstg.var.player_name].finished_num
-        if fin[1] == 0 and fin[2] == 0 and fin[3] == 0 and fin[4] == 0 then
-            scoredata.enhancer_slot = min((scoredata.enhancer_slot or 4) + 1, 7)
-        end
-        --累加通关（不算续关）次数
-        local diff = GetDiff()
-        fin[diff] = fin[diff] + 1
-    end
-
-    --解锁结局
-    scoredata.ending = scoredata.ending or { A = false, B = false, C = false, D = false, E = false }
-    if m.EndingFlag then scoredata.ending[m.EndingFlag] = true end
-
-    if m.last_replay then
-        --是否通关（不算续关）
-        m.last_replay_finish = (finish == 1)
-        --rep总帧数，用于统计处理落
-        if replayWriter then
-            m.last_replay_frame = replayWriter:GetCount()
-        end
-        --rep总时间，用于统计处理落
-        if aic.ext.real_timer then
-            m.last_replay_time = aic.ext.StopTimer()
-            --累加游玩时间
-            local pt = scoredata.player_data[lstg.var.player_name].played_time
-            pt = pt + m.last_replay_time
-        end
-        --自动保存
-        if not gamecontinueflag then
-            ext.replay.SaveReplay(m.last_replay, 0, "AutoSave", finish)
-        end
-    end
-    gamecontinueflag = false
     stage.Set(self.group.title, 'none')
 end
 
@@ -430,7 +324,7 @@ end
 local function _fade_out_music()
     local _, bgm = EnumRes('bgm')
     for i = 1, 30 do
-        for _, v in pairs(bgm) do
+        for _,v in pairs(bgm) do
             if GetMusicState(v) == 'playing' then
                 SetBGMVolume(v, 1 - i / 30)
             end
@@ -442,7 +336,7 @@ end
 function stage.group.initTask(self, f)
     _init_item(self)
     difficulty = self.group.difficulty
-    New(mask_fader, 'open')
+    New(mask_fader,'open')
     if jstg and jstg.CreatePlayers then
         jstg.CreatePlayers()
     else
@@ -460,7 +354,7 @@ function stage.group.initTask(self, f)
         task.New(self, function()
             _fade_out_music()
         end)
-        
+        task.Wait(30)
         _stop_music()
         stage.group.FinishStage()
     end)
@@ -472,7 +366,7 @@ function stage.group.GoToStageTask(self, number, wait)
         task.New(self, function()
             _fade_out_music()
         end)
-        
+        task.Wait(30)
         _stop_music()
         stage.group.GoToStage(number)
     end
@@ -485,11 +379,11 @@ end
 
 function stage.group.FinishGroupTask(self, wait)
     local function f()
-        New(mask_fader, 'close')
+        New(mask_fader,'close')
         task.New(self, function()
             _fade_out_music()
         end)
-        
+        task.Wait(30)
         _stop_music()
         stage.group.FinishGroup()
     end

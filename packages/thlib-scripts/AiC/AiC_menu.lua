@@ -44,11 +44,11 @@ local lib = aic.menu
 
 ---副标题名称
 local subtitle = { 'Stage Select', 'Spell Select', 'Replay', 'Library', 'Music Room', 'Option', 'Manual',
-    'Rank Select', 'Player Select', 'Enhancer Select', 'Name Regist', 'Save Replay', 'Player Data', 'Ending' }
+    'Rank Select', 'Player Select', 'Name Regist', 'Save Replay', 'Player Data', 'Ending' }
 
 ---菜单名称
-local menu = { 'title', 'practice', 'spell_practice', 'replay', 'library', 'music_room', 'option', 'manual',
-    'difficulty_select', 'player_select', 'enhancer_select', 'name_regist', 'save_replay', 'player_data', 'ending' }
+local menu = { 'pretitle', 'title', 'practice', 'spell_practice', 'replay', 'library', 'music_room', 'option', 'manual',
+    'difficulty_select', 'player_select', 'name_regist', 'save_replay', 'player_data', 'ending' }
 
 ---练习模式标志
 ---@type string
@@ -158,8 +158,32 @@ function lib.PushMenuStack(menu, ...)
     lib.Fly(lstg.tmpvar.current_menu, 1, 'left')
     --存储参数，以便在弹出下一级菜单时重新以同样的参数创建本级菜单
     lstg.tmpvar.current_menu_param = { ... }
-    --判定是否需要开启副背景
-    if #lib.menu_stack >= 3 then lstg.tmpvar.submenusign = true end
+end
+
+---临时添加的有向PushMenuStack函数
+---@param menu class @菜单
+---@param dir string | "'up'" | "'down'" | "'left'" | "'right'" @移动方向
+function lib.PushMenuStackWithDir(menu, dir, ...)
+    if not dir then dir = 'left' end
+    --向菜单栈加入一个菜单
+    table.insert(lib.menu_stack, menu)
+    --上一级菜单飞出
+    lib.Fly(lstg.tmpvar.current_menu, 0, dir, true)
+    --新建菜单
+    lstg.tmpvar.current_menu = New(menu, ...)
+    --菜单飞入
+    if dir == 'up' then
+        lstg.tmpvar.current_menu.y = lstg.tmpvar.current_menu.y - 20
+    elseif dir == 'down' then
+        lstg.tmpvar.current_menu.y = lstg.tmpvar.current_menu.y + 20
+    elseif dir == 'left' then
+        lstg.tmpvar.current_menu.x = lstg.tmpvar.current_menu.x + 20
+    elseif dir == 'right' then
+        lstg.tmpvar.current_menu.x = lstg.tmpvar.current_menu.x - 20
+    end
+    lib.Fly(lstg.tmpvar.current_menu, 1, dir)
+    --存储参数，以便在弹出下一级菜单时重新以同样的参数创建本级菜单
+    lstg.tmpvar.current_menu_param = { ... }
 end
 
 ---从菜单栈弹出一个菜单
@@ -178,8 +202,30 @@ function lib.PopMenuStack()
     --上一级菜单飞入
     lstg.tmpvar.current_menu.x = lstg.tmpvar.current_menu.x - 20
     lib.Fly(lstg.tmpvar.current_menu, 1, 'right')
-    --判定是否需要取消副背景
-    if #lib.menu_stack == 1 then lstg.tmpvar.submenusign = false end
+end
+
+function lib.PopMenuStackWithDir(dir)
+    ---从菜单栈弹出一个菜单
+    table.remove(lib.menu_stack)
+    --菜单飞出
+    lib.Fly(lstg.tmpvar.current_menu, 0, dir, true)
+    --使用预先存储的参数新建上一级菜单
+    if lstg.tmpvar.current_menu_param and #lstg.tmpvar.current_menu_param > 0 then
+        lstg.tmpvar.current_menu = New(lib.menu_stack[#lib.menu_stack], unpack(lstg.tmpvar.current_menu_param))
+    else
+        lstg.tmpvar.current_menu = New(lib.menu_stack[#lib.menu_stack])
+    end
+    --上一级菜单飞入
+    if dir == 'up' then
+        lstg.tmpvar.current_menu.y = lstg.tmpvar.current_menu.y - 20
+    elseif dir == 'down' then
+        lstg.tmpvar.current_menu.y = lstg.tmpvar.current_menu.y + 20
+    elseif dir == 'left' then
+        lstg.tmpvar.current_menu.x = lstg.tmpvar.current_menu.x + 20
+    elseif dir == 'right' then
+        lstg.tmpvar.current_menu.x = lstg.tmpvar.current_menu.x - 20
+    end
+    lib.Fly(lstg.tmpvar.current_menu, 1, dir)
 end
 
 ---清空菜单栈
@@ -286,13 +332,12 @@ function lib:GetExtRepInfo()
             [l10n.general.rep_info.player] = player[st.stagePlayer] or l10n.general.terms.unknown_player,
             [l10n.general.rep_info.version] = var.aic_version or l10n.general.terms.unknown_version,
             [l10n.general.rep_info.difficulty] = difficulty[var.difficulty] or l10n.general.terms.unknown_difficulty,
-            [l10n.general.rep_info.enhancer_select] = var.enhancer_select or {}
         }
         self.text3_kt = setvaluetable({
             l10n.general.rep_info.is_finished, l10n.general.rep_info.time, l10n.general.rep_info.score,
-            l10n.general.rep_info.player, l10n.general.rep_info.version, l10n.general.rep_info.difficulty, l10n.general.rep_info.enhancer_select
+            l10n.general.rep_info.player, l10n.general.rep_info.version, l10n.general.rep_info.difficulty
             --"是否通关", "时间", "总分", "自机",
-            --"游戏版本", "难度选择", "携带插件"
+            --"游戏版本", "难度选择"
         }, self.text3)
     else
         self.text3_kt = nil
@@ -469,38 +514,6 @@ function lib.GetReplayDelay()
     return ret
 end
 
-------------------------------------------------------------
-
---单独写一个obj大概是最烂的解决方法了，但是能行
----二级菜单背景
-lib.submenu_bg = Class(object)
-
-function lib.submenu_bg:init()
-    self.group = GROUP_GHOST
-    self.LAYER = LAYER_TOP
-    self.alpha = 0
-    self.s = 1
-end
-
-function lib.submenu_bg:frame()
-    if self.s == 1 then
-        self.alpha = min(self.alpha + 255 / 30, 255)
-    else
-        self.alpha = max(self.alpha - 255 / 30, 0)
-    end
-end
-
-function lib.submenu_bg:render()
-    SetViewMode('ui')
-    local bg = 'Muki_AiC_menu_bg'
-    if lstg.tmpvar.current_menu.num == 5 then --Music Room特殊背景
-        bg = 'Muki_AiC_menu_bg_music_room'
-    end
-    SetImageState(bg, '', Color(self.alpha, 255, 255, 255))
-    RenderRect(bg, 0, screen.width, 0, screen.height)
-    SetViewMode('world')
-end
-
 for _, m in ipairs(menu) do
     DoFile('AiC/menu/' .. m .. '.lua')
 end
@@ -509,19 +522,12 @@ end
 ---资源
 
 --标题菜单
-for _, m in ipairs({ { 'difficulty_select', 4 }, { 'player_select', 8 }, { 'enhancer_select', 16 } }) do
+for _, m in ipairs({ { 'difficulty_select', 4 }, { 'player_select', 8 } }) do
     for i = 1, m[2] do
         LoadImageFromFile('Muki_AiC_menu_' .. m[1] .. i,
             'THlib/UI/menu/' .. m[1] .. '/Muki_AiC_menu_' .. m[1] .. i .. '.png')
     end
 end
---插件相关
-LoadImageGroupFromFile('Muki_AiC_menu_enhancer_select_slot',
-    'THlib/UI/menu/enhancer_select/Muki_AiC_menu_enhancer_select_slot.png', true, 3, 1)
-LoadImageFromFile('Muki_AiC_menu_enhancer_select_bg',
-    'THlib/UI/menu/enhancer_select/Muki_AiC_menu_enhancer_select_bg.png')
-LoadImageFromFile('Muki_AiC_menu_enhancer_select_cursor',
-    'THlib/UI/menu/enhancer_select/Muki_AiC_menu_enhancer_select_cursor.png')
 --manual
 for i = 1, 12 do
     LoadImageFromFile('Muki_AiC_help' .. i, 'THlib/UI/pause_menu/help/Muki_AiC_help' .. i .. '.png')

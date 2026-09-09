@@ -230,7 +230,7 @@ function ext.pausemenu:render()
     Render('pause_eff', -150 + 180 * self.eff / 15 + dx, -115 + dy, 4 + 4 * sin(self.timer * 3), 0.5, 0.5)
     --准备选项
     local pause_menu_text
-    local pause_menu_choose = { 'yes', 'no' }
+    local pause_menu_choose = { 'Yes', 'No' }
     if lstg.tmpvar.pause_menu_text then
         pause_menu_text = lstg.tmpvar.pause_menu_text
     else
@@ -263,20 +263,6 @@ function ext.pausemenu:render()
                     SetImageState('pause_pausemenu', '', Color(pm.mask_alph[1] + 15, 255, 255, 255))
                 end
                 Render('pause_pausemenu', pm.mask_x[1] + dx, -30 + dy, 0, 0.7, 0.7)
-            elseif ext.pmode_flag then
-                if self.choose then
-                    SetImageState('pause_Mission Incomplete', '', Color(pm.mask_alph[1] + 15, 100, 100, 100))
-                else
-                    SetImageState('pause_Mission Incomplete', '', Color(pm.mask_alph[1] + 15, 255, 255, 255))
-                end
-                Render('pause_Mission Incomplete', pm.mask_x[1] + dx, -30 + dy, 0, 0.7, 0.7)
-            elseif EndingBFlag then
-                if self.choose then
-                    SetImageState('pause_endingB', '', Color(pm.mask_alph[1] + 15, 100, 100, 100))
-                else
-                    SetImageState('pause_endingB', '', Color(pm.mask_alph[1] + 15, 255, 255, 255))
-                end
-                Render('pause_gameover', pm.mask_x[1] + dx, -30 + dy, 0, 0.7, 0.7)
             elseif not ext.sc_pr then
                 if self.choose then
                     SetImageState('pause_gameover', '', Color(pm.mask_alph[1] + 15, 100, 100, 100))
@@ -1299,7 +1285,7 @@ SetImageCenter('pause_Continue', 0, 29)
 LoadImage('pause_Manual', 'pause', 0, 490, 150, 56)
 SetImageCenter('pause_Manual', 0, 28)
 LoadImage('pause_eff', 'pause', 408, 320, 104, 384)
-]]
+]]--
 
 local pause = { 'pausemenu', 'gameover', 'replayover', 'Return to Game', 'Return to Title', 'Give up and Retry',
     'Yes', 'No', 'Quit and Save Replay', 'really', 'Save Replay', --以后谁再把replay写成reply我打死他

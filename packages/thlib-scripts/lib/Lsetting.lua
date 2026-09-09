@@ -10,12 +10,6 @@ default_setting = {
     sevolume = 80,
     bgmvolume = 100,
 
-    autofire = false,
-    autoslow = false,
-    autododge = false,
-    newopening = false,
-    newbgm = false,
-    sfwmode = true,
 
     keys = {
         up = KEY.UP,

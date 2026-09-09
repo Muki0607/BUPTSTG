@@ -92,24 +92,6 @@ function lib.player_select:init()
             task.Wait()
         end
     end)
-    ---全开档秘籍，0d00的名言
-    ---下个版本它会有用的
-    task.New(self, function()
-        self.qte_checker = New(aic.misc.qte_checker_ex, {
-            KEY.W, KEY.A, KEY.T, KEY.A, KEY.S, KEY.H, KEY.I, KEY.N, KEY.O,
-            KEY.O, KEY.N, KEY.A, KEY.N, KEY.I, KEY.I,
-            KEY.W, KEY.O, KEY.M, KEY.I, KEY.T, KEY.E, KEY.K, KEY.U, KEY.D, KEY.A, KEY.S, KEY.A, KEY.I })
-        for _ = 1, _infinite do
-            if self.qte_checker.finished then
-                self.qte_checker.finished = false
-                self.qte_checker.num = 1
-                if self.pos == 4 then
-                    aic.misc.UnlockAll()
-                end
-            end
-            task.Wait()
-        end
-    end)
 end
 
 function lib.player_select:frame()
@@ -130,7 +112,48 @@ function lib.player_select:frame()
             lstg.var.player_name = player_list[self.pos][2]
             lstg.var.rep_player = player_list[self.pos][3]
             self.quit()
-            lib.PushMenuStack(lib.enhancer_select)
+            if setting.newopening then
+                PlaySound('aic_opening_new', 0.5)
+            else
+                PlaySound('aic_opening', 0.5)
+            end
+            task.New(self, function()
+                lib.BgmFadeOut(aic.misc.GetCurrentBGM(), 59)
+            end)
+            if practice then
+                New(tasker, function()
+                    Del(self)
+                    if _debug.skip_loading or GetKeyState(KEY.S) then
+                        New(mask_fader, 'close')
+                        task.Wait(30)
+                        New(mask_fader, 'open')
+                    else
+                        New(aic.misc.loading_scene)
+                        task.Wait(270)
+                        New(mask_fader, 'open')
+                    end
+                    stage.group.PracticeStart(stage.groups['SpellCard'])
+                end)
+            else
+                New(tasker, function()
+                    Del(self)
+                    if _debug.skip_loading or GetKeyState(KEY.S) then
+                        New(mask_fader, 'close')
+                        task.Wait(30)
+                        New(mask_fader, 'open')
+                    else
+                        New(aic.misc.loading_scene)
+                        task.Wait(270)
+                        New(mask_fader, 'open')
+                    end
+                    if stage.groups.SpellCard then
+                        stage.group.Start(stage.groups.SpellCard)
+                    else
+                        --其他难度待添加
+                        stage.group.Start(stage.groups.Normal)
+                    end
+                end)
+            end
         end
         if (KeyIsDown('up') or KeyIsDown('left')) and self.pos > 1 then
             self.wait = self.t + 5

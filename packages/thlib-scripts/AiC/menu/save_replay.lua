@@ -342,14 +342,6 @@ function lib.save_replay:render()
                     DrawText("main_font_zh_cn", text3('get', i) .. ": " .. text3[i], x + xos[1], y - i * lineh * 1.25, 0.75,
                         _color(COLOR_WHITE, self.alpha))
                 end
-                --对携带插件特化处理，给予足够空间渲染插件图标
-                DrawText("main_font_zh_cn", text3('get', len) .. ": ", x + xos[1], y - len * lineh * 1.25 - 10, 0.75,
-                    _color(COLOR_WHITE, self.alpha))
-                for k, v in ipairs(text3[len]) do
-                    local s = 0.35
-                    if v >= 12 and v ~= 16 then s = s * 2 end
-                    Render('Muki_AiC_menu_enhancer_select' .. v, x + xos[1] + 40 + k * 28, y - len * lineh * 1.25 - 10, 0, s)
-                end
             end
         end
     else

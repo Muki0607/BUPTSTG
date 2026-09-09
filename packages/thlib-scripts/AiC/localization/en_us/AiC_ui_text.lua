@@ -417,7 +417,6 @@ lib.subtitle = {
     'How to Play',
     'Select a Rank',
     'Select a Player',
-    'Select Your Enhancer',
     'Enter a Score Name,okay?',
     'Save Your Replay', 
     'Check Your Battle History',
@@ -429,8 +428,6 @@ lib.tips = {
     back = 'Back',
     select_diff = 'Select Difficulty',
     select_player = 'Select Player Character',
-    equip_enhancer = 'Equip Enhancer',
-    unequip_enhancer = 'Unequip Enhancer',
     start_game = 'Start Game',
     play_music = 'Play Music',
     pause_continue_music = 'Pause/Continue Music',
@@ -449,23 +446,12 @@ lib.tips = {
     page_up_down = 'Page Up/Down',
 }
 
-lib.enhancer_select_tips = {
-    cost = 'Cost',
-    enhancer_overload = 'Enhancer Overload',
-    equipped_enhancer = 'Equipped',
-    enhancer_slot = 'Enhancer Slot',
-}
-
 lib.library = { "View Score Rankings", "View Spellcard History", "View Endings" }
 
 lib.player_data = {
     total_play_times = 'Total Plays',
     play_time = 'Play Time',
     finish_times = 'Clears',
-}
-
-lib.enhancer_select = {
-    cost = 'Cost'
 }
 
 lib.music_room = {
@@ -484,7 +470,7 @@ lib.difficulty_select = {
     --hard
     { 'Damage Multiplier: 1.2x\nMana Gauge Shatter Chance: 90%', 'For seasoned Thohou players.\nThe Danmaku offers more challenge.\nFrom here on, there is no mercy.' },
     --lunatic
-    { 'Damage Multiplier: 1.5x\nMana Gauge Shatter Chance: 100%', 'A difficulty for the masters.\nAim for LNNNN*.\nIn this difficulty, if in Enhancer Overload,\na single Miss leads to a beaten state.\n*Lunatic No Miss No Bomb No Dodge No Enhancer.' },
+    { 'Damage Multiplier: 1.5x\nMana Gauge Shatter Chance: 100%', 'A difficulty for the masters.' },
     tip = "\nDanmaku difficulty differentiation is not yet implemented.\nCurrent difficulty only affects systems."
 }
 
@@ -494,29 +480,6 @@ lib.journey_select = {
     --Alice
     { 'Dodge Invincibility Duration: 0.5x', 'Face Alice alongside Noel.\nIs she an enemy, or a friend?' }
 }
-
-lib.enhancer_select = {
-    { 'Stolen Base Slide', 'Makes the wearer immune to physical attacks.\nIncreases invincibility time after dodging by 30 frames.' },
-    { 'Hidden Art, Guarded Simplicity', 'Prevents mana loss on Miss,\nbut disables the point collection line.\n\nFor those who miss frequently.\n\n※Cannot be equipped with Omen of Dampness' },
-    { 'Double Dodge', 'Allows the wearer to dodge twice consecutively.\nDodge cost reduced by 25%.\n\nFor those who enjoy dodging.' },
-    { 'Overload Chant', 'Allows the wearer to use mana to make up for missing overcharge mana when casting Spellcards.\nSpellcard cost increased by 10%.\n\nFor those who frequently use Spellcards.' },
-    { 'Grip Shoes', 'Allows the wearer to dodge without holding a direction key,\ncausing no movement.\n\nFor those who only need the invincibility frames.' },
-    { 'Long Staff', "Increases the wearer's shot hitbox size by 50%,\nbut damage remains unchanged.\nDoes not affect lasers." },
-    { 'Rain Prayer Charm', 'Increases item drop count when the wearer defeats enemies.' },
-    { 'Omen of Dampness', 'Always generates 500 mana upon Miss, regardless of pre-Miss mana.\n\nFor those fearful of insufficient firepower.\n\n※Cannot be equipped with Hidden Art, Guarded Simplicity' },
-    { 'Acrophobia', "Increases the wearer's invincibility time after using a Spellcard by 60 frames." },
-    { 'Crimson Rainbow Eyes', 'When the wearer collects an overcharge mana item, grants 1 HP instead of 5 overcharge mana.' },
-    { "Cat's Gentle Descent", 'Grants 60 frames of invincibility when the wearer is above the point collection line.\nCooldown: 300 frames.\n\nFor those who often Miss while point collecting.' },
-    { "Tamaki's Sketchbook", "Changes Spellcards to 「Tamaki's Sketchbook」.\nLower damage, shorter invincibility time.\nSpellcard cost reduced by 60%." },
-    { "Shiina's Programming Guidebook", 'Skip all dialogue.' },
-    { "Ayame's Small Terminal", 'Maximum dodge distance increased by 100%.' },
-    { "Kayo's Headphones", 'Disables Spellcards and dodging.\nDamage taken reduced by 50%.' },
-    { "Noel's Staff", "Shot damage increased by 50%.\nMana gauge shatter amount per Miss increased by 100%.\nIf difficulty is Nightmare, additionally increases shot speed by 50%.\n\nThis Enhancer's slot cost is always Max Slots + 1." },
-}
-
-if _debug.pmode then
-    lib.enhancer_select[12][2] = 'Enables Flawless Mode.\nThe game saves automatically.\nOn Miss, you return to the last save point.'
-end
 
 lib.option = {
     username = 'Username',

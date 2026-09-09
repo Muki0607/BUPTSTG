@@ -633,10 +633,6 @@ end
 --游戏系统相关
 
 function _drop_item(itemclass, num, x, y)
-    ---THLoOP Added
-    if CheckEnhancer(7) then
-        num = int(num * 1.25)
-    end
     local switch = {
         [item_power] = function()
             item.DropItem(x, y, { num, 0, 0 })

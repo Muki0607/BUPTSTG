@@ -95,12 +95,6 @@ function lib.FadeDel(unit)
     end
 end
 
-function lib.UnlockAll()
-    scoredata.enhancer_slot = 7
-    scoredata.Alice_unlocked = true
-    PlaySound('extend', 1)
-end
-
 --QTE检测器，仅支持replay键位（上下左右、Shift、ZXC）
 lib.qte_checker = Class(object)
 
@@ -248,14 +242,14 @@ function lib.opening_scene:init(t)
     self.bound = false
     self.t = t or 300
     self.alpha = 0
+    --[[
     self.co = task.New(self, function() 
         --加载bgm
         for i = 1, 15 do
-            if i ~= 12 then
-                LoadMusicRecord("aic_bgm" .. i)
-            end
+            LoadMusicRecord("bgm" .. i)
         end
     end)
+    ]]
 end
 
 function lib.opening_scene:frame()
@@ -683,52 +677,6 @@ function lib.camera_setter:render()
     SetViewMode 'world'
 end
 
----哈酱的party parrot，用于标记未完成区域
-lib.party_parrot = Class(object)
-
----@param x number @x坐标
----@param y number @y坐标
----@param s number @缩放比例
----@param t number @周期（请传入5的整数倍）
----@param r number @旋转半径
----@param rgb boolean @是否开启超级rgb模式
----@param ui boolean 是否使用ui系
-function lib.party_parrot:init(x, y, s, t, r, rgb, ui)
-    self.group = GROUP_GHOST
-    self.x = x or 0
-    self.y = y or 0
-    self.bound = false
-    self.blend = ''
-    self._a = 255
-    self._r = 255
-    self._g = 255
-    self._b = 255
-    self.r = r or 25
-    self.angle = 0
-    self.scale = s or 0.25
-    self.t = t or 25
-    self.rgb = rgb
-    self.ui = ui
-end
-
-function lib.party_parrot:frame()
-    task.Do(self)
-    if self.rgb then
-        self._a, self._r, self._g, self._b = 255, 150 + 100 * sin(5 * self.timer), 150 - 100 * cos(5 * self.timer),
-            150 + 100 * cos(5 * self.timer)
-    end
-end
-
-function lib.party_parrot:render()
-    if self.ui then SetViewMode('ui') end
-    for i = 1, 5 do
-        SetImageState('Muki_AiC_party_parrot' .. i, self.blend, Color(self._a, self._r, self._g, self._b))
-    end
-    Render('Muki_AiC_party_parrot' .. (int((self.timer % self.t) / (self.t / 5)) + 1),
-        self.x + self.r * cos(5 * self.timer), self.y + self.r * sin(5 * self.timer), self.angle, self.scale)
-    if self.ui then SetViewMode('world') end
-end
-
 ----------------------------------------
 ---资源
 
@@ -756,8 +704,3 @@ LoadFX('fx:outer_glow', 'THlib/shader/outer_glow.hlsl')
 --符卡名相关
 LoadImageFromFile("Muki_AiC_spell_history", "THlib/UI/Muki_AiC_spell_history.png")
 LoadImageFromFile("Muki_AiC_spell_bonus", "THlib/UI/Muki_AiC_spell_bonus.png")
-
---派对鹦鹉
-for i = 1, 5 do
-    LoadImageFromFile('Muki_AiC_party_parrot' .. i, 'THlib/UI/party_parrot/Muki_AiC_party_parrot' .. i .. '.png')
-end

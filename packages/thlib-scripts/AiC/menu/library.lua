@@ -34,11 +34,6 @@ function lib.library:init(pos, l)
     }
     self.l = l or #self.jump
     self.invalid_menu = { 2, }
-    self.parrot = {}
-    for _, i in ipairs(self.invalid_menu) do
-        table.insert(self.parrot,
-            New(aic.misc.party_parrot, self.x - 90, self.y + (2.5 - i) * 75 - 25, 0.1, 25, 5, true, true))
-    end
     lib.Fly(self, 1, 'left')
 end
 

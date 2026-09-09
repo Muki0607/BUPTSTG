@@ -17,23 +17,6 @@
 aic.sys = {}
 local lib = aic.sys
 
-
-
---插件编号
----@alias enhancer_num '1 = 盗垒滑步'|'2 = 藏巧守拙'|'3 = 双重闪避'|'4 = 超载咏唱'|'5 = 抓地鞋'|'6 = 长法杖'|'7 = 祈雨御守'|'8 = 濡湿预兆'|'9 = 恐高症'|'10 = 血之虹瞳'|'11 = 猫之缓降'|'12 = 珠辉的素描本'|'13 = 椎奈的编程指导书'|'14 = 菖蒲的小型终端'|'15 = 歌夜的耳机'|'16 = 诺艾儿的法杖'
-
----检查玩家是否携带某插件
----@param num enhancer_num @插件编号
----@return boolean
-function lib.CheckEnhancer(num)
-    if not lstg.var.enhancer_select then
-        lstg.var.enhancer_select = {}
-    end
-    for _, v in ipairs(lstg.var.enhancer_select) do
-        if v == num then return true end
-    end
-end
-
 ---检查当前难度是否大于等于某难度
 ---@param diff number @检查的难度
 ---@param equal boolean @是否要求严格等于
@@ -180,7 +163,6 @@ end
 ---@param player lstg.GameObject @玩家
 function lib.SpHit(player)
     local p = 180
-    if CheckEnhancer(9) then p = p + 30 end
     player.protext = p
     player.nextspell = 120
     New(lib.Tamaki_weapon, player.x, player.y, 8, 150)
