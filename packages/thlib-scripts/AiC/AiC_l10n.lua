@@ -79,6 +79,7 @@ end
 lib.InitLang("zh_cn", "CN", "简体中文(CN)")
 lib.InitFontParam("zh_cn", 10, 18, 4)
 
+--[[
 lib.InitLang("zh_tc", "TC", "繁體中文(TC)")
 lib.InitFontParam("zh_tc", 10, 18, 4)
 
@@ -87,6 +88,8 @@ lib.InitFontParam("en_us", 10, 18, 4)
 
 lib.InitLang("ja_jp", "JP", "日本語(JP)")
 lib.InitFontParam("ja_jp", 10, 18, 4)
+
+--]]
 
 -------------------------------------------
 --请将你的语言添加在下一行！

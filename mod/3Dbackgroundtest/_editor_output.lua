@@ -48,7 +48,8 @@ stage.group.DefStageFunc('SpellCard@SpellCard','init',function(self)
     if jstg then jstg.CreatePlayers() else New(_G[lstg.var.player_name]) end
     lasttask=task.New(self,function()
         LoadMusic('spellcard','THlib\\music\\spellcard.ogg',75,0xc36e80/44100/4)
-        New(magic_forest_background)
+        New(HM_hzc4_background)
+        New(aic.misc.camera_setter,0,0)
         --[[ 红魔馆内部
         ]]
         --[[ 神社前院上空
@@ -93,7 +94,6 @@ stage.group.DefStageFunc('SpellCard@SpellCard','init',function(self)
         ]]
         --[[ 森林（不知道在哪）
         ]]
-        New(world_background)
         --[[ 蓝色网格
         ]]
         --[[ 永夜抄4面（迷途竹林）

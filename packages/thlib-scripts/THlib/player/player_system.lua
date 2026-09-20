@@ -241,43 +241,7 @@ local defaultFrameEvent = {
             if self.time_stop then
                 self.death = self.death - 1
             end
-            --------------------------------------------------
-            --由于决死的存在，hp扣减由colli搬至这里
-            if not (IsValid(Noel) and Noel.phase4_flag) then
-                local dmg = self.taking_damage or 50
-                local plist = { 0.8, 1, 1.2, 1.5 }
-                lstg.tmpvar.hit_count = lstg.tmpvar.hit_count or 0
-
-                local percent = plist[scoredata.difficulty_select]
-                dmg = dmg * percent
-                if not CheckDiff(3) then
-                    local maxp
-                    if IsValid(_boss) then
-                        maxp = 0.75
-                    else
-                        maxp = 0.5
-                    end
-                    dmg = dmg * (1 - min(maxp, lstg.tmpvar.hit_count * (3 - scoredata.difficulty_select) * 0.15))
-                end
-                dmg = int(dmg)
-
-                if CheckDiff(3) then
-                    lstg.var.hp = max(lstg.var.hp - dmg, 0)
-                elseif lstg.var.hp >= dmg * 0.75 - 1 then
-                    lstg.var.hp = max(lstg.var.hp - dmg, 0)
-                    lstg.var.temp_hp = lstg.var.temp_hp + dmg * 0.25
-                else
-                    local d = dmg * 0.75 - lstg.var.hp + 1
-                    if lstg.var.temp_hp >= d then
-                        lstg.var.temp_hp = max(lstg.var.temp_hp - d, 0)
-                        lstg.var.hp = 1
-                    else
-                        lstg.var.temp_hp = 0
-                        lstg.var.hp = 0
-                    end
-                end
-                item.PlayerMiss(self)
-            end
+            item.PlayerMiss(self)
 
             --重置决死时间
             player.deathtime = player.default_deathtime

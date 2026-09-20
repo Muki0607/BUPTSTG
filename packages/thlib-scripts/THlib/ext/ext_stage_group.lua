@@ -9,7 +9,7 @@ stage.group = {}
 stage.groups = {}
 
 gamecontinueflag = false
-local deathmusic = DeathMusic--疮痍曲
+local deathmusic = 'bgm1'--疮痍曲
 
 function stage.group.New(title, stages, name, item_init, allow_practice, difficulty)
     local sg = { ['title'] = title, number = #stages }
@@ -81,7 +81,7 @@ function stage.group.frame(self)
             ext.rep_over = true
             lstg.tmpvar.pause_menu_text = { 'Replay Again', 'Return to Title', nil }
         else
-            PlayMusic(deathmusic, 0.8)
+            _play_music(deathmusic)
             ext.pop_pause_menu = true
             lstg.tmpvar.death = true
             lstg.tmpvar.pause_menu_text = { 'Continue', 'Quit and Save Replay', 'Restart' }
@@ -98,7 +98,9 @@ function stage.group.frame(self)
         stage.Restart()
     end
     if ext.GetPauseMenuOrder() == 'Give up and Retry' then
-        StopMusic(deathmusic)
+        if CheckRes('bgm', deathmusic) and GetMusicState(deathmusic) == 'playing' then
+            StopMusic(deathmusic)
+        end
         lstg.var.timeslow = nil
         if lstg.var.is_practice then
             stage.group.PracticeStart(self.name)
@@ -108,7 +110,9 @@ function stage.group.frame(self)
     end
     if ext.GetPauseMenuOrder() == 'Continue' then
         lstg.var.timeslow = nil
-        StopMusic(deathmusic)
+        if CheckRes('bgm', deathmusic) and GetMusicState(deathmusic) == 'playing' then
+            StopMusic(deathmusic)
+        end
         if not Extramode then
             gamecontinueflag = true
             if lstg.var.block_spell then
@@ -149,7 +153,9 @@ function stage.group.frame(self)
         lstg.var.timeslow = nil
     end
     if ext.GetPauseMenuOrder() == 'Restart' then
-        StopMusic(deathmusic)
+        if CheckRes('bgm', deathmusic) and GetMusicState(deathmusic) == 'playing' then
+            StopMusic(deathmusic)
+        end
         if lstg.var.is_practice then
             stage.group.PracticeStart(self.name)
         else
@@ -304,7 +310,9 @@ function stage.group.FinishGroup()
 end
 
 function stage.group.ReturnToTitle(save_rep, finish)
-    StopMusic(deathmusic)
+    if CheckRes('bgm', deathmusic) and GetMusicState(deathmusic) == 'playing' then
+        StopMusic(deathmusic)
+    end
     gamecontinueflag = false
     local self = stage.current_stage
     local title = stage.stages[self.group.title]

@@ -72,19 +72,6 @@ function enemybase:frame()
         Kill(self)
     end
     task.Do(self)
-    --原本的小怪拾取道具，有很多问题所以不加这个细节了
-    --[[
-    for _, o in ObjList(GROUP_ITEM) do
-        if o.is_power or o.is_power_red then
-            if Dist(self, o) < 48 then
-                if o.attract < 3 then
-                    o.attract = max(o.attract, 3)
-                    o.target = self
-                end
-            end
-        end
-    end
-    --]]
 end
 
 function enemybase:colli(other)

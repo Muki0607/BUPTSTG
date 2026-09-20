@@ -9,7 +9,7 @@ function stage_init:init()
 end
 
 function stage_init:frame()
-    if coroutine.status(opening.co) == 'dead' and (self.timer >= 240 or _debug.skip_opening or GetKeyState(KEY.ESCAPE)) then
+    if (self.timer >= 240 or _debug.skip_opening or GetKeyState(KEY.ESCAPE)) then
         stage.Set('menu', 'none')
     end
 end
@@ -18,7 +18,6 @@ function stage_init:render()
     ui.DrawMenuBG()
 end
 
-MusicRecord("menu", 'THlib/music/Muki_AiC_bgm1.ogg', 7090800 / 44100, 3351600 / 44100)
 --MusicRecord("menu", 'THlib/music/luastg 0.08.540 - 1.27.800.ogg', 87.8, 79.26)
 MusicRecord("spellcard", 'THlib/music/spellcard.ogg', 75, 0xc36e80 / 44100 / 4)
 
@@ -27,6 +26,7 @@ MusicRecord("spellcard", 'THlib/music/spellcard.ogg', 75, 0xc36e80 / 44100 / 4)
 stage_menu = stage.New('menu', false, true)
 
 function stage_menu:init()
+    --加载bgm
     self.is_menu = true
     if _title_flag == nil then
         _title_flag = true
@@ -69,11 +69,8 @@ function stage_menu:init()
         end
     end
     ]]
-    if setting.newbgm then
-        _play_music('aic_bgm30', nil, false)
-    else
-        _play_music('aic_bgm1', nil, false)
-    end
+
+    _play_music('bgm0', nil, false)
 end
 
 function stage_menu:render()
@@ -319,7 +316,7 @@ if _debug.old_title then
             --延迟几帧加载bgm避免奇怪的黑块问题--然并乱，草死
             task.Wait(1)
             --LoadMusicRecord('menu')
-            _play_music('aic_bgm1', nil, false)
+            _play_music('bgm0', nil, false)
         end)
 
         menu_list = { menu_title, menu_player_select, menu_difficulty_select, menu_replay_loader, menu_replay_saver,

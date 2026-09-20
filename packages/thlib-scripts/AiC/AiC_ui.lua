@@ -1391,11 +1391,5 @@ LoadImageGroupFromFile("Muki_AiC_timebar", "THlib/UI/Muki_AiC_timebar.png", fals
 LoadImageFromFile("Muki_AiC_bossbar_node", "THlib/UI/Muki_AiC_bossbar_node.png")
 
 --boss名
-LoadImageFromFile("Muki_AiC_bossname_Noel Cornehl", "THlib/UI/Muki_AiC_bossname_Noel Cornehl.png")
-SetImageCenter("Muki_AiC_bossname_Noel Cornehl", 100, 500)
-LoadImageFromFile("Muki_AiC_bossname_Noel Cornehl & Ixia Polystachya", "THlib/UI/Muki_AiC_bossname_Noel Cornehl & Ixia Polystachya.png")
-SetImageCenter("Muki_AiC_bossname_Noel Cornehl & Ixia Polystachya", 100, 1280)
-LoadImageFromFile("Muki_AiC_bossname_Primula", "THlib/UI/Muki_AiC_bossname_Primula.png")
-SetImageCenter("Muki_AiC_bossname_Primula", 100, 320)
-LoadImageFromFile("Muki_AiC_bossname_Alma Opfebaum", "THlib/UI/Muki_AiC_bossname_Alma Opfebaum.png")
-SetImageCenter("Muki_AiC_bossname_Alma Opfebaum", 100, 720)
+LoadImageFromFile("Muki_AiC_bossname_Shameimaru Aya", "THlib/UI/Muki_AiC_bossname_Shameimaru Aya.png")
+SetImageCenter("Muki_AiC_bossname_Shameimaru Aya", 100, 375)

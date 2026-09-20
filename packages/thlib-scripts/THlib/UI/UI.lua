@@ -1,5 +1,4 @@
-﻿---THLoOP Arranged
-Include "THlib/UI/uiconfig.lua"
+﻿Include "THlib/UI/uiconfig.lua"
 Include "THlib/UI/font.lua"
 Include "THlib/UI/title.lua"
 Include "THlib/UI/sc_pr.lua"
@@ -9,53 +8,42 @@ ui = {}
 LoadTexture("boss_ui", "THlib/UI/boss_ui.png")
 LoadImage("boss_spell_name_bg", "boss_ui", 0, 0, 256, 36)
 SetImageCenter("boss_spell_name_bg", 256, 0)
-LoadImage("player_spell_name_bg", "boss_ui", 0, 100, 256, 36)
-SetImageCenter("player_spell_name_bg", 0, 0)
 
 LoadImage("boss_pointer", "boss_ui", 0, 64, 48, 16)
 SetImageCenter("boss_pointer", 24, 0)
+
 LoadImage("player_pointer", "boss_ui", 0, 82, 48, 16)
 SetImageCenter("player_pointer", 24, 0)
 
 LoadImage("boss_sc_left", "boss_ui", 64, 64, 32, 32)
-SetImageState("boss_sc_left", "", Color(255, 82, 228, 242))
+SetImageState("boss_sc_left", "", Color(0xFF80FF80))
 
 LoadTexture("hint", "THlib/UI/hint.png", true)
-LoadTexture("hint_old", "THlib/UI/hint_old.png", true)
-LoadImage("hint.bonusfail", "hint_old", 10, 64, 236, 64)
-LoadImage("hint.getbonus", "hint_old", 16, 144, 348, 64)
-LoadImage("hint.extend", "hint_old", 0, 192, 160, 64)
-LoadImage("hint.power", "hint_old", 0, 12, 84, 32)
-LoadImage("hint.graze", "hint_old", 86, 12, 74, 32)
-LoadImage("hint.point", "hint_old", 160, 12, 120, 32)
-
-LoadImage("hint.life", "hint_old", 288, 0, 16, 15)
-LoadImage("hint.lifeleft", "hint_old", 304, 0, 16, 15)
-LoadImage("hint.bomb", "hint_old", 320, 0, 16, 16)
-LoadImage("hint.bombleft", "hint_old", 336, 0, 16, 16)
-
-LoadImage("kill_time", "hint_old", 232, 200, 152, 56, 16, 16)
+LoadImage("hint.bonusfail", "hint", 0, 64, 256, 64)
+LoadImage("hint.getbonus", "hint", 0, 128, 396, 64)
+LoadImage("hint.extend", "hint", 0, 192, 160, 64)
+LoadImage("hint.power", "hint", 0, 12, 84, 32)
+LoadImage("hint.graze", "hint", 86, 12, 74, 32)
+LoadImage("hint.point", "hint", 160, 12, 120, 32)
+LoadImage("hint.life", "hint", 288, 0, 16, 15)
+LoadImage("hint.lifeleft", "hint", 304, 0, 16, 15)
+LoadImage("hint.bomb", "hint", 320, 0, 16, 16)
+LoadImage("hint.bombleft", "hint", 336, 0, 16, 16)
+LoadImage("kill_time", "hint", 232, 200, 152, 56, 16, 16)
 SetImageCenter("hint.power", 0, 16)
 SetImageCenter("hint.graze", 0, 16)
 SetImageCenter("hint.point", 0, 16)
-
-LoadImageGroup("lifechip", "hint_old", 288, 16, 16, 15, 4, 1, 0, 0)
-LoadImageGroup("bombchip", "hint_old", 288, 32, 16, 16, 4, 1, 0, 0)
---LoadImage("hint.hiscore", "hint_old", 424, 8, 80, 20)
---LoadImage("hint.score", "hint_old", 424, 30, 64, 20)
-
-LoadImage("hint.hiscore", "hint", 248, 53, 127, 32)
-LoadImage("hint.score", "hint", 275, 84, 73, 27)
-
-LoadImage("hint.power", "hint_old", 380, 112, 117, 30)
-LoadImage("hint.Pnumber", "hint_old", 380, 142, 117, 30)
-LoadImage("hint.Bnumber", "hint_old", 380, 170, 117, 32)
-LoadImage("hint.Cnumber", "hint_old", 352, 52, 40, 20)
-SetImageCenter("hint.hiscore", 0, 16)
-SetImageCenter("hint.score", 0, 14)
-SetImageCenter("hint.power", 0, 17)
-SetImageCenter("hint.Pnumber", 0, 17)
-SetImageCenter("hint.Bnumber", 0, 17)
+LoadImageGroup("lifechip", "hint", 288, 16, 16, 15, 4, 1, 0, 0)
+LoadImageGroup("bombchip", "hint", 288, 32, 16, 16, 4, 1, 0, 0)
+LoadImage("hint.hiscore", "hint", 424, 8, 80, 20)
+LoadImage("hint.score", "hint", 424, 30, 64, 20)
+LoadImage("hint.Pnumber", "hint", 352, 8, 56, 20)
+LoadImage("hint.Bnumber", "hint", 352, 30, 72, 20)
+LoadImage("hint.Cnumber", "hint", 352, 52, 40, 20)
+SetImageCenter("hint.hiscore", 0, 10)
+SetImageCenter("hint.score", 0, 10)
+SetImageCenter("hint.Pnumber", 0, 10)
+SetImageCenter("hint.Bnumber", 0, 10)
 
 LoadTexture("line", "THlib/UI/line.png", true)
 LoadImageGroup("line_", "line", 0, 0, 200, 8, 1, 7, 0, 0)
@@ -88,7 +76,6 @@ ui.menu = {
     rep_font_size = 0.6,
     rep_line_height = 20,
 }
-
 local function Stroke(font, text, x, y, co, ...)
     local _x, _y
     for i = 0, 8 do
@@ -289,6 +276,7 @@ local function formatnum(num)
     end
     return var, #tmp - 1
 end
+
 function RenderScore(fontname, score, x, y, size, mode)
     if score < 100000000000 then
         RenderText(fontname, formatnum(score), x, y, size, mode)
@@ -312,11 +300,9 @@ function lstg.lstg_ui_object:init()
     self.ui.alpha = 255
     self.ui.player_pointer = New(aic.ui.player_pointer)
 end
-
 function lstg.lstg_ui_object:frame()
     task.Do(self)
 end
-
 function lstg.lstg_ui_object:render()
     if not CloseUI then
         self.ui:drawFrame()
@@ -331,7 +317,7 @@ local lstg_ui = lstg.lstg_ui
 
 local res_list = {
     ["tex"] = {
-        --"logo",
+        "logo",
         "ui_bg",
         "ui_bg2",
         "menu_bg",
@@ -339,7 +325,7 @@ local res_list = {
         integer = 1,
     },
     ["img"] = {
-        --"logo",
+        "logo",
         "ui_bg",
         "ui_bg2",
         "menu_bg",
@@ -347,8 +333,6 @@ local res_list = {
         integer = 2,
     },
 }
-
-
 function lstg_ui:reloadUI()
     for type, list in pairs(res_list) do
         for _, res in pairs(list) do
@@ -374,83 +358,38 @@ function lstg_ui:reloadUI()
     end
     SetResourceStatus(pool)
 end
-
 function lstg_ui:init()
-    if setting.resx > setting.resy then
-        self.type = 1
-    else
-        self.type = 2
-    end
-    self._dx = 0
+    self.type = 1
+    self.type = 2
     self.bgdx = -29
-    self.logodx = 20
-    self.s = 0.8
     self:reloadUI()
 end
 
 function lstg_ui:drawFrame()
-    self["drawFrame" .. self.type](self)
-end
-
-function lstg_ui:drawFrame1()
     SetViewMode "ui"
     local w = lstg.world
     local x = (w.scrr - w.scrl) / 2 + w.scrl
     local y = (w.scrt - w.scrb) / 2 + w.scrb
     local hs = (w.scrr - w.scrl) / 384
     local vs = (w.scrt - w.scrb) / 448
-    local dx = self._dx
-    local bgdx = self.bgdx
-    local logodx = self.logodx
+    local dx = self.bgdx
     x = x + 96 * hs
-    if CheckRes("img", "image:UI_img") then
-        Render("image:UI_img", x + bgdx, y, 0, hs, vs)
-    else
-        Render("ui_bg", x + bgdx, y, 0, hs, vs)
-    end
-    if CheckRes("img", "image:LOGO_img") then
-        Render("image:LOGO_img", -16 + w.scrr - 48 + logodx, 165, 0, 0.7 * self.s, 0.7 * self.s)
-    else
-        SetImageState("logo", "", Color(255, 255, 255, 255))
-        Render("logo", -16 + w.scrr - 48 + logodx, 165 - 45, 0, 0.7 * self.s, 0.7 * self.s)
-    end
+    Render("ui_bg", x + dx, y, 0, hs, vs)
+    Render("logo", -16 + w.scrr + dx + 15, 150, 0, 0.5, 0.5)
     SetFontState("menu", "", Color(0xFFFFFFFF))
     RenderText("menu",
-        string.format("%.1ffps", GetFPS()),
-        220 + w.scrr + dx, 1, 0.25 * self.s, "right", "bottom")
-    SetViewMode "world"
-end
-
-function lstg_ui:drawFrame2()
-    local dx = self._dx
-    SetViewMode "ui"
-    Render("ui_bg2", 198 + dx, 264)
+            string.format("%.1ffps", GetFPS()),
+            220 + w.scrr + dx, 1, 0.25, "right", "bottom")
     SetViewMode "world"
 end
 
 function lstg_ui:drawMenuBG()
-    self["drawMenuBG" .. self.type](self)
-end
-
-function lstg_ui:drawMenuBG1()
-    local dx = self._dx
     SetViewMode "ui"
-    Render("menu_bg", 320 + dx, 240, 0, 0.5)
+    Render("menu_bg", 320 + self.bgdx, 240)
     SetFontState("menu", "", Color(0xFFFFFFFF))
     RenderText("menu",
-        string.format("%.1ffps", GetFPS()),
-        636 + dx, 1, 0.25, "right", "bottom")
-    SetViewMode "world"
-end
-
-function lstg_ui:drawMenuBG2()
-    local dx = self._dx
-    SetViewMode "ui"
-    Render("menu_bg2", 198 + dx, 264)
-    SetFontState("menu", "", Color(0xFFFFFFFF))
-    RenderText("menu",
-        string.format("%.1ffps", GetFPS()),
-        392 + dx, 1, 0.25, "right", "bottom")
+            string.format("%.1ffps", GetFPS()),
+            636, 1, 0.25, "right", "bottom")
     SetViewMode "world"
 end
 
@@ -482,30 +421,20 @@ end
 
 function lstg_ui:drawScore()
     self:ScoreUpdate()
-    self["drawScore" .. self.type](self)
-end
-
-function lstg_ui:drawScore1()
     SetViewMode "ui"
     self:drawDifficulty()
-    self:drawInfo1()
-    SetViewMode "world"
-end
-
-function lstg_ui:drawScore2()
-    SetViewMode "ui"
-    self:drawInfo2()
+    self:drawInfo()
     SetViewMode "world"
 end
 
 function lstg_ui:drawDifficulty()
-    local dx = self._dx
+    local dx = self.bgdx
     SetFontState("score3", "", Color(0xFFADADAD))
     local w = lstg.world
     local diff = string.match(stage.current_stage.name, "[%w_][%w_ ]*$")
     local diffimg = CheckRes("img", "image:diff_" .. diff)
     if diffimg then
-        Render("image:diff_" .. diff, 112 + w.scrr + dx, 448, self.s)
+        Render("image:diff_" .. diff, 112 + w.scrr + dx, 448)
     else
         --by OLC，难度显示加入符卡练习
         if ext.sc_pr and diff == "Spell Practice" and lstg.var.sc_index then
@@ -515,7 +444,7 @@ function lstg_ui:drawDifficulty()
             end
         end
         local x1 = -192 + w.scrr + dx
-        local x2 = 112 + w.scrr - 15
+        local x2 = 112 + w.scrr
         local y1 = 457
         local y2 = 448
         local dy = 22
@@ -543,36 +472,36 @@ function lstg_ui:drawDifficulty()
         end
         if diff == "Easy" or diff == "Normal" or diff == "Hard" or diff == "Lunatic" or diff == "Extra" then
             SetImageState("rank_" .. diff, "", Color(a, 255, 255, 255))
-            Render("rank_" .. diff, x, y, 0, 0.5 * self.s, t * 0.5 * self.s)
+            Render("rank_" .. diff, x, y, 0, 0.5, t * 0.5)
         else
             SetFontState("menu", "", Color(a, 255, 255, 255))
-            RenderText("menu", diff, x, y + dy, 0.5 * self.s, "center")
+            RenderText("menu", diff, x, y + dy, 0.5, "center")
         end
     end
 end
-
-function lstg_ui:drawInfo1()
-    local dx = self._dx
-    local dx2 = -30
-    local dy = 15
+function lstg_ui:drawInfo()
+    local dx = self.bgdx
+    local dx2 = 0
+    local dx3 = 15
+    local dxl = -10
     local w = lstg.world
     local RenderImgList = {
-        { "line_1",       109 + w.scrr + dx, 419 + dy, 0, 1,   1 },
-        { "line_2",       109 + w.scrr + dx, 397 + dy, 0, 1,   1 },
-        { "line_3",       109 + w.scrr + dx, 349 + dy, 0, 1,   1 },
-        { "line_4",       109 + w.scrr + dx, 247 + dy, 0, 1,   1 },
-        { "line_5",       109 + w.scrr + dx, 311 + dy, 0, 1,   1 },
-        { "line_6",       109 + w.scrr + dx, 224 + dy, 0, 1,   1 },
-        { "line_7",       109 + w.scrr + dx, 202 + dy, 0, 1,   1 },
-        { "hint.hiscore", 12 + w.scrr + dx,  425 + dy, 0, 0.6, 0.6 },
-        { "hint.score",   10 + w.scrr + dx,  403 + dy, 0, 0.6, 0.6 },
-        { "hint.Pnumber", -8 + w.scrr + dx,  371 + dy, 0, 0.7, 0.7 },
-        { "hint.Bnumber", 5 + w.scrr + dx,   278 + dy, 0, 0.6, 0.6 },
-        { "hint.Cnumber", 138 + w.scrr + dx, 316, 0, 0.85, 0.85 },
-        { "hint.Cnumber", 138 + w.scrr + dx, 354, 0, 0.85, 0.85 },
-        { "hint.power",   -8 + w.scrr + dx,  328 + dy, 0, 0.7, 0.7 },
-        { "hint.point",   6 + w.scrr + dx,   230 + dy, 0, 0.6, 0.6 },
-        { "hint.graze",   22 + w.scrr + dx,  208 + dy, 0, 0.5, 0.5 }
+        { "line_1", 109 + w.scrr + dxl, 419, 0, 1, 1 },
+        { "line_2", 109 + w.scrr + dxl, 397, 0, 1, 1 },
+        { "line_3", 109 + w.scrr + dxl, 349, 0, 1, 1 },
+        { "line_4", 109 + w.scrr + dxl, 311, 0, 1, 1 },
+        { "line_5", 109 + w.scrr + dxl, 247, 0, 1, 1 },
+        { "line_6", 109 + w.scrr + dxl, 224, 0, 1, 1 },
+        { "line_7", 109 + w.scrr + dxl, 202, 0, 1, 1 },
+        { "hint.hiscore", 12 + w.scrr, 425, 0, 1, 1 },
+        { "hint.score", 12 + w.scrr, 403, 0, 1, 1 },
+        { "hint.Pnumber", 12 + w.scrr, 371, 0, 1, 1 },
+        { "hint.Bnumber", 12 + w.scrr, 334, 0, 1, 1 },
+        { "hint.Cnumber", 138 + w.scrr, 316, 0, 0.85, 0.85 },
+        { "hint.Cnumber", 138 + w.scrr, 354, 0, 0.85, 0.85 },
+        { "hint.power", 39 + w.scrr + dx, 253, 0, 0.5, 0.5 },
+        { "hint.point", 39 + w.scrr + dx, 230, 0, 0.5, 0.5 },
+        { "hint.graze", 54 + w.scrr + dx, 208, 0, 0.5, 0.5 }
     }
     local s = stage.current_stage
     local timer = s.timer
@@ -592,127 +521,70 @@ function lstg_ui:drawInfo1()
                 dw = alpha / 255
             end
             SetImageState(p1, "", Color(alpha, 255, 255, 255))
-            Render(p1, p2, p3, p4, p5 * dw * self.s, p6 * self.s)
+            Render(p1, p2, p3, p4, p5 * dw, p6)
         end
         alplat = min(dyt * alphatrate, 255)
     else
         for i = 1, #RenderImgList do
             local p1, p2, p3, p4, p5, p6 = unpack(RenderImgList[i])
             SetImageState(p1, "", Color(255, 255, 255, 255))
-            Render(p1, p2, p3, p4, p5 * self.s, p6 * self.s)
+            Render(p1, p2, p3, p4, p5, p6)
         end
         alplat = 255
     end
     SetFontState("score3", "", Color(alplat, 173, 173, 173))
-    RenderScore("score3", max(lstg.tmpvar.hiscore or 0, self.score or 0), 216 + w.scrr + dx + dx2, 436 + dy, 0.43 * self.s, "right")
+    RenderScore("score3", max(lstg.tmpvar.hiscore or 0, self.score or 0), 216 + w.scrr + dx + dx2, 436, 0.43, "right")
     SetFontState("score3", "", Color(alplat, 255, 255, 255))
-    RenderScore("score3", self.score or 0, 216 + w.scrr + dx + dx2, 414 + dy, 0.43 * self.s, "right")
-    RenderText("score3", string.format("%d/5", lstg.var.chip), 214 + w.scrr, 361, 0.35, "right")
-    RenderText("score3", string.format("%d/5", lstg.var.bombchip), 214 + w.scrr, 323, 0.35, "right")
+    RenderScore("score3", self.score or 0, 216 + w.scrr + dx + dx2, 414, 0.43, "right")
+    RenderText("score3", string.format("%d/5", lstg.var.chip), 214 + w.scrr + dx + dx2, 361, 0.35, "right")
+    RenderText("score3", string.format("%d/5", lstg.var.bombchip), 214 + w.scrr + dx + dx2, 323, 0.35, "right")
     SetFontState("score1", "", Color(alplat, 205, 102, 0))
     SetFontState("score2", "", Color(alplat, 34, 216, 221))
-    RenderText("score1", string.format("%d.    /4.    ", math.floor(lstg.var.power / 100)), 204 + w.scrr, 262, 0.4,
-        "right")
-    RenderText("score1",
-        string.format("      %d%d        00", math.floor((lstg.var.power % 100) / 10), lstg.var.power % 10), 205 + w.scrr, 258.5, 0.3, "right")
-    RenderScore("score2", lstg.var.pointrate, 204 + w.scrr + dx + dx2, 239 + dy, 0.4 * self.s, "right")
+    RenderText("score1", string.format("%d.    /4.    ", math.floor(lstg.var.power / 100)), 204 + w.scrr + dx + dx2, 262, 0.4, "right")
+    RenderText("score1", string.format("      %d%d        00", math.floor((lstg.var.power % 100) / 10), lstg.var.power % 10), 205 + w.scrr + dx + dx2, 258.5, 0.3, "right")
+    RenderScore("score2", lstg.var.pointrate, 204 + w.scrr + dx + dx2, 239, 0.4, "right")
     SetFontState("score3", "", Color(alplat, 173, 173, 173))
-    RenderText("score3", string.format("%d", lstg.var.graze), 204 + w.scrr + dx + dx2, 216 + dy, 0.4 * self.s, "right")
-
-
+    RenderText("score3", string.format("%d", lstg.var.graze), 204 + w.scrr + dx + dx2, 216, 0.4, "right")
     SetImageState("hint.life", "", Color(alplat, 255, 255, 255))
     for i = 1, 8 do
-        Render("hint.life", 89 + w.scrr + 13 * i, 371, 0, 1, 1)
+        Render("hint.life", 89 + w.scrr + 13 * i + dx + dx3, 371, 0, 1, 1)
     end
     SetImageState("hint.lifeleft", "", Color(alplat, 255, 255, 255))
     for i = 1, lstg.var.lifeleft do
-        Render("hint.lifeleft", 89 + w.scrr + 13 * i, 371, 0, 1, 1)
+        Render("hint.lifeleft", 89 + w.scrr + 13 * i + dx + dx3, 371, 0, 1, 1)
     end
     SetImageState("hint.bomb", "", Color(alplat, 255, 255, 255))
     for i = 1, 8 do
-        Render("hint.bomb", 89 + w.scrr + 13 * i, 334, 0, 1, 1)
+        Render("hint.bomb", 89 + w.scrr + 13 * i + dx + dx3, 334, 0, 1, 1)
     end
     SetImageState("hint.bombleft", "", Color(alplat, 255, 255, 255))
     for i = 1, lstg.var.bomb do
-        Render("hint.bombleft", 89 + w.scrr + 13 * i, 334, 0, 1, 1)
+        Render("hint.bombleft", 89 + w.scrr + 13 * i + dx + dx3, 334, 0, 1, 1)
     end
     local Lchip = lstg.var.chip
     if Lchip > 0 and Lchip < 5 and lstg.var.lifeleft < 8 then
         SetImageState("lifechip" .. Lchip, "", Color(alplat, 255, 255, 255))
-        Render("lifechip" .. Lchip, 89 + w.scrr + 13 * (lstg.var.lifeleft + 1), 371, 0, 1, 1)
+        Render("lifechip" .. Lchip, 89 + w.scrr + 13 * (lstg.var.lifeleft + 1) + dx + dx3, 371, 0, 1, 1)
     end
     local Bchip = lstg.var.bombchip
     if Bchip > 0 and Bchip < 5 and lstg.var.bomb < 8 then
         SetImageState("bombchip" .. Bchip, "", Color(alplat, 255, 255, 255))
-        Render("bombchip" .. Bchip, 89 + w.scrr + 13 * (lstg.var.bomb + 1), 334, 0, 1, 1)
+        Render("bombchip" .. Bchip, 89 + w.scrr + 13 * (lstg.var.bomb + 1) + dx + dx3, 334, 0, 1, 1)
     end
-    --有谁能解释一下这为什么要渲染两遍吗
-    --[=[SetFontState("score3", "", Color(alplat, 173, 173, 173))
-    RenderScore("score3", max(lstg.tmpvar.hiscore or 0, self.score or 0), 216 + w.scrr, 436 + dy2, 0.43, "right")
-    SetFontState("score3", "", Color(alplat, 255, 255, 255))
-    RenderScore("score3", self.score or 0, 216 + w.scrr, 414 + dy2, 0.43, "right")
-    --[[RenderText("score3", string.format("%d/5", lstg.var.chip), 214 + w.scrr, 361, 0.35, "right")
-    RenderText("score3", string.format("%d/5", lstg.var.bombchip), 214 + w.scrr, 323, 0.35, "right")
-    SetFontState("score1", "", Color(alplat, 205, 102, 0))
-    SetFontState("score2", "", Color(alplat, 34, 216, 221))
-    RenderText("score1", string.format("%d.    /4.    ", math.floor(lstg.var.power / 100)), 204 + w.scrr, 262, 0.4,
-        "right")
-    RenderText("score1",
-        string.format("      %d%d        00", math.floor((lstg.var.power % 100) / 10), lstg.var.power % 10), 205 + w.scrr, 258.5, 0.3, "right")]]
-    RenderScore("score2", lstg.var.pointrate, 204 + w.scrr, 239 + dy2, 0.4, "right")
-    SetFontState("score3", "", Color(alplat, 255, 255, 255))
-    RenderText("score3", string.format("%d", lstg.var.graze), 204 + w.scrr, 216 + dy2, 0.4, "right")
-    ]=]
-end
-
-function lstg_ui:drawInfo2()
-    local dx = self._dx
-    RenderText("score", "HiScore", 8 + dx, 520, 0.5, "left", "top")
-    RenderText("score",
-        string.format("%d", max(lstg.tmpvar.hiscore or 0, lstg.var.score)),
-        190 + dx, 520, 0.5, "right", "top")
-    RenderText("score", "Score", 206 + dx, 520, 0.5, "left", "top")
-    RenderText("score",
-        string.format("%d", lstg.var.score),
-        388 + dx, 520, 0.5, "right", "top")
-    SetFontState("score", "", Color(0xFFFF4040))
-    --[[RenderText("score",
-        string.format("%1.2f", lstg.var.power / 100),
-        8, 496, 0.5, "left", "top")]]
-    SetFontState("score", "", Color(0xFF40FF40))
-    RenderText("score",
-        string.format("%d", lstg.var.faith),
-        84 + dx, 496, 0.5, "left", "top")
-    SetFontState("score", "", Color(0xFF4040FF))
-    RenderText("score",
-        string.format("%d", lstg.var.pointrate),
-        160 + dx, 496, 0.5, "left", "top")
-    SetFontState("score", "", Color(0xFFFFFFFF))
-    RenderText("score",
-        string.format("%d", lstg.var.graze),
-        236 + dx, 496, 0.5, "left", "top")
-    --[[RenderText("score",
-        string.rep("*", max(0, lstg.var.lifeleft)),
-        388, 496, 0.5, "right", "top")
-    RenderText("score",
-        string.rep("*", max(0, lstg.var.bomb)),
-        380, 490, 0.5, "right", "top")]]
 end
 
 function ResetUI()
     lstg.ui = lstg.lstg_ui()
     function ui.DrawFrame()
     end
-
     function ui.DrawMenuBG()
         if lstg.ui then
             lstg.ui:drawMenuBG()
         end
     end
-
     function ui.DrawScore()
         if not IsValid(_lstg_ui) then
-            lstg.ui_obj = New(lstg.lstg_ui_object)
+            New(lstg.lstg_ui_object)
         end
     end
 end

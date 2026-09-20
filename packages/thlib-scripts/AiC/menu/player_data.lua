@@ -19,7 +19,7 @@ function lib.player_data:init(scnum)
     self.t = 30
     self.wait = 30
     self.alpha = 0
-    self.player_list = { "reimu_player", "marisa_player", "sakuya_player", "muki_player", "nenyuki_player" }
+    self.player_list = { "reimu_player", "marisa_player", "sakuya_player", "hifuu_player" }
     self.diff_list = { "Easy", "Normal", "Hard", "Lunatic", --[["Extra"]] }
     self.sc_list = aic.l10n[setting.locale].ui.sc_list
     self.data = nil

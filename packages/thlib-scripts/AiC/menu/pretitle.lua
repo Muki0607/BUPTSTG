@@ -11,7 +11,7 @@ function lib.pretitle:init()
     if not scoredata.player_data then
         scoredata.player_data = {}
     end
-    for _, p in ipairs({ 'reimu_player', 'marisa_player', 'sakuya_player', 'muki_player', 'nenyuki_player' }) do
+    for _, p in ipairs({ 'reimu_player', 'marisa_player', 'sakuya_player', "hifuu_player" }) do
         if not scoredata.player_data[p] then
             lib.InitPlayerData(p)
         end
@@ -46,8 +46,8 @@ function lib.pretitle:init()
     if lib.last_replay and not lib.EndingFlag then
         lib.PushMenuStack(lib.name_regist)
     end
-    if aic.misc.GetCurrentBGM() ~= 'aic_bgm1' then
-        _play_music('aic_bgm1', nil, false)
+    if aic.misc.GetCurrentBGM() ~= 'bgm0' then
+        _play_music('bgm0', nil, false)
     end
 end
 

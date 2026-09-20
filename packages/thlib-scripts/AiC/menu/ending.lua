@@ -35,7 +35,7 @@ function lib.ending:init()
         self.playing = true
         task.New(self, function()
             if lib.EndingFlag ~= 'D' then
-                _play_music('aic_bgm18', nil, false)
+                _play_music('bgm18', nil, false)
             end
             local d = aic.l10n[setting.locale].dialog.dialog_ending[lib.EndingFlag]
             local l
@@ -65,7 +65,7 @@ function lib.ending:frame()
         if not self.staff_flag2 then
             self.staff_flag2 = true
             self.finished = false
-            _play_music('aic_bgm19')
+            _play_music('bgm19')
             task.New(self, function()
                 for _ = 1, _infinite do
                     local dy = screen.height * #self.text3 / (70 * 60)

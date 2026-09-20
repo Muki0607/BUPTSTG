@@ -82,7 +82,7 @@ function CardsSystem:init(system, cards, is_final)
             b.last_card = i
         end
         ---THLoOP Changed
-        if b.cards[i].is_sc and not string.match(b.cards[i].name, l10n.general.nonspell) then
+        if b.cards[i].is_sc and not string.match(b.cards[i].name, '通常攻击') then
             b.sc_left = b.sc_left + 1
         end
         b.sc_left = b.sc_left
@@ -878,7 +878,7 @@ function system:updateBG()
     end
     if b.bg then
         if IsValid(b.bg) then
-            if b.__show_scbg and (b.sc_name and not string.match(b.sc_name, l10n.general.nonspell)) then
+            if b.__show_scbg and (b.sc_name and not string.match(b.sc_name, '通常攻击')) then
                 b.bg.alpha = min(1, b.bg.alpha + 0.025)
             else
                 b.bg.alpha = max(0, b.bg.alpha - 0.025)
@@ -1004,7 +1004,7 @@ function system:popSpellResult()
     b.spell_damage = 0
     lstg.tmpvar.hit_count = 0
     ---THLoOP Added
-    if b.is_sc and b.sc_name and not string.match(b.sc_name, l10n.general.nonspell) then
+    if b.is_sc and b.sc_name and not string.match(b.sc_name, '通常攻击') then
         table.remove(_sc_left_type, 1)
     end
 end
@@ -1087,7 +1087,7 @@ function system:popResult(continue)
         b.dropitem = nil
     end
     ---THLoOP Added
-    if b.is_sc and b.sc_name and not string.match(b.sc_name, l10n.general.nonspell) then
+    if b.is_sc and b.sc_name and not string.match(b.sc_name, '通常攻击') then
         b.sc_left = max(0, b.sc_left - 1)
     end
     self:endChipBonus(b.bonus_x or b.x, b.bonus_y or b.y)

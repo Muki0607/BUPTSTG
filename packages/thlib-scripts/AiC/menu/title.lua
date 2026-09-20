@@ -56,8 +56,8 @@ function lib.title:init(pos, l)
     lstg.tmpvar.current_menu = self
 
     self.invalid_menu = { 2, 3 }
-    if aic.misc.GetCurrentBGM() ~= 'aic_bgm1' then
-        _play_music('aic_bgm1', nil, false)
+    if aic.misc.GetCurrentBGM() ~= 'bgm0' then
+        _play_music('bgm0', nil, false)
     end
 end
 

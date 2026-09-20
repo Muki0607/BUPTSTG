@@ -29,7 +29,7 @@ function lib.name_regist:init()
     self.name = setting.username or ''
     self._posX = aic.sys.GetPlayer() --由于没有开始新的一局，此时可直接使用上一局选择来判断
     self._posY = aic.sys.GetDiff()
-    self.player_list = { "reimu_player", "marisa_player", "sakuya_player", "muki_player", "nenyuki_player" }
+    self.player_list = { "reimu_player", "marisa_player", "sakuya_player", "hifuu_player" }
     self.diff_list = { "Easy", "Normal", "Hard", "Lunatic", --[["Extra"]] }
     self.l = 10
 
@@ -113,7 +113,7 @@ function lib.name_regist:frame()
     task.Do(self)
     ---疮痍曲
     if not self.music_flag then
-        _play_music('aic_bgm20', nil, false)
+        _play_music('bgm20', nil, false)
         self.music_flag = true
     end
     self.wait = max(self.wait - 1, 0)

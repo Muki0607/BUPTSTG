@@ -74,7 +74,7 @@ function lib.music_room:init(pos, l)
     self.random_text = '' --紫的曲子用的随机字符
     self.music_pos = 0 --音乐当前播放位置，由于没有能直接获取的函数，只能手动计时
     self.playing = false --当前是否在播放，虽然进入时在播放标题bgm但无法获得当前播放位置所以初始为false
-    self.curr_bgm = 'aic_bgm1'
+    self.curr_bgm = 'bgm0'
     self.x = screen.width * 0.5
     self.y = screen.height * 0.5
     self.default_x = screen.width * 0.5
@@ -101,7 +101,7 @@ function lib.music_room:init(pos, l)
     ---检查bgm是否播放过
     ---@param num number @要检测的bgm编号
     function self.CheckRecord(num)
-        return scoredata.music_record['aic_bgm' .. num]
+        return scoredata.music_record['bgm' .. num]
     end
     lib.Fly(self, 1, 'left')
 end
@@ -133,13 +133,7 @@ function lib.music_room:frame()
                         task.New(self, function()
                             lib.SetBGMVolume(setting.bgmvolume)
                             TryExcept(function()
-                                    if self.pos == 16 and KeyIsDown('slow') then
-                                        _play_music('aic_bgm16_full', nil, false)
-                                        self.full_flag = true
-                                    else
-                                        _play_music('aic_bgm' .. self.pos, nil, false)
-                                        self.full_flag = false
-                                    end
+                                    _play_music('bgm' .. self.pos, nil, false)
                                     self.playing = true
                                     self.music_pos = 0
                                 end,
@@ -155,13 +149,7 @@ function lib.music_room:frame()
                     task.New(self, function()
                         lib.SetBGMVolume(setting.bgmvolume)
                         TryExcept(function()
-                                if self.pos == 16 and KeyIsDown('slow') then
-                                    _play_music('aic_bgm16_full', nil, false)
-                                    self.full_flag = true
-                                else
-                                    _play_music('aic_bgm' .. self.pos, nil, false)
-                                    self.full_flag = false
-                                end
+                                _play_music('bgm' .. self.pos, nil, false)
                                 self.playing = true
                                 self.music_pos = 0
                             end,
