@@ -1,38 +1,13 @@
---THLoOP Arranged
 local player_lib = player_lib
 ---@class player.system
 ---@return player.system
 player_lib.system = plus.Class()
 
-
-
 local defaultKeys = {
     "up", "down", "left", "right",
-    "slow", "shoot", "spell", "special"
+    "slow", "shoot", "spell", "special",
 }
 player_lib.defaultKeys = defaultKeys
-
------------------------------------------------
---debug tool
-local keydown_list = {}
-local status_list = {}
-for i = 112, 118, 1
-do
-    keydown_list[i] = false
-    status_list[i] = false
-end
-for i = 49, 56, 1
-do
-    keydown_list[i] = false
-    status_list[i] = false
-end
-local boss_locked_hp
-local boss_locked_time
-local player_locked_hp
-local player_locked_exmp
-local player_locked_power
-local debug_tool_used = false
------------------------------------------------
 
 local defaultKeyEvent = {
     { "up", "down", "key.up.down", 0, function(self)
@@ -103,9 +78,6 @@ local defaultFrameEvent = {
         end
     end },
     ["frame.updateSlow"] = { 99, function(self)
-        if Hana_AI and Hana_AI.Start_state == 1 then Hana_AI.Frame_action() end
-        if setting.autofire then self.__shoot_flag = not self.__shoot_flag end
-        if setting.autoslow and self.__shoot_flag then self.__slow_flag = true end
         if self.__death_state == 0 then
             if self.__slow_flag then
                 self.slow = 1
@@ -120,18 +92,8 @@ local defaultFrameEvent = {
                 if (self.__shoot_flag or player_lib.debug_data.keep_shooting) and self.nextshoot <= 0 then
                     system:shoot()
                 end
-                local cost = 100
-                --这年头想放个b是真的难
-                if self.__spell_flag and self.nextspell <= 0 and
-                    lstg.var.exmp >= cost and not lstg.var.block_spell then
-                    if lstg.var.mp_active then
-                        if lstg.var.mp_active > 0 then
-                            lstg.var.mp_active = lstg.var.mp_active - 1
-                            aic.sys.ActivateBorder()
-                        end
-                    else
-                        system:spell()
-                    end
+                if self.__spell_flag and self.nextspell <= 0 and lstg.var.bomb > 0 and not lstg.var.block_spell then
+                    system:spell()
                 end
                 if self.__special_flag and self.nextsp <= 0 then
                     system:special()
@@ -177,7 +139,6 @@ local defaultFrameEvent = {
         end
         self.__move_dx = dx
         self.__move_dy = dy
-        if Hana_AI and Hana_AI.Start_state == 1 then Hana_AI.Walking_diagram_correction(dx, dy) end
     end },
     ["frame.fire"] = { 96, function(self)
         if self.__death_state == 0 then
@@ -206,7 +167,6 @@ local defaultFrameEvent = {
                             flag = true
                         end
                     end
-                    --if o.is_power_red then flag = false end
                     if flag then
                         o.attract = 8
                         o.num = self.item
@@ -216,7 +176,7 @@ local defaultFrameEvent = {
             else
                 if self.__slow_flag then
                     for _, o in ObjList(GROUP_ITEM) do
-                        if Dist(self, o) < 48 or ((o.is_power or o.is_power_blue) and Dist(self, o) < 96) then
+                        if Dist(self, o) < 48 then
                             if o.attract < 3 then
                                 o.attract = max(o.attract, 3)
                                 o.target = self
@@ -225,7 +185,7 @@ local defaultFrameEvent = {
                     end
                 else
                     for _, o in ObjList(GROUP_ITEM) do
-                        if Dist(self, o) < 24 or ((o.is_power or o.is_power_blue) and Dist(self, o) < 48) then
+                        if Dist(self, o) < 24 then
                             if o.attract < 3 then
                                 o.attract = max(o.attract, 3)
                                 o.target = self
@@ -245,7 +205,6 @@ local defaultFrameEvent = {
 
             --重置决死时间
             player.deathtime = player.default_deathtime
-            --------------------------------------------------
             New(death_weapon, self.x, self.y)
             self.deathee = {}
             self.deathee[1] = New(deatheff, self.x, self.y, "first")
@@ -272,8 +231,6 @@ local defaultFrameEvent = {
             self.supporty = -236
             self.hide = false
             New(bullet_deleter, self.x, self.y)
-            lstg.tmpvar.hit_count = lstg.tmpvar.hit_count or 0
-            lstg.tmpvar.hit_count = lstg.tmpvar.hit_count + 1
         end
     end },
     ["frame.death4"] = { 91, function(self)
@@ -331,7 +288,7 @@ local defaultFrameEvent = {
                     for i = 1, 4 do
                         if self.slist[s][i] and self.slist[s + 1][i] then
                             self.sp[i] = MixTable(t, MixTable(self.lh, self.slist[s][i]),
-                                MixTable(self.lh, self.slist[s + 1][i]))
+                                    MixTable(self.lh, self.slist[s + 1][i]))
                             self.sp[i][3] = 1
                         elseif self.slist[s + 1][i] then
                             self.sp[i] = MixTable(self.lh, self.slist[s + 1][i])
@@ -347,140 +304,6 @@ local defaultFrameEvent = {
             self.timer = self.timer - 1
         end
     end },
-    -----------------------------------------------
-    --debug tool
-    ["frame.debug_tool"] = { 86, function(self)
-        for i = 112, 118, 1
-        do
-            if (GetKeyState(i)) and _debug.debug_tool then
-                if not keydown_list[i] then
-                    keydown_list[i] = true
-                    status_list[i] = not status_list[i]
-                    if i == 112 and status_list[112] == true then
-                        debug_tool_used = true
-                        for i = 113, 118, 1
-                        do
-                            status_list[i] = false
-                        end
-                        for i = 49, 56, 1
-                        do
-                            status_list[i] = false
-                        end
-                    end
-                    if status_list[112] then 
-                        if i == 113 then
-                            status_list[115] = false
-                            status_list[116] = false
-                            if IsValid(_boss) then
-                                Kill(_boss)
-                            end
-                        end
-                        if i == 114 then
-                            status_list[115] = false
-                            if IsValid(_boss) then
-                                _boss.hp = _boss.hp - 100
-                            end
-                        end
-                        if i == 115 then
-                            if IsValid(_boss) then
-                                boss_locked_hp = _boss.hp
-                            end
-                        end
-                        if i == 116 then
-                            if IsValid(_boss) then
-                                boss_locked_time = _boss.timer
-                            end
-                        end
-                        if i == 117 then
-                            for _, unit in ObjList(GROUP_ENEMY_BULLET) do
-                                Del(unit)
-                            end
-                        end
-                        if i == 118 then
-                            for _, unit in ObjList(GROUP_ENEMY) do
-                                if unit ~= _boss then
-                                    Del(unit)
-                                end
-                            end
-                            for _, unit in ObjList(GROUP_NONTJT) do
-                                if unit ~= _boss then
-                                    Del(unit)
-                                end
-                            end
-                        end
-                    end
-                end
-            else
-                keydown_list[i] = false
-            end
-        end
-        for i = 49, 56, 1
-        do
-            if (GetKeyState(i)) then
-                if not keydown_list[i] then
-                    keydown_list[i] = true
-                    status_list[i] = not status_list[i]
-                    if status_list[112] then 
-                        if i == 50 then
-                            player_locked_hp = lstg.var.hp
-                        end
-                        if i == 51 then
-                            player_locked_exmp = lstg.var.exmp
-                        end
-                        if i == 52 then
-                            player_locked_power = lstg.var.power
-                        end
-                        if i == 53 then
-                            status_list[52] = false
-                            lstg.var.power = 500
-                            PlaySound('powerup1', 0.5)
-                        end
-                        if i == 54 then
-                            status_list[50] = false
-                            lstg.var.hp = lstg.var.hp + 50
-                            PlaySound('extend', 0.5)
-                            New(hinter, 'hint.extend', 0.6, 0, 112, 15, 120)
-                        end
-                        if i == 55 then
-                            status_list[51] = false
-                            lstg.var.exmp = lstg.var.exmp + 100
-                            PlaySound("cardget", 0.8)
-                        end
-                    end
-                end
-            else
-                keydown_list[i] = false    
-            end
-        end
-        if status_list[112] then
-            if status_list[49] then
-                if self.death > 0 then
-                    self.death = 0
-                    self.protect = 120
-                end
-            end
-            if status_list[50] then
-                lstg.var.hp = player_locked_hp
-            end
-            if status_list[51] then
-                lstg.var.exmp = player_locked_exmp
-            end
-            if status_list[52] then
-                lstg.var.power = player_locked_power
-            end
-            if status_list[115] then
-                if IsValid(_boss) then
-                    _boss.hp = boss_locked_hp
-                end
-            end
-            if status_list[116] then
-                if IsValid(_boss) then
-                    _boss.timer = boss_locked_time
-                end
-            end
-        end
-    end },
-    -----------------------------------------------
 }
 player_lib.defaultFrameEvent = defaultFrameEvent
 
@@ -553,84 +376,8 @@ function system:render()
         SetImageState('white', 'mul+add', color(COLOR_WHITE, 100))
         aic.ui.RenderEclipseRing('white', player.x, player.y, 0, player.protect / 2)
     end
-    -----------------------------------------------
     local p = self.player
     p._wisys:render()--by OLC，自机行走图系统
-    -----------------------------------------------
-    --debug tool
-    if status_list[112] then
-        lstg.RenderTTF("debug_tool_font", "[F1]debug模式", -180, -100, 170, 180, 0, Color(0xFF00FFFF))
-        if keydown_list[113] then
-            lstg.RenderTTF("debug_tool_font", "[F2]KillBoss", -180, -100, 160, 170, 0, Color(0xFF00FFFF))
-        else
-            lstg.RenderTTF("debug_tool_font", "[F2]KillBoss", -180, -100, 160, 170, 0, Color(0xAACCCCCC))
-        end
-        if keydown_list[114] then
-            lstg.RenderTTF("debug_tool_font", "[F3]BossHP减100", -180, -100, 150, 160, 0, Color(0xFF00FFFF))
-        else
-            lstg.RenderTTF("debug_tool_font", "[F3]BossHP减100", -180, -100, 150, 160, 0, Color(0xAACCCCCC))
-        end
-        if status_list[115] then
-            lstg.RenderTTF("debug_tool_font", "[F4]Boss锁HP", -180, -100, 140, 150, 0, Color(0xFF00FFFF))
-        else
-            lstg.RenderTTF("debug_tool_font", "[F4]Boss锁HP", -180, -100, 140, 150, 0, Color(0xAACCCCCC))
-        end
-        if status_list[116] then
-            lstg.RenderTTF("debug_tool_font", "[F5]Boss锁时", -180, -100, 130, 140, 0, Color(0xFF00FFFF))
-        else
-            lstg.RenderTTF("debug_tool_font", "[F5]Boss锁时", -180, -100, 130, 140, 0, Color(0xAACCCCCC))
-        end
-        if keydown_list[117] then
-            lstg.RenderTTF("debug_tool_font", "[F6]清子弹", -180, -100, 120, 130, 0, Color(0xFF00FFFF))
-        else
-            lstg.RenderTTF("debug_tool_font", "[F6]清子弹", -180, -100, 120, 130, 0, Color(0xAACCCCCC))
-        end
-        if keydown_list[118] then
-            lstg.RenderTTF("debug_tool_font", "[F7]清小怪", -180, -100, 110, 120, 0, Color(0xFF00FFFF))
-        else
-            lstg.RenderTTF("debug_tool_font", "[F7]清小怪", -180, -100, 110, 120, 0, Color(0xAACCCCCC))
-        end
-        if status_list[49] then
-            lstg.RenderTTF("debug_tool_font", "[1]miss后不掉HP", -180, -100, 100, 110, 0, Color(0xFF00FFFF))
-        else
-            lstg.RenderTTF("debug_tool_font", "[1]miss后不掉HP", -180, -100, 100, 110, 0, Color(0xAACCCCCC))
-        end
-        if status_list[50] then
-            lstg.RenderTTF("debug_tool_font", "[2]锁自机HP", -180, -100, 90, 100, 0, Color(0xFF00FFFF))
-        else
-            lstg.RenderTTF("debug_tool_font", "[2]锁自机HP", -180, -100, 90, 100, 0, Color(0xAACCCCCC))
-        end
-        if status_list[51] then
-            lstg.RenderTTF("debug_tool_font", "[3]锁过充魔力", -180, -100, 80, 90, 0, Color(0xFF00FFFF))
-        else
-            lstg.RenderTTF("debug_tool_font", "[3]锁过充魔力", -180, -100, 80, 90, 0, Color(0xAACCCCCC))
-        end
-        if status_list[52] then
-            lstg.RenderTTF("debug_tool_font", "[4]锁魔力", -180, -100, 70, 80, 0, Color(0xFF00FFFF))
-        else
-            lstg.RenderTTF("debug_tool_font", "[4]锁魔力", -180, -100, 70, 80, 0, Color(0xAACCCCCC))
-        end
-        if keydown_list[53] then
-            lstg.RenderTTF("debug_tool_font", "[5]满魔力", -180, -100, 60, 70, 0, Color(0xFF00FFFF))
-        else
-            lstg.RenderTTF("debug_tool_font", "[5]满魔力", -180, -100, 60, 70, 0, Color(0xAACCCCCC))
-        end
-        if keydown_list[54] then
-            lstg.RenderTTF("debug_tool_font", "[6]增加50HP", -180, -100, 50, 60, 0, Color(0xFF00FFFF))
-        else
-            lstg.RenderTTF("debug_tool_font", "[6]增加50HP", -180, -100, 50, 60, 0, Color(0xAACCCCCC))
-        end
-        if keydown_list[55] then
-            lstg.RenderTTF("debug_tool_font", "[7]增加100过充魔力", -180, -100, 40, 50, 0, Color(0xFF00FFFF))
-        else
-            lstg.RenderTTF("debug_tool_font", "[7]增加100过充魔力", -180, -100, 40, 50, 0, Color(0xAACCCCCC))
-        end
-    else
-        if debug_tool_used then
-            lstg.RenderTTF("debug_tool_font", "[F1]debug模式", -180, -100, 170, 180, 0, Color(0xAACCCCCC))
-        end
-    end
-    -----------------------------------------------
 end
 
 ---Shoot事件
@@ -645,17 +392,11 @@ end
 function system:spell()
     local p = self.player
     item.PlayerSpell()
-    local cost = 100
-    local before = int(lstg.var.exmp / 100)
-    lstg.var.exmp = lstg.var.exmp - cost
-    local after = int(lstg.var.exmp / 100)
-    if after < before then
-        lstg.var.exmp_int = lstg.var.exmp_int - 1
-    end
-    local spellname = l10n.ui.player_scname[p.name]
+    lstg.var.bomb = lstg.var.bomb - 1
     if p.class.spell then
         p.class.spell(p)
         if p.spellname then
+            local spellname = p.spellname
             if p.death > 90 and p.have_death_spell then
                 aic.ui.NewSpellname(nil, spellname[2], nil, nil, nil, true, 240)
             elseif p.lastspell then
@@ -670,8 +411,6 @@ function system:spell()
                 end
             end
         end
-    else
-        self:sphit()
     end
     if p.death > 90 then
         p.deathtime = max(0, p.deathtime - 4)
@@ -691,11 +430,10 @@ end
 ---碰撞回调事件
 function system:colli(other)
     local p = self.player
-    if (not _debug.cheat) or (not cheat) then
+    if not cheat then
         if p.death == 0 and not p.dialog then
             if p.protect == 0 then
                 PlaySound("pldead00", 0.5)
-                self.taking_damage = other.damage or 50
                 p.death = 100
                 if p.deathtime then p.death = 90 + p.deathtime end
             end
@@ -759,7 +497,7 @@ function system:updateKeyState()
     for key in pairs(self._keys) do
         --更新已注册按键状态并执行事件组
         self.keyStatePre[key] = self.keyState[key]
-        self.keyState[key] = (keyState[key]) or false
+        self.keyState[key] = keyState[key] or false
         if self.keyState[key] then
             if self.keyStatePre[key] then
                 self:doKeyEvent(key, "hold") --保持按住

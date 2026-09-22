@@ -8,6 +8,8 @@ ui = {}
 LoadTexture("boss_ui", "THlib/UI/boss_ui.png")
 LoadImage("boss_spell_name_bg", "boss_ui", 0, 0, 256, 36)
 SetImageCenter("boss_spell_name_bg", 256, 0)
+LoadImage("player_spell_name_bg", "boss_ui", 0, 100, 256, 36)
+SetImageCenter("player_spell_name_bg", 0, 0)
 
 LoadImage("boss_pointer", "boss_ui", 0, 64, 48, 16)
 SetImageCenter("boss_pointer", 24, 0)
@@ -343,19 +345,10 @@ function lstg_ui:reloadUI()
     end
     local pool = GetResourceStatus() or "global"
     SetResourceStatus("global")
-    if self.type == 1 then
-        LoadImageFromFile("logo", "THlib/UI/logo.png")
-        SetImageCenter("logo", 0, 0)
-        LoadImageFromFile("ui_bg", "THlib/UI/ui_bg.png")
-        LoadImageFromFile("menu_bg", "THlib/UI/menu_bg.png")
-    elseif self.type == 2 then
-        LoadImageFromFile("logo", "THlib/UI/logo.png")
-        SetImageCenter("logo", 0, 0)
-        LoadImageFromFile("ui_bg", "THlib/UI/ui_bg.png")
-        LoadImageFromFile("ui_bg2", "THlib/UI/ui_bg_2.png")
-        LoadImageFromFile("menu_bg", "THlib/UI/menu_bg.png")
-        LoadImageFromFile("menu_bg2", "THlib/UI/menu_bg_2.png")
-    end
+    LoadImageFromFile("logo", "THlib/UI/logo.png")
+    SetImageCenter("logo", 0, 0)
+    LoadImageFromFile("ui_bg", "THlib/UI/ui_bg.png")
+    LoadImageFromFile("menu_bg", "THlib/UI/menu_bg.png")
     SetResourceStatus(pool)
 end
 function lstg_ui:init()

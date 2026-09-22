@@ -21,6 +21,7 @@ _editor_class["sc5_slave"].init=function(self,_x,_y,n,flag,N,list)
     self.drop={0,0,0}
     task.New(self,function() self.protect=true task.Wait(1) self.protect=false end)
     self.r=20
+    self.spell_immune=true
     _connect(_boss,self,1,true)
     lasttask=task.New(self,function()
         do local a,_d_a=(list[n]),(3) for _=1,_infinite do
@@ -95,7 +96,7 @@ _editor_class["Aya"].difficulty="All"
 _editor_class["Aya"].init=function(self,cards)
 boss.init(self,240,384,_editor_class["Aya"].name,cards,New(spellcard_background),_editor_class["Aya"].difficulty)
 end
-_tmp_sc=boss.card.New("莲台野「墓碑后的冥界」",2,5,60,200,{0,0,0},false)
+_tmp_sc=boss.card.New("莲台野「墓碑后的冥界」",2,5,60,400,{0,0,0},false)
 function _tmp_sc:before()
 end
 function _tmp_sc:init()

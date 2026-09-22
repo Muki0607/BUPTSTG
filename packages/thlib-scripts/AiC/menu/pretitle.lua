@@ -20,6 +20,7 @@ function lib.pretitle:init()
     if not scoredata.music_record then
         scoredata.music_record = {}
     end
+    scoredata.player_select = 4
     self.num = -1 --菜单编号
     self.group = GROUP_GHOST
     self.layer = LAYER_TOP

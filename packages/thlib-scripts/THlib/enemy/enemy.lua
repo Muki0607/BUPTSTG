@@ -56,6 +56,7 @@ function enemybase:init(hp, nontaijutsu)
     setmetatable(self, { __index = GetAttr, __newindex = enemy_meta_newindex })
     self.colli = true
     self._servants = {}
+    self._blade_frozen = false -- 莲子高速bomb特效
 end
 
 function enemy_meta_newindex(t, k, v)
@@ -67,6 +68,9 @@ function enemy_meta_newindex(t, k, v)
 end
 
 function enemybase:frame()
+    if self._blade_frozen then
+        return
+    end
     SetAttr(self, 'colli', BoxCheck(self, lstg.world.boundl, lstg.world.boundr, lstg.world.boundb, lstg.world.boundt) and self._colli)
     if self.hp <= 0 then
         Kill(self)
