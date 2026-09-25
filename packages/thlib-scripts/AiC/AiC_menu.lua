@@ -50,7 +50,8 @@ local lib = aic.menu
 -------------------------------------------------------------
 
 ---菜单名称
-local menu = { 'scene', 'title', 'pre_start', 'practice', 'spell_practice', 'replay', 'music_room', 'option',
+---练习模式已并入pre_start，practice菜单被弃用
+local menu = { 'scene', 'title', 'pre_start', 'spell_practice', 'replay', 'music_room', 'option',
     'manual', 'name_regist', 'save_replay', 'player_data' }
 
 ------------------------------------------------------------
@@ -79,8 +80,21 @@ function lib.GetScreenSize()
 end
 
 ---练习模式标志
----@type string
+---nil为正常开始游戏，'stage'为关卡练习（并入pre_start）
+---@type string|nil
 local practice
+
+---设置练习模式标志
+---@param p string|nil @'stage'或nil
+function lib.SetPractice(p)
+    practice = p
+end
+
+---获取练习模式标志
+---@return string|nil
+function lib.GetPractice()
+    return practice
+end
 
 ---菜单栈
 ---里面放的是各菜单的类而非实例obj
@@ -123,24 +137,28 @@ end
 function lib.Fly(self, dir)
     if not IsValid(self) then return end
     local t = self.t or 30
-    task.New(self, function()
-        local x, y = 0, 0
-        for _, d in ipairs(dir) do
-            if d == 'up' then
-                y = y + screen.height
-            elseif d == 'down' then
-                y = y - screen.height
-            elseif d == 'left' then
-                x = x - screen.width
-            elseif d == 'right' then
-                x = x + screen.width
-            else
-                return
-            end
-            task.MoveTo(self.x + x, self.y + y, t * #dir, 2)
+    --先算出总位移，再一次性移动过去。
+    --原实现是每遇到一个方向就调用一次task.MoveTo，多个方向会串成多次移动，
+    --若中途又有新的移动请求进来，位移会累加，导致移动量翻倍。
+    local x, y = 0, 0
+    for _, d in ipairs(dir) do
+        if d == 'up' then
+            y = y + screen.height
+        elseif d == 'down' then
+            y = y - screen.height
+        elseif d == 'left' then
+            x = x - screen.width
+        elseif d == 'right' then
+            x = x + screen.width
+        else
+            --none等其它值不产生位移
         end
+    end
+    if x == 0 and y == 0 then return end
+    local tx, ty = self.x + x, self.y + y
+    task.New(self, function()
+        task.MoveTo(tx, ty, t * #dir, 2)
     end)
-
 end
 
 ---把所有菜单与desk一起平移（切换活跃菜单时用）
@@ -150,6 +168,7 @@ function lib.MoveAll(dir)
     for _, m in pairs(lib.instances) do
         if IsValid(m) then
             lib.Fly(m, dir)
+            m.wait = 30
         end
     end
 end
@@ -183,22 +202,29 @@ function lib.PushMenuStack(menu, dir)
     --向菜单栈加入一个菜单
     table.insert(lib.menu_stack, menu)
     --菜单移动
+    --注意：必须新建表，不能就地修改传入的dir。
+    --dir通常是调用方jump表中的方向数组，就地修改会把它永久反转，
+    --导致再次进入同一菜单时移动方向相反。
+    local move = {}
     for i, d in ipairs(dir) do
         if d == 'up' then
-            dir[i] = 'down'
+            move[i] = 'down'
         elseif d == 'down' then
-            dir[i] = 'up'
+            move[i] = 'up'
         elseif d == 'left' then
-            dir[i] = 'right'
+            move[i] = 'right'
         elseif d == 'right' then
-            dir[i] = 'left'
+            move[i] = 'left'
         else
-            dir[i] = 'none'
+            move[i] = 'none'
         end
     end
-    lib.MoveAll(dir)
-    lib.last_move_dir = dir
-    lstg.tmpvar.current_menu = lib.instances[menu]
+    lib.MoveAll(move)
+    lib.last_move_dir = move
+    --保证进入的菜单可见（各菜单的flyout可能把alpha渐出到0）
+    local m = lib.instances[menu]
+    if IsValid(m) then m.alpha = 255 end
+    lstg.tmpvar.current_menu = m
 end
 
 ---从菜单栈弹出一个菜单
@@ -229,15 +255,16 @@ end
 function lib.ClearMenuStack(move)
     lib.menu_stack = {}
     if move then
-        task.New(function()
-            local m = lstg.tmpvar.current_menu
-            local dx, dy = m.default_x - m.x, m.default_y - m.y
-            for _, m in pairs(lib.instances) do
-                if IsValid(m) then
+        local m = lstg.tmpvar.current_menu
+        local dx, dy = m.default_x - m.x, m.default_y - m.y
+        for _, m in pairs(lib.instances) do
+            if IsValid(m) then
+                task.New(function()
                     task.MoveTo(m.x + dx, m.y + dy, 30, 2)
-                end
+                    m.wait = 30
+                end)
             end
-        end)
+        end
     end
 end
 
@@ -303,7 +330,7 @@ function lib.GetReplayData(i)
     if slot.group_finish == 1 then
         stage_num = 'All' --海猫的力量（无端
     end
-    if date then 
+    if date then
         text = { string.format('No.%02d', i), slot.userName, date, slot.stages[1].stagePlayer, diff, stage_num, delay }
     else
         text = { string.format('No.%02d', i), '--------', '----/--/-- --:--', '--------', '--------', '---', '---%' }
@@ -337,10 +364,16 @@ function lib:GetExtRepInfo()
         local slot = self.slot
         ---@class plus.ReplayManager.SaveData.StageData
         local st = slot.stages[1]
-        if not st then self.text3_kt = nil return end
+        if not st then
+            self.text3_kt = nil
+            return
+        end
         local finish = { l10n.general.terms.yes, [0] = l10n.general.terms.no }
-        local player = { Reimu = l10n.general.character_names.reimu, Marisa = l10n.general.character_names.marisa, Sakuya = l10n.general.character_names.sakuya, Muki = l10n.general.character_names.muki, Nenyuki = l10n.general.character_names.nenyuki }
-        local difficulty = { l10n.general.difficulty.easy, l10n.general.difficulty.normal, l10n.general.difficulty.hard, l10n.general.difficulty.lunatic }
+        local player = { Reimu = l10n.general.character_names.reimu, Marisa = l10n.general.character_names.marisa, Sakuya =
+        l10n.general.character_names.sakuya, Muki = l10n.general.character_names.muki, Nenyuki = l10n.general
+        .character_names.nenyuki }
+        local difficulty = { l10n.general.difficulty.easy, l10n.general.difficulty.normal, l10n.general.difficulty.hard,
+            l10n.general.difficulty.lunatic }
         local var = DeSerialize(st.stageExtendInfo)
         self.text3 = {
             --[l10n.general.rep_info.username] = slot.userName,
@@ -362,7 +395,6 @@ function lib:GetExtRepInfo()
         self.text3_kt = nil
     end
 end
-
 
 ---绘制键位提示
 ---@param keys table @键位表，按照{shoot, spell, special, slow, repfast}的顺序传入
@@ -406,9 +438,12 @@ function lib:DrawTips(keys, move)
     if keys[5] then
         text = text .. key[setting.keysys.repfast] .. l10n.general.terms.key .. ' ' .. keys[5]
     end
+    --键位提示是固定在窗口右下角的全局UI，因此不随菜单坐标移动；
+    --又因为它固定不动，非活跃时若也渲染会叠在别的菜单上，所以只在活跃时渲染
+    if not lib.IsActive(self) then return end
     DrawText('main_font_zh_cn', text,
         screen.width, 10, 0.5, Color(self.alpha, 255, 255, 255), nil, 'right')
-end 
+end
 
 ---初始化PlayerData
 ---@param player_name string @自机名称
@@ -423,15 +458,15 @@ function lib.InitPlayerData(player_name)
         high_score = aic.table.Repeat({
             --机签 分数 时间 是否通关 处理落
             { '--------', 1000000, '----/--/-- --:--:--', 'Stage -', '---%' },
-            { '--------', 900000, '----/--/-- --:--:--', 'Stage -', '---%' },
-            { '--------', 800000, '----/--/-- --:--:--', 'Stage -', '---%' },
-            { '--------', 700000, '----/--/-- --:--:--', 'Stage -', '---%' },
-            { '--------', 600000, '----/--/-- --:--:--', 'Stage -', '---%' },
-            { '--------', 500000, '----/--/-- --:--:--', 'Stage -', '---%' },
-            { '--------', 400000, '----/--/-- --:--:--', 'Stage -', '---%' },
-            { '--------', 300000, '----/--/-- --:--:--', 'Stage -', '---%' },
-            { '--------', 200000, '----/--/-- --:--:--', 'Stage -', '---%' },
-            { '--------', 100000, '----/--/-- --:--:--', 'Stage -', '---%' },
+            { '--------', 900000,  '----/--/-- --:--:--', 'Stage -', '---%' },
+            { '--------', 800000,  '----/--/-- --:--:--', 'Stage -', '---%' },
+            { '--------', 700000,  '----/--/-- --:--:--', 'Stage -', '---%' },
+            { '--------', 600000,  '----/--/-- --:--:--', 'Stage -', '---%' },
+            { '--------', 500000,  '----/--/-- --:--:--', 'Stage -', '---%' },
+            { '--------', 400000,  '----/--/-- --:--:--', 'Stage -', '---%' },
+            { '--------', 300000,  '----/--/-- --:--:--', 'Stage -', '---%' },
+            { '--------', 200000,  '----/--/-- --:--:--', 'Stage -', '---%' },
+            { '--------', 100000,  '----/--/-- --:--:--', 'Stage -', '---%' },
         }, 4)
     }
 end
@@ -463,10 +498,10 @@ function lib.SavePlayerData(score)
         for j = 1, 5 do
             if j == 1 then
                 --去除名称中多余的双引号（虽然我也不知道怎么多出来的）
-                temp[i][j] = aic.string.Filter(hscore[i][j], '\"') 
+                temp[i][j] = aic.string.Filter(hscore[i][j], '\"')
             elseif j == 3 then
                 --去除时间中多余的空格（虽然我也不知道怎么多出来的）
-                local s = aic.string.Filter(hscore[i][j], '%s') 
+                local s = aic.string.Filter(hscore[i][j], '%s')
                 temp[i][j] = string.sub(s, 1, 10) .. ' ' .. string.sub(s, 11)
             else
                 temp[i][j] = hscore[i][j]
@@ -499,24 +534,38 @@ function lib.SavePlayerData(score)
     pos = pos or 'XX' --打完全关之后分数低于最低分的情况
     return temp, pos
 end
+
 --]]
 
 ---获取当前rep的处理落率
 ---@return string 字符串格式的处理落率
 function lib.GetReplayDelay()
-    local sec = (lib.last_replay_frame / 60) --将单位转换为秒
-    local ret = 1 - (sec / lib.last_replay_time) --计算处理落率
-    ret = string.format('%.1f', ret) .. '%' --保留一位小数
+    local sec = ((lib.last_replay_frame or 0) / 60)             --将单位转换为秒
+    local ret = 1 - (sec / (lib.last_replay_time or 1))         --计算处理落率
+    ret = string.format('%.1f', ret) .. '%'                     --保留一位小数
     return ret
 end
 
+---加载并创建所有菜单
+---注意：不能在这里直接创建菜单对象。
+---本文件是在脚本加载阶段被执行的，此时早于core.lua的GameInit，
+---而各游戏对象类的回调（含init）要等到GameInit里的lstg.RegisterAllGameObjectClass()
+---才会被整理给底层，在此之前New()创建的对象不会调用init。
+---因此这里只加载菜单脚本，实例化交给lib.NewMenus()，由场景在进入时调用。
 function lib.Initialize()
     ---加载所有菜单
     for _, m in ipairs(menu) do
         DoFile('AiC/menu/' .. m .. '.lua')
     end
+end
+
+---创建所有菜单实例（必须在类注册完成之后调用）
+---已经存在的实例不会重复创建；scene自身由入口创建，这里跳过，否则会递归
+function lib.NewMenus()
     for _, m in ipairs(menu) do
-        New(lib[m])
+        if m ~= 'scene' and not IsValid(lib.instances[lib[m]]) then
+            New(lib[m])
+        end
     end
 end
 

@@ -779,7 +779,7 @@ end
 ---@param layer number @图层
 ---@param score number @SCB分数
 ---@param font string @符卡字体
-function lib.NewSpellname(boss, name, slot, xc, yu, IsPlayer, t, layer, score, font)
+function lib.NewSpellname(boss, name, slot, xc, yu, IsPlayer, t, layer, score, font, no_info)
     boss = boss or _boss
     if (not boss or not IsValid(boss)) and not IsPlayer then return end
     name = name or ' '
@@ -789,7 +789,7 @@ function lib.NewSpellname(boss, name, slot, xc, yu, IsPlayer, t, layer, score, f
     score = score or 200000000
     layer = layer or LAYER_TOP + 446
     if not IsPlayer then t = nil end
-    return New(lib.spellname, boss, name, slot, score, layer, xc, yu, IsPlayer, t, font)
+    return New(lib.spellname, boss, name, slot, score, layer, xc, yu, IsPlayer, t, font, no_info)
 end
 
 
@@ -799,7 +799,7 @@ end
 ---符卡名（玩家符卡名及boss符卡名）
 lib.spellname = Class(object)
 
-function lib.spellname:init(b, name, slot, score, lay, xc, yu, IsPlayer, t, font)
+function lib.spellname:init(b, name, slot, score, lay, xc, yu, IsPlayer, t, font, no_info)
     self.x, self.y = 0, 0
     self.img = "img_void"
     self.layer = lay
@@ -861,6 +861,7 @@ function lib.spellname:init(b, name, slot, score, lay, xc, yu, IsPlayer, t, font
     self._alpha = 0
     self.talpha = 0
     self.talpha2 = 0
+    self.no_info = no_info
 end
 
 function lib.spellname:frame()
@@ -1039,15 +1040,17 @@ function lib.spellname:render()
             --x = x - 1
             --y = y + 1
             --RenderTTF("pixel", "Bonus                           History", aicx - 55, aicx - 55, aicy, aicy, Color(255, 0, 255, 255), "right")
-            if shift then
-                Render("Muki_AiC_spell_history", x - 58 + self.xp, y - 18 + self.yp, 0, 0.5)
-            else
-                Render("Muki_AiC_spell_history", x - 38 + self.xp, y - 18 + self.yp, 0, 0.5)
+            if not (self.IsPlayer or self.no_info) then
+                if shift then
+                    Render("Muki_AiC_spell_history", x - 58 + self.xp, y - 18 + self.yp, 0, 0.5)
+                else
+                    Render("Muki_AiC_spell_history", x - 38 + self.xp, y - 18 + self.yp, 0, 0.5)
+                end
+                Render("Muki_AiC_spell_bonus", x - 151 + self.xp, y - 18 + self.yp, 0, 0.5)
             end
-            Render("Muki_AiC_spell_bonus", x - 151 + self.xp, y - 18 + self.yp, 0, 0.5)
 
 
-            if not self.IsPlayer and (not (self.death) or (self.death and IsValid(b) and b.is_exploding and self.timer <= 0)) then
+            if not (self.IsPlayer or self.no_info) and (not (self.death) or (self.death and IsValid(b) and b.is_exploding and self.timer <= 0)) then
                 x = x + xm + 4 + self.xp
                 y = y + ym + self.yp
                 aicx = aicx + xm + 4 + self.xp - 5

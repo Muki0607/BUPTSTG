@@ -10,9 +10,9 @@ lib.replay = Class(object)
 ---@param page number @初始页数
 function lib.replay:init(pos, page)
     self.class = lib.replay
-    self.num = 6 --菜单编号
+    self.num = 5 --菜单编号
     self.group = GROUP_GHOST
-    self.layer = LAYER_TOP
+    self.layer = LAYER_TOP + self.num
     self.level = 1 --self.state
     self.text1 = {} --self.state1Text
     self.text2 = {} --self.state2Text
@@ -34,7 +34,7 @@ function lib.replay:init(pos, page)
     self.bound = false
     self.t = 8
     self.wait = 30
-    self.alpha = 0
+    self.alpha = 255
     self.lname = 8 --REPLAY_USER_NAME_MAX
     self.format1 = "%02d %s %" .. self.lname .. "s %012d"
     self.format2 = "%02d ----/--/-- --:--:-- %" .. self.lname .. "s %012d"
@@ -242,6 +242,12 @@ end
 
 function lib.replay:render()
     SetViewMode('ui')
+    ---菜单背景与标题
+    local _w, _h = GetTextureSize("general_bg")
+    local s = 1.25
+    Render('general_bg', self.x, self.y, 0, screen.width / _w * s, screen.height / _h * s)
+    DrawText('menuttf', 'Replay', self.x, self.y + 190, 1.5,
+        Color(self.alpha, 47, 45, 42), Color(self.alpha, 255, 255, 255), 'centerpoint')
     local _color = color
     if self.level == 1 then
         local x, y, text, pos, timer = self.x, self.y, sp.copy(self.text1), self.pos1, self.timer
@@ -255,9 +261,9 @@ function lib.replay:render()
             self.DrawRepInfo(i, xos, yos, lineh, x, y, text, pos, timer)
         end
 
-        --普莉姆拉老师！
-        SetImageState('Muki_AiC_menu_replay_Primula', '', color(COLOR_WHITE, self.alpha))
-        Render('Muki_AiC_menu_replay_Primula', x + 150, y, 0, -0.5, 0.5)
+        --文文！
+        --SetImageState('menu_replay_Aya', '', color(COLOR_WHITE, self.alpha))
+        --Render('menu_replay_Aya', x + 150, y, 0, -0.5, 0.5)
 
         lib.DrawTips(self, { l10n.ui.tips.play_replay, l10n.ui.tips.back })
         

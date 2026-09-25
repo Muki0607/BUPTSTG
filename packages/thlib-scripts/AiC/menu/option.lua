@@ -7,7 +7,9 @@ lib.option = Class(object)
 
 function lib.option:init()
     self.class = lib.option
-    self.num = 8
+    self.num = 7
+    self.group = GROUP_GHOST
+    self.layer = LAYER_TOP + self.num
     self.x = screen.width * 0.5
     self.y = screen.height * 0.5
     self.x = self.x - screen.width
@@ -16,7 +18,7 @@ function lib.option:init()
     self.pos1 = 1
     self.pos2 = 1
     self.t = 16
-    self.l1 = 16
+    self.l1 = 12
     self.l2_key = 9
     self.l2_keysys = 5
     self.l2 = self.l2_key + self.l2_keysys
@@ -67,16 +69,12 @@ function lib.option:init()
             { o.BGM, 21, { 1, 5, 9, 13, 17, 21 } },
             { o.autofire, l10n.general.terms.off, l10n.general.terms.on },
             { o.autoslow, l10n.general.terms.off, l10n.general.terms.on },
-            { o.autododge, l10n.general.terms.off, l10n.general.terms.on },
-            { o.opening_se, o.old_version, o.new_version },
-            { o.title_bgm, o.normal_version, o.full_version },
-            { o.sfwmode, l10n.general.terms.on, o.supersafe },
             o.key_binding,
             o.reset,
             o.save_and_quit }
         self.text2 = o.text2
         self.text3 = o.text3
-        self.setname = { 'username', 'locale', 'resx', 'windowed', 'vsync', 'sevolume', 'bgmvolume', 'autofire', 'autoslow', 'autododge', 'newopening', 'newbgm', 'sfwmode' }
+        self.setname = { 'username', 'locale', 'resx', 'windowed', 'vsync', 'sevolume', 'bgmvolume', 'autofire', 'autoslow' }
 
         --实际为在下面读取l10n中已加载语言
         local lang = {
@@ -104,50 +102,33 @@ function lib.option:init()
                 self.pos_res = k
             end
         end
-        for _, v in ipairs({ 'autofire', 'autoslow', 'autododge', 'newopening', 'newbgm' }) do 
+        for _, v in ipairs({ 'autofire', 'autoslow', }) do 
             self.setting[v] = self.setting[v] or false
         end
-        self.setting.sfwmode = self.setting.sfwmode or true
     end
 
     self.flyin = function()
         self.locked = true
-        --self.wait = self.t
-        self.x = self.default_x + screen.width * 0.25
-        self.y = self.default_y
+        --alpha统一由切换菜单时置为255，这里不再做渐入
         task.New(self, function()
             task.Wait(self.t / 4)
-            for i = 1, self.t * 3 / 4 do
-                self.alpha = i * 255 / (self.t * 3 / 4)
-                task.Wait()
-            end
             self.locked = false
-        end)
-        task.New(self, function()
-            task.MoveTo(self.default_x, self.y, self.t, 2)
         end)
     end
 
     self.flyout = function(dir)
         self.locked = true
-        --self.wait = self.t
-        task.New(self, function()
-            for i = 1, self.t do
-                self.alpha = 255 - i * 255 / self.t
-                task.Wait()
-            end
-        end)
         if dir == 1 then
             task.New(self, function()
-                --task.MoveTo(self.x, screen.height * 1.5, self.t, 2)
                 task.MoveTo(self.x, self.y + 20, self.t, 2)
             end)
         elseif dir == -1 then
             task.New(self, function()
-                --task.MoveTo(self.x, screen.height * -0.5, self.t, 2)
                 task.MoveTo(self.x, self.y - 20, self.t, 2)
             end)
         elseif dir == 'quit' then
+            --本次是直接退回上一级菜单，不会再走flyin把它解锁，所以这里必须解开
+            self.locked = false
             lib.PopMenuStack()
         end
     end
@@ -253,7 +234,7 @@ function lib.option:frame()
             elseif KeyIsDown('left') then
                 self.wait = 8
                 --又是写死……哎
-                if self.pos1 == 1 or (self.pos1 == 2 and self.pos_locale == 1) or (self.pos1 == 6 and set.sevolume == 0) or (self.pos1 == 7 and set.bgmvolume == 0) or (self.pos1 == 13 and not set.sfwmode) then
+                if self.pos1 == 1 or (self.pos1 == 2 and self.pos_locale == 1) or (self.pos1 == 6 and set.sevolume == 0) or (self.pos1 == 7 and set.bgmvolume == 0) then
                     PlaySound('aic_setting_limited', 0.3)
                 else
                     PlaySound('aic_setting_scroll', 0.5)
@@ -275,18 +256,16 @@ function lib.option:frame()
                     set.sevolume = max(0, set.sevolume - 5)
                 elseif self.pos1 == 7 then
                     set.bgmvolume = max(0, set.bgmvolume - 5)
-                elseif self.pos1 == 13 and set.sfwmode then
-                    set.sfwmode = not set.sfwmode
                 else
                     for k, v in pairs(self.setname) do
-                        if self.pos1 == k and v ~= 'sfwmode' then
+                        if self.pos1 == k then
                             set[v] = not set[v]
                         end
                     end
                 end
             elseif KeyIsDown('right') then
                 self.wait = 8
-                if self.pos1 == 1 or (self.pos1 == 2 and self.pos_locale == self.lang_kt('len')) or (self.pos1 == 6 and set.sevolume == 100) or (self.pos1 == 7 and set.bgmvolume == 100) or (self.pos1 == 13 and set.sfwmode) then
+                if self.pos1 == 1 or (self.pos1 == 2 and self.pos_locale == self.lang_kt('len')) or (self.pos1 == 6 and set.sevolume == 100) or (self.pos1 == 7 and set.bgmvolume == 100) then
                     PlaySound('aic_setting_limited', 0.3)
                 else
                     PlaySound('aic_setting_scroll', 0.5)
@@ -308,11 +287,9 @@ function lib.option:frame()
                     set.sevolume = min(100, set.sevolume + 5)
                 elseif self.pos1 == 7 then
                     set.bgmvolume = min(100, set.bgmvolume + 5)
-                elseif self.pos1 == 13 and not set.sfwmode then
-                    set.sfwmode = not set.sfwmode
                 else
                     for k, v in pairs(self.setname) do
-                        if self.pos1 == k and v ~= 'sfwmode' then
+                        if self.pos1 == k then
                             set[v] = not set[v]
                         end
                     end
@@ -397,11 +374,17 @@ end
 
 function lib.option:render()
     SetViewMode('ui')
+    ---菜单背景与标题（option使用同名图片）
+    local _w, _h = GetTextureSize("option")
+    Render('option', self.x, self.y, 0, screen.width / _w, screen.height / _h)
+    DrawText('menuttf', 'Option', self.x, self.y + 190, 1.5,
+        Color(self.alpha, 47, 45, 42), Color(self.alpha, 255, 255, 255), 'centerpoint')
     --SetImageState('white', '', Color(150, 85, 76, 74))
     --RenderRect('white', 0, screen.width, 0, screen.height)
     SetImageState('Muki_AiC_square_empty', '', color(COLOR_WHITE, self.alpha))
     SetImageState('Muki_AiC_square_middle', '', color(COLOR_WHITE, self.alpha))
-    local d, x, y = 30, self.x - 30, self.y + screen.height * 0.45
+    --选项整体以菜单中心为基准排布（原来用了screen.height*0.45的整屏偏移，会把内容推出屏幕）
+    local d, x, y = 25, self.x - 30, self.y + 120
     local x1, x2 = x - screen.width * 0.4, x + screen.width * 0.1
     local lang = self.lang_kt
     local lang_square_offset = 5

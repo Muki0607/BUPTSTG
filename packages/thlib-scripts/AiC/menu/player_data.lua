@@ -9,9 +9,9 @@ lib.player_data = Class(object)
 ---@param scnum number @总符卡数
 function lib.player_data:init()
     self.class = lib.player_data
-    self.num = 12 --菜单编号
+    self.num = 11 --菜单编号
     self.group = GROUP_GHOST
-    self.layer = LAYER_TOP
+    self.layer = LAYER_TOP + self.num
     self.x = screen.width * 0.5
     self.y = screen.height * 0.5
     self.x = self.x + screen.width
@@ -20,14 +20,14 @@ function lib.player_data:init()
     self.bound = false
     self.t = 30
     self.wait = 30
-    self.alpha = 0
+    self.alpha = 255
     self.player_list = { "hifuu_player" }
     self.diff_list = { "Hard" }
     self.sc_list = aic.l10n[setting.locale].ui.sc_list
     self.data = nil
     self.playdata = nil
     self.posX = 1 --自机选择
-    self.posY = 1 --难度选择
+    self.posY = 3 --难度选择
     self.lX = #self.player_list
     self.lY = #self.diff_list
     self.lsc = 7 --总符卡数
@@ -118,8 +118,6 @@ function lib.player_data:init()
     end
 
     self.lpage = int(self.lsc / self.l) + 1 --总页数
-    self.GetData()
-    self.GetPlayData()
     lib.RegistMenu(self)
 end
 
@@ -127,6 +125,10 @@ function lib.player_data:frame()
     task.Do(self)
     --只有活跃的菜单才响应玩家操作
     if not lib.IsActive(self) then return end
+    if not self.init_flag then
+        self.GetData()
+        self.GetPlayData()
+    end
     self.wait = max(self.wait - 1, 0)
     if self.wait < 1 then
         local lastkey = GetLastKey()
@@ -145,39 +147,6 @@ function lib.player_data:frame()
         if KeyIsPressed('special') then
             self.is_SC_hist = not self.is_SC_hist
         end
-        if KeyIsDown('up') then
-            self.wait = self.t
-            if self.posY > 1 then
-                self.posY = self.posY - 1
-            else
-                self.posY = self.lY
-            end
-            PlaySound('select00', 0.3)
-        elseif KeyIsDown('down') then
-            self.wait = self.t
-            if self.posY < self.lY then
-                self.posY = self.posY + 1
-            else
-                self.posY = 1
-            end
-            PlaySound('select00', 0.3)
-        elseif KeyIsDown('left') then
-            self.wait = self.t
-            if self.posX > 1 then
-                self.posX = self.posX - 1
-            else
-                self.posX = self.lX
-            end
-            PlaySound('select00', 0.3)
-        elseif KeyIsDown('right') then
-            self.wait = self.t
-            if self.posX < self.lX then
-                self.posX = self.posX + 1
-            else
-                self.posX = 1
-            end
-            PlaySound('select00', 0.3)
-        end
         local key = { setting.keys.shoot, setting.keys.up, setting.keys.down,
             setting.keys.left, setting.keys.right }
         --有按键输入时进行一次刷新
@@ -195,7 +164,10 @@ end
 --真的是调参地狱，我不想再碰这玩意了
 function lib.player_data:render()
     SetViewMode('ui')
-    lib.DrawTips(self, { nil, l10n.ui.tips.back }, { l10n.ui.select_diff, l10n.ui.select_player })
+    ---菜单背景（player_data使用同名图片，标题已在图片上）
+    local _w, _h = GetTextureSize("player_data")
+    Render('player_data', self.x, self.y, 0, screen.width / _w, screen.height / _h)
+    lib.DrawTips(self, { nil, l10n.ui.tips.back })
     local x, y = self.x, self.y - 70
     local lineh = 20
     local yos = (self.l + 1) * lineh * 0.5
@@ -203,22 +175,11 @@ function lib.player_data:render()
     local data, playdata = self.data, self.playdata
     if playdata then
         local d = 25
-        local player = { l10n.general.character_names.reimu, l10n.general.character_names.marisa, l10n.general.character_names.sakuya, l10n.general.character_names.muki, l10n.general.character_names.nenyuki }
-        local player_co = { { 255, 136, 170 }, { 221, 221, 85 }, { 85, 204, 255 }, { 76, 231, 235 }, { 165, 164, 249 } }
-        DrawText('main_font_zh_cn', player[self.posX], x, y + 195, 1.25,
-            Color(self.alpha, unpack(player_co[self.posX])), nil, 'center')
-        DrawText('main_font_zh_cn', '<', x - d * 3.25 - d / 5 * sin(3 * self.timer),
-            y + 195, 1.25, color(COLOR_WHITE, self.alpha), nil, 'left')
-        DrawText('main_font_zh_cn', '>', x + d * 3.25 + d / 5 * sin(3 * self.timer),
-            y + 195, 1.25, color(COLOR_WHITE, self.alpha), nil, 'right')
+        DrawText('main_font_zh_cn', l10n.general.character_names.hifuu, x, y + 195, 1.25,
+            Color(self.alpha, 221, 221, 85), nil, 'center')
         
-        local diff = { "HARD" }
-        DrawText('main_font_zh_cn', diff[self.posY], x, y + 160, 1.25,
+        DrawText('main_font_zh_cn', "HARD", x, y + 160, 1.25,
             color(COLOR_WHITE, self.alpha), nil, 'center')
-        DrawText('main_font_zh_cn', '︿', x - 7, y + 150 + d / 2.25 + d / 7 * sin(3 * self.timer),
-            1, color(COLOR_WHITE, self.alpha), nil, 'bottom')
-        DrawText('main_font_zh_cn', '﹀', x - 7, y + 150 - d / 2.25 - d / 7 * sin(3 * self.timer),
-            1, color(COLOR_WHITE, self.alpha), nil, 'top')
         
         for k, v in ipairs({ l10n.ui.player_data.total_play_times, l10n.ui.player_data.play_time, l10n.ui.player_data.finish_times }) do
             DrawText('main_font_zh_cn', v, x - d * 1.25,
@@ -228,69 +189,27 @@ function lib.player_data:render()
         end
     end
     if data then
-        if self.lsc then --符卡数据渲染
-            local xos = { -275, -250, -80, -30, 130, 220 }
-            for i = 1 + self.l * (self.page - 1), self.l * self.page do
-                local co
-                if data[i][4] and data[i][4] > 0 then
-                    if data[i][3] > 0 then
-                        co = { 136, 136, 255 }
-                    else
-                        co = { 255, 255, 255 }
+        --列偏移按参考图重排：行号、机签、分数、时间、是否通关、处理落，各列留有足够宽度
+        local xos = { -300, -250, -30, 60, 210, 280 }
+        for i = 1, 10 do
+            for j = 0, 5 do
+                local align = 'left'
+                local text = data[i][j]
+                if j == 0 then
+                    text = i
+                    align = 'right'
+                elseif j == 1 then
+                    if tonumber(text) then
+                        text = string.format("%2d", tonumber(text))
                     end
-                else
-                    co = { 136, 136, 136 }
-                end
-                for j = 1, 4 do
-                    local align = 'left'
-                    local text = data[i][j]
-                    if j == 0 then
-                    elseif j == 1 then
-                    elseif j == 2 then
-                    elseif j == 3 then
+                elseif j == 2 then
+                    if tonumber(text) and tonumber(text) < 10000000000 then
+                        text = string.format("%9d", tonumber(text))
                     end
-                    DrawText("main_font_zh_cn", text,
-                        x + xos[1], y - i * lineh + yos + 25, 0.9, Color(self.alpha, unpack(co)), nil, 'vcenter', align)
+                    align = 'right'
                 end
-            end
-        else --游玩数据渲染
-            local xos = { -275, -250, -80, -30, 130, 220 }
-            --高级循环，小子
-            local _beg_r = co1[1]
-            local r = _beg_r
-            local _end_r = co2[1]
-            local _d_r = (_end_r - _beg_r) / (10 - 1)
-            local _beg_g = co1[2]
-            local g = _beg_g
-            local _end_g = co2[2]
-            local _d_g = (_end_g - _beg_g) / (10 - 1)
-            local _beg_b = co1[3]
-            local b = _beg_b
-            local _end_b = co2[3]
-            local _d_b = (_end_b - _beg_b) / (10 - 1)
-            for i = 1, 10 do
-                for j = 0, 5 do
-                    local align = 'left'
-                    local text = data[i][j]
-                    if j == 0 then
-                        text = i
-                        align = 'right'
-                    elseif j == 1 then
-                        if tonumber(text) then
-                            text = string.format("%2d", tonumber(text))
-                        end
-                    elseif j == 2 then
-                        if tonumber(text) and tonumber(text) < 10000000000 then
-                            text = string.format("%9d", tonumber(text))
-                        end
-                        align = 'right'
-                    end
-                    DrawText("main_font_zh_cn", text,
-                        x + xos[j + 1], y - i * lineh + yos + 25, 0.9, Color(self.alpha, r, g, b), nil, 'vcenter', align)
-                end
-                r = r + _d_r
-                g = g + _d_g
-                b = b + _d_b
+                DrawText("main_font_zh_cn", text,
+                    x + xos[j + 1], y - i * lineh + yos + 25, 0.9, Color(self.alpha, 255, 255, 255), nil, 'vcenter', align)
             end
         end
     end

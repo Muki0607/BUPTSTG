@@ -143,6 +143,7 @@ function hifuu_player:init(slot)
     self.water_max_radius  = 500 -- 水面最大作用半径（世界坐标，用于消弹与伤害范围）
     ---
     self.spellname         = { '以太「量子隧穿」', '境界「另一侧的月」' }
+    self.default_deathtime         = 15
 end
 
 -------------------------------------------------------
@@ -187,7 +188,7 @@ function hifuu_player:shoot()
                         if target.class.base.take_damage then
                             target.class.base.take_damage(target, 0.25)
                         end
-                        if target.hp > target.maxhp * 0.1 then
+                        if target.hp and target.maxhp and target.hp > target.maxhp * 0.1 then
                             PlaySound('damage00', 0.3, target.x / 1024)
                         else
                             PlaySound('damage01', 0.6, target.x / 1024)

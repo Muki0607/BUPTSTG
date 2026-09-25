@@ -13,22 +13,20 @@ function lib.title:init(pos, l)
     self.class = lib.title
     self.num = 2 --菜单编号
     self.group = GROUP_GHOST
-    self.layer = LAYER_TOP
+    self.layer = LAYER_TOP + self.num
     self.bound = false
     self.pos = pos or 1
     self.t = 30
     self.wait = 30
-    self.alpha = 0
+    self.alpha = 255
     --false时只显示Press to Start
     self.started = false
-    --是否处于活跃状态（用于从子菜单返回时重置等待）
-    self.was_active = false
     ----------------------------------------
     ---Press to Start → 菜单的过渡动画
     ---按下shoot后，Press to Start向下移动并渐隐，菜单选项向上移动并渐显，均在60帧内线性完成
-    self.anim_time = 15 --动画总帧数
-    self.anim_frame = 0 --0表示Press to Start状态，1表示菜单已完全展开
-    self.pts_fade_dist = screen.height / 10 --Press to Start向下移动的距离
+    self.anim_time = 15                      --动画总帧数
+    self.anim_frame = 0                      --0表示Press to Start状态，1表示菜单已完全展开
+    self.pts_fade_dist = screen.height / 10  --Press to Start向下移动的距离
     self.menu_rise_dist = screen.height / 10 --菜单选项向上移动的距离
     ----------------------------------------
     ---菜单坐标
@@ -50,27 +48,28 @@ function lib.title:init(pos, l)
     }
     self.jump =
     {
-        { lib.pre_start, {'down'} },
+        { lib.pre_start,   { 'down' } },
+        --练习模式并入pre_start，仅多传一个practice标志
         {
-            lib.practice, 
-            {'down', 'left'},
-            function() practice = 'stage' end
+            lib.pre_start,
+            { 'down' },
+            function() lib.SetPractice('stage') end
         },
         {
             lib.spell_practice,
-            {'down', 'right'},
-            function() practice = 'spell' end
+            { 'down', 'right' },
+            function() lib.SetPractice('spell') end
         },
-        { lib.replay, {'left', 'up'} },
-        { lib.player_data, {'right'} },
-        { lib.music_room, {'up'} },
-        { lib.option, {'left'} },
-        { lib.manual, {'left', 'up'} },
+        { lib.replay,      { 'left', 'up' } },
+        { lib.player_data, { 'right' } },
+        { lib.music_room,  { 'up' } },
+        { lib.option,      { 'left' } },
+        { lib.manual,      { 'right', 'up' } },
         {},
     }
     self.l = l or #self.jump
     --尚未完成的菜单（进入时会提示无效）
-    self.invalid_menu = { 2, 3 }
+    self.invalid_menu = {}
     lib.RegistMenu(self)
 end
 
@@ -78,13 +77,7 @@ function lib.title:frame()
     task.Do(self)
     --只有活跃的菜单才响应玩家操作
     if not lib.IsActive(self) then
-        self.was_active = false
         return
-    end
-    --从子菜单返回时重置等待，否则会一直不响应操作
-    if not self.was_active then
-        self.was_active = true
-        self.wait = 10
     end
 
     self.wait = max(self.wait - 1, 0)
@@ -180,7 +173,8 @@ function lib.title:render()
     ---Press to Start：按shoot后向下移动并渐隐
     local pts_alpha = (1 - p) * self.alpha
     DrawText('menuttf', 'Press to Start', self.x, self.y - p * self.pts_fade_dist - 150, 2.5,
-        Color(pts_alpha * abs(sin(3 * self.timer)), 47, 45, 42), Color(pts_alpha * abs(sin(3 * self.timer)), 255, 255, 255), 'centerpoint')
+        Color(pts_alpha * abs(sin(3 * self.timer)), 47, 45, 42),
+        Color(pts_alpha * abs(sin(3 * self.timer)), 255, 255, 255), 'centerpoint')
     ---菜单选项：从下方向上移动并渐显
     local menu_alpha = p * self.alpha
     local d, x, y = 30, self.x + 10, self.y - screen.height * 0.2
@@ -193,7 +187,11 @@ function lib.title:render()
                 Color(menu_alpha, 47, 45, 42), Color(menu_alpha, 255, 255, 255))
         end
     end
-    DrawText('main_font_zh_cn', "v" .. aic.version, 5, 15, 0.75,
-        color(COLOR_WHITE, menu_alpha), nil, "left")
+    --版本号是固定在窗口左下角的全局UI，不随菜单坐标移动；
+    --固定不动的内容只在活跃时渲染，否则会叠在别的菜单上
+    if lib.IsActive(self) then
+        DrawText('main_font_zh_cn', "v" .. aic.version, 5, 15, 0.75,
+            color(COLOR_WHITE, menu_alpha), nil, "left")
+    end
     SetViewMode('world')
 end

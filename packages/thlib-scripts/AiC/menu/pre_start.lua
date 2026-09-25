@@ -13,11 +13,11 @@ function lib.pre_start:init()
     self.class = lib.pre_start
     self.num = 3 --菜单编号
     self.group = GROUP_GHOST
-    self.layer = LAYER_TOP
+    self.layer = LAYER_TOP + self.num
     self.bound = false
     self.t = 30
     self.wait = 30
-    self.alpha = 0
+    self.alpha = 255
     self.l = 4
     self.pos = 1
     ----------------------------------------
@@ -26,6 +26,8 @@ function lib.pre_start:init()
     self.x, self.y = lib.GetScreenCenter()
     self.y = self.y - screen.height
     self.default_x, self.default_y = self.x, self.y
+    --每次进入时清掉上一次残留的练习标志（从title进入时若选Practice会重新设置）
+    lib.SetPractice(nil)
     lib.RegistMenu(self)
 end
 
@@ -35,16 +37,40 @@ function lib.pre_start:frame()
     if not lib.IsActive(self) then return end
     self.wait = max(self.wait - 1, 0)
     if self.wait < 1 then
-        --开始游戏
+        --开始游戏（或在练习模式下开始练习）
         if KeyIsPressed('shoot') or GetKeyState(KEY.S) then
             self.wait = 114514
             PlaySound('ok00', 0.3)
-            lib.StartGame()
+            lstg.var.player_name = player_list[scoredata.player_select][2]
+            lstg.var.rep_player = player_list[scoredata.player_select][3]
+            local is_practice = lib.GetPractice() == 'stage'
+            New(tasker, function()
+                lib.BgmFadeOut(aic.misc.GetCurrentBGM(), 59)
+                if _debug.skip_loading or GetKeyState(KEY.S) then
+                    New(mask_fader, 'close')
+                    task.Wait(30)
+                    New(mask_fader, 'open')
+                else
+                    New(aic.misc.loading_scene)
+                    task.Wait(270)
+                    New(mask_fader, 'open')
+                end
+                --Hard是本项目目前唯一的关卡组（后续难度待添加）
+                local group = stage.groups.Hard or stage.groups[1]
+                if is_practice then
+                    --关卡练习：本项目目前只有一个关卡，直接练习它
+                    stage.group.PracticeStart(group[1])
+                else
+                    stage.group.Start(group)
+                end
+            end)
         end
         --返回标题
         if KeyIsPressed('spell') or aic.input.CheckLastKey('menu') then
             PlaySound('cancel00', 0.3)
             self.wait = 114514
+            --返回时重设练习标志，避免影响下次选择
+            lib.SetPractice(nil)
             lib.PopMenuStack()
         end
         --伪难度选择（实际并没有区别）

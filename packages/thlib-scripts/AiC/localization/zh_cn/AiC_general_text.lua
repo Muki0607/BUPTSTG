@@ -18,7 +18,7 @@ The code in `<>` is text effect. To change text effect, see `AiC_text_effect.lua
 
 local lib = aic.l10n.zh_cn.general
 
-lib.title = "东方梦摇篮 ~ Lodestar of Oriental Paradise"
+lib.title = "秘封采访之旅 ~ Yuri interview with supernatural club."
 
 lib.terms = {
     yes = "是",
@@ -38,12 +38,7 @@ lib.punctions = {
 }
 
 lib.character_names = {
-    reimu = "博丽 灵梦",
-    marisa = "雾雨 魔理沙",
-    sakuya = "十六夜 咲夜",
-    muki = "小林 无记",
-    nenyuki = "千幻 念雪",
-    noel = "诺艾儿・柯涅尔"
+    hifuu = '秘封组'
 }
 
 lib.difficulty = {

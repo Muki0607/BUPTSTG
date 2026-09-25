@@ -608,7 +608,7 @@ function _play_music(name, ptime, bgmname)
     LoadMusicRecord(name)
     PlayMusic(name, 1.0, ptime)
     local n = tonumber(string.match(name, 'bgm(%d+)'))
-    if n and bgmname then New(aic.misc.bgm_name, n) end
+    if n and n ~= 0 and bgmname then New(aic.misc.bgm_name, n) end
 end
 function _pause_music()
     local _, bgm = EnumRes('bgm')

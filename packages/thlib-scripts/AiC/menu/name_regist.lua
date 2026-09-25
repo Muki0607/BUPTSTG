@@ -9,9 +9,9 @@ lib.name_regist = Class(object)
 
 function lib.name_regist:init()
     self.class = lib.name_regist
-    self.num = 10 --菜单编号
+    self.num = 9 --菜单编号
     self.group = GROUP_GHOST
-    self.layer = LAYER_TOP
+    self.layer = LAYER_TOP + self.num
     self.posX = 0
     self.posY = 0
     self.x = screen.width * 0.5
@@ -22,7 +22,7 @@ function lib.name_regist:init()
     self.bound = false
     self.t = 8
     self.wait = 30
-    self.alpha = 0
+    self.alpha = 255
     self.bound = false
     self.stages = lib.last_replay
     self.finish = lib.last_replay_finish
@@ -42,6 +42,10 @@ function lib.name_regist:init()
     function self.GetScore()
         ext.replay.RefreshReplay() --这个不能忘，否则读到的就是上次的rep了
         local slot = ext.replay.GetSlot(0)
+        --所有菜单在游戏启动时就会创建，此时可能还没有任何rep，必须判空
+        if not slot then
+            return { '', 0, '----/--/-- --:--:--', 'Stage -', '---%' }, nil
+        end
         -- 使用第一关的时间作为录像时间
         local date = '----/--/-- --:--:--'
         if slot.stages[1] then
@@ -70,16 +74,11 @@ function lib.name_regist:init()
         return { '', totalScore, date, stage_num, delay }, slot --保存rep时会用到的当前rep
         --{ '--------', 1000000, '----/--/-- --:--:--', 'Stage -', '---%' }
     end
-    local score
-    score, self.slot = self.GetScore()
-    self.data, self.score_pos = lib.SavePlayerData(score)
-    if self.score_pos == 'XX' then self.data.XX = score end
-
+    
     ---更新名称
     function self.UpdateName()
         self.data[self.score_pos][1] = self.name
     end
-    self.UpdateName()
 
     ---获取键盘
     ---好暴力的写法
@@ -106,6 +105,17 @@ function lib.name_regist:init()
         end
         return _keyboard
     end
+
+    function self.initialize()
+        self.init_flag = true
+        local score
+        score, self.slot = self.GetScore()
+        self.data, self.score_pos = lib.SavePlayerData(score)
+        if self.score_pos == 'XX' then self.data.XX = score end
+        self.UpdateName()
+        _play_music('bgm0', nil, false)
+    end
+
     self.keyboard = self.GetKeyboard()
     lib.RegistMenu(self)
 end
@@ -114,10 +124,10 @@ function lib.name_regist:frame()
     task.Do(self)
     --只有活跃的菜单才响应玩家操作
     if not lib.IsActive(self) then return end
-    ---疮痍曲
-    if not self.music_flag then
-        _play_music('bgm20', nil, false)
-        self.music_flag = true
+    ---初始化
+    if not self.init_flag then
+        self.initialize()
+        self.init_flag = true
     end
     self.wait = max(self.wait - 1, 0)
     self.posX = (self.posX + 13) % 13
@@ -189,6 +199,11 @@ end
 
 function lib.name_regist:render()
     SetViewMode('ui')
+    ---菜单背景与标题
+    local _w, _h = GetTextureSize("general_bg")
+    Render('general_bg', self.x, self.y, 0, screen.width / _w, screen.height / _h)
+    DrawText('menuttf', 'Name Regist', self.x, self.y + 190, 1.5,
+        Color(self.alpha, 47, 45, 42), Color(self.alpha, 255, 255, 255), 'centerpoint')
     lib.DrawTips(self, { l10n.ui.tips.input_char, l10n.ui.tips.delete_char })
 
     -- 绘制键盘
@@ -196,7 +211,8 @@ function lib.name_regist:render()
     SetFontState("replay", "", Color(255 * self.alpha, unpack(ui.menu.unfocused_color)))
     --是谁写的在Lua里还从0开始数啊（恼）
     --担心哪里会有逻辑出问题就没改了
-    local w, h, _y = 18, 15, self.y - screen.height - 45
+    --键盘相对菜单中心定位（不能再用screen.height整体偏移，否则进入别的菜单时会错位飘进屏幕）
+    local w, h, _y = 18, 15, self.y - 45
     local co
     for x = 0, 12 do
         for y = 0, 6 do    
@@ -227,41 +243,21 @@ function lib.name_regist:render()
         end
     end
     
-    local x, y = self.x, self.y - screen.height + 90
+    --名字与成绩数据同样相对菜单中心定位
+    local x, y = self.x, self.y + 90
     local lineh = 20
     local yos = (self.l + 1) * lineh * 0.5
     local co1, co2 = { 247, 225, 158 }, { 166, 129, 193 }
     local data = self.data
-    local player = { l10n.general.character_names.reimu, l10n.general.character_names.marisa,
-        l10n.general.character_names.sakuya, l10n.general.character_names.muki, l10n.general.character_names.nenyuki }
-    local player_co = { { 255, 136, 170 }, { 221, 221, 85 }, { 85, 204, 255 }, { 76, 231, 235 }, { 165, 164, 249 } }
-    --咲字渲不出来
-    if self._posX == 3 and (setting.locale == 'zh_cn' or setting.locale == 'zh_tc') then
-        DrawText('sc_name', "咲", x + 20, y + 198, 1.3,
-            Color(self.alpha, unpack(player_co[self._posX])), nil, 'center')
-    end
-    DrawText('main_font_zh_cn', player[self._posX], x, y + 195, 1.25,
-        Color(self.alpha, unpack(player_co[self._posX])), nil, 'center')
+    DrawText('main_font_zh_cn', l10n.general.character_names.hifuu, x, y + 195, 1.25,
+        Color(self.alpha, 221, 221, 85), nil, 'center')
     
-    local diff = { "HARD" }
-    DrawText('main_font_zh_cn', diff[self._posY], x, y + 165, 1.25,
+    DrawText('main_font_zh_cn', "HARD", x, y + 165, 1.25,
         color(COLOR_WHITE, self.alpha), nil, 'center')
     y = y + 25
     if data then
         local xos = { -275, -250, -80, -30, 130, 220 }
         --高级循环，小子
-        local _beg_r = co1[1]
-        local r = _beg_r
-        local _end_r = co2[1]
-        local _d_r = (_end_r - _beg_r) / (10 - 1)
-        local _beg_g = co1[2]
-        local g = _beg_g
-        local _end_g = co2[2]
-        local _d_g = (_end_g - _beg_g) / (10 - 1)
-        local _beg_b = co1[3]
-        local b = _beg_b
-        local _end_b = co2[3]
-        local _d_b = (_end_b - _beg_b) / (10 - 1)
         for i = 1, 10 do
             if not data[i] then return end
             for j = 0, 5 do
@@ -283,15 +279,12 @@ function lib.name_regist:render()
                 end
                 if i == self.score_pos then
                     DrawText("main_font_zh_cn", text, x + xos[j + 1],
-                        y - i * lineh + yos + 25, 0.9, Color(self.alpha, r, g, b), nil, align)
+                        y - i * lineh + yos + 25, 0.9, Color(self.alpha, 255, 255, 255), nil, align)
                 else
                     DrawText("main_font_zh_cn", text, x + xos[j + 1],
-                        y - i * lineh + yos + 25, 0.9, Color(self.alpha, r - 100, g - 100, b - 100), nil, align)
+                        y - i * lineh + yos + 25, 0.9, Color(self.alpha, 155, 155, 155), nil, align)
                 end
             end
-            r = r + _d_r
-            g = g + _d_g
-            b = b + _d_b
         end
         if self.score_pos == 'XX' then
             local i = 'XX'
@@ -314,7 +307,7 @@ function lib.name_regist:render()
                     align = 'right'
                 end
                 DrawText("main_font_zh_cn", text, x + xos[j + 1],
-                    y - 11 * lineh + yos + 25, 0.9, Color(self.alpha, r, g, b), nil, align)
+                    y - 11 * lineh + yos + 25, 0.9, Color(self.alpha, 255, 255, 255), nil, align)
             end
         end
     end

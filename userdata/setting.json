@@ -1,39 +1,19 @@
 {
-	"last_mod": "Test",
-	"mod": "Test",
-	"newbgm": false,
-	"autofire": false,
-	"nosplash": true,
-	"joyblindarea": 0.2,
-	"autoslow": false,
-	"sfwmode": true,
-	"autododge": false,
-	"newopening": false,
-	"username": "Muki",
 	"windowed": true,
-	"locale": "zh_cn",
+	"resx": 1280,
 	"resy": 960,
 	"vsync": false,
-	"keys": {
-		"left": 37,
-		"right": 39,
-		"slow": 16,
-		"up": 38,
-		"down": 40,
-		"special": 67,
-		"shoot": 90,
-		"spell": 88
-	},
+	"sevolume": 25,
 	"bgmvolume": 25,
 	"keys2": {
+		"up": 101,
+		"down": 98,
 		"left": 97,
 		"right": 99,
 		"slow": 65,
-		"up": 101,
-		"down": 98,
-		"special": 70,
 		"shoot": 83,
-		"spell": 68
+		"spell": 68,
+		"special": 70
 	},
 	"keysys": {
 		"repfast": 17,
@@ -42,23 +22,43 @@
 		"snapshot": 36,
 		"retry": 82
 	},
-	"sevolume": 25,
-	"resx": 1280,
 	"joysticks": {
+		"up": 1,
+		"down": 2,
 		"left": 4,
 		"right": 8,
 		"slow": 8192,
-		"up": 1,
-		"down": 2,
-		"special": 32768,
 		"shoot": 16384,
-		"spell": 4096
+		"spell": 4096,
+		"special": 32768
 	},
 	"joysticksys": {
-		"retry": 256,
-		"repfast": 64,
 		"menu": 16,
-		"snapshot": 32
+		"snapshot": 32,
+		"repfast": 64,
+		"retry": 256
 	},
-	"timezone": 8
+	"mod": "BUPTSTG",
+	"last_mod": "BUPTSTG",
+	"username": "Muki",
+	"nosplash": true,
+	"autododge": false,
+	"autofire": false,
+	"sfwmode": true,
+	"newbgm": false,
+	"autoslow": false,
+	"newopening": false,
+	"locale": "zh_cn",
+	"joyblindarea": 0.2,
+	"timezone": 8,
+	"keys": {
+		"up": 38,
+		"down": 40,
+		"left": 37,
+		"right": 39,
+		"slow": 16,
+		"shoot": 90,
+		"spell": 88,
+		"special": 67
+	}
 }

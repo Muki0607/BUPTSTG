@@ -9,9 +9,9 @@ lib.save_replay = Class(object)
 ---@param rep_saved boolean @是否已保存录像
 function lib.save_replay:init()
     self.class = lib.save_replay
-    self.num = 11 --菜单编号
+    self.num = 10 --菜单编号
     self.group = GROUP_GHOST
-    self.layer = LAYER_TOP
+    self.layer = LAYER_TOP + self.num
     self.level = 1
     self.text1 = {} --self.state1Text
     self.text3 = {} --额外rep信息
@@ -31,7 +31,7 @@ function lib.save_replay:init()
     self.bound = false
     self.t = 8
     self.wait = 30
-    self.alpha = 0
+    self.alpha = 255
     self.lname = 8 --REPLAY_USER_NAME_MAX
     self.format1 = "%02d %s %" .. self.lname .. "s %012d"
     self.format2 = "%02d ----/--/-- --:--:-- %" .. self.lname .. "s %012d"
@@ -286,15 +286,20 @@ end
 
 function lib.save_replay:render()
     SetViewMode('ui')
+    ---菜单背景与标题
+    local _w, _h = GetTextureSize("general_bg")
+    Render('general_bg', self.x, self.y, 0, screen.width / _w, screen.height / _h)
+    DrawText('menuttf', 'Save Replay', self.x, self.y + 190, 1.5,
+        Color(self.alpha, 47, 45, 42), Color(self.alpha, 255, 255, 255), 'centerpoint')
     local _color = color
     local x, y, text, pos, timer = self.x, self.y, sp.copy(self.text1), self.pos1, self.timer
     local lineh = 15
     local xos = { -300, -240, -180, -80, -20, 40, 80 }
     local yos = (self.l + 1) * lineh * 0.5 + 30
 
-    --普莉姆拉老师！
-    SetImageState('Muki_AiC_menu_replay_Primula', '', color(COLOR_WHITE, self.alpha))
-    Render('Muki_AiC_menu_replay_Primula', x + 150, y, 0, -0.5, 0.5)
+    --文文！
+    --SetImageState('menu_replay_Aya', '', color(COLOR_WHITE, self.alpha))
+    --Render('menu_replay_Aya', x + 150, y, 0, -0.5, 0.5)
 
     if self.level == 1 then
         lib.DrawTips(self, { l10n.ui.tips.select_save_pos, l10n.ui.tips.cancel_save_rep }, { l10n.ui.tips.move, l10n.ui.tips.page_up_down })

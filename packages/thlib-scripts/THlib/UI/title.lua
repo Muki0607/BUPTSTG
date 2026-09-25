@@ -19,7 +19,7 @@ function stage_init:render()
 end
 
 --MusicRecord("menu", 'THlib/music/luastg 0.08.540 - 1.27.800.ogg', 87.8, 79.26)
-MusicRecord("spellcard", 'THlib/music/spellcard.ogg', 75, 0xc36e80 / 44100 / 4)
+--MusicRecord("spellcard", 'THlib/music/spellcard.ogg', 75, 0xc36e80 / 44100 / 4)
 
 
 --重写标题菜单，替代原先基于simple_menu的标题菜单
@@ -70,7 +70,7 @@ function stage_menu:init()
     end
     ]]
 
-    _play_music('bgm0', nil, false)
+    _play_music('bgm1', nil, false)
 end
 
 function stage_menu:render()
@@ -316,7 +316,7 @@ if _debug.old_title then
             --延迟几帧加载bgm避免奇怪的黑块问题--然并乱，草死
             task.Wait(1)
             --LoadMusicRecord('menu')
-            _play_music('bgm0', nil, false)
+            _play_music('bgm1', nil, false)
         end)
 
         menu_list = { menu_title, menu_player_select, menu_difficulty_select, menu_replay_loader, menu_replay_saver,

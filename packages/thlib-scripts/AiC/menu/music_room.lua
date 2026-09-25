@@ -59,9 +59,9 @@ lib.music_room = Class(object)
 
 function lib.music_room:init(pos, l)
     self.class = lib.music_room
-    self.num = 7 --菜单编号
+    self.num = 6 --菜单编号
     self.group = GROUP_GHOST
-    self.layer = LAYER_TOP
+    self.layer = LAYER_TOP + self.num
     self.pos = pos or 1
     self.prepos1 = self.pos --前一个选择
     self.prepos2 = self.pos --前前一个选择
@@ -82,22 +82,15 @@ function lib.music_room:init(pos, l)
     self.bound = false
     self.t = 8
     self.wait = 30
-    self.alpha = 0
+    self.alpha = 255
     self.text_alpha = 255
-    self.lbgm = l or 21 --总bgm数
-    if aic.DLC or _debug._debug then self.lbgm = 30 end --DLC扩充曲包
-    self.l = 10 --一页显示bgm数
+    self.lbgm = 4 --总bgm数
+    self.l = 4 --一页显示bgm数
     self.debug = _debug.music_room_debug
-    --初始化，由于文本文件在THlib加载完成前不会加载，需要等到游戏打开后再执行
-    function self.Initialize()
-        self.init_sign = true
-        local text = l10n.ui.music_room_text
-        self.text1 = text.title
-        self.text2 = text.comment
-        self.text3 = text.warn1
-        self.text4 = text.warn2
-        self.text5 = text.warn3
-    end
+    local text = aic.l10n[setting.locale].ui.music_room_text
+    self.text1 = text.title
+    self.text2 = text.comment
+    self.text3 = text.warn1
     ---检查bgm是否播放过
     ---@param num number @要检测的bgm编号
     function self.CheckRecord(num)
@@ -110,7 +103,6 @@ function lib.music_room:frame()
     task.Do(self)
     --只有活跃的菜单才响应玩家操作
     if not lib.IsActive(self) then return end
-    if not self.init_sign then self.Initialize() end
     self.wait = max(self.wait - 1, 0)
     self.curr_bgm = aic.misc.GetCurrentBGM() or self.curr_bgm --当前播放bgm，若暂停则为暂停前播放bgm
     if self.playing then
@@ -129,45 +121,25 @@ function lib.music_room:frame()
             self.textpos = self.pos
             if self.CheckRecord(self.pos) or self.warn1 then
                 self.warn1 = false
-                if self.pos == 27 then
-                    if self.warn2 then
-                        self.warn2 = false
-                        task.New(self, function()
-                            lib.SetBGMVolume(setting.bgmvolume)
-                            TryExcept(function()
-                                    _play_music('bgm' .. self.pos, nil, false)
-                                    self.playing = true
-                                    self.music_pos = 0
-                                end,
-                                { [''] = pass })
-                            for t = 1, 30 do
-                                self.text_alpha = 255 / 30 * t
-                            end
-                        end)
-                    else
-                        self.warn2 = true
+                task.New(self, function()
+                    lib.SetBGMVolume(setting.bgmvolume)
+                    TryExcept(function()
+                            _play_music('bgm' .. self.pos, nil, false)
+                            self.playing = true
+                            self.music_pos = 0
+                        end,
+                        { [''] = pass })
+                    for t = 1, 30 do
+                        self.text_alpha = 255 / 30 * t
                     end
-                else
-                    task.New(self, function()
-                        lib.SetBGMVolume(setting.bgmvolume)
-                        TryExcept(function()
-                                _play_music('bgm' .. self.pos, nil, false)
-                                self.playing = true
-                                self.music_pos = 0
-                            end,
-                            { [''] = pass })
-                        for t = 1, 30 do
-                            self.text_alpha = 255 / 30 * t
-                        end
-                    end)
-                end
+                end)
             else
                 self.warn1 = true
             end
         elseif KeyIsDown('up') then
             self.wait = self.t
             PlaySound('select00', 0.3)
-            if self.pos > 0 then
+            if self.pos > 1 then
                 self.prepos2 = self.prepos1
                 self.prepos1 = self.pos
                 self.pos = self.pos - 1
@@ -208,8 +180,12 @@ end
 
 function lib.music_room:render()
     SetViewMode('ui')
+    ---菜单背景与标题（music_room使用同名图片）
+    local w, h = GetTextureSize("music_room")
+    Render('music_room', self.x, self.y, 0, screen.width / w, screen.height / h)
     lib.DrawTips(self, { l10n.ui.tips.play_music, l10n.ui.tips.back, l10n.ui.tips.pause_continue_music }, { l10n.ui.tips.select_music })
     local d, x, y, text1 = 20, self.x - 260, self.y + 110, self.text1
+    local dx = 150
     for i = 1, self.l do
         local pos, text = i + self.headpos - 1
         local title
@@ -218,65 +194,38 @@ function lib.music_room:render()
         else
             title = string.rep(l10n.general.terms.unknown, 3)
         end
-        if pos < 10 then
-            text = 'No.　' .. pos .. '　' .. title
-        else
-            text = 'No.  ' .. pos .. '　' .. title
-        end
+        text = 'No.　' .. pos .. '　' .. title
         if pos == self.pos then
-            DrawText("main_font_zh_cn", text, x - 10, y + (2.5 - i) * d, 0.9,
+            DrawText("main_font_zh_cn", text, x + dx - 10, y + (2.5 - i) * d, 0.9,
                 Color(self.alpha, 223, 223, 103), color(COLOR_BLACK, self.alpha))
         elseif pos == self.prepos1 then
-            DrawText("main_font_zh_cn", text, x, y + (2.5 - i) * d, 0.9,
+            DrawText("main_font_zh_cn", text, x + dx, y + (2.5 - i) * d, 0.9,
                 Color(self.alpha, 154, 154, 129), color(COLOR_BLACK, self.alpha))
         elseif pos == self.prepos2 then
-            DrawText("main_font_zh_cn", text, x, y + (2.5 - i) * d, 0.9,
+            DrawText("main_font_zh_cn", text, x + dx, y + (2.5 - i) * d, 0.9,
                 Color(self.alpha, 134, 134, 129), color(COLOR_BLACK, self.alpha))
         else
-            DrawText("main_font_zh_cn", text, x, y + (2.5 - i) * d, 0.9,
+            DrawText("main_font_zh_cn", text, x + dx, y + (2.5 - i) * d, 0.9,
                 Color(self.alpha, 129, 129, 129), color(COLOR_BLACK, self.alpha))
         end
     end
     local alpha = min(self.alpha, self.text_alpha)
     local dx, dy, note_dx, warn_dx = -80, -170, 40, 100
-    if self.textpos == 27 then
-        if not self.warn2 then
-            local text = self.random_text
-            for _ = 1, 3 do
-                text = text .. '\n                '
-                for _ = 1, 50 do
-                    text = text .. aic.table.Choice(self.text5)
-                end
-            end
-            DrawText("main_font_zh_cn", '            ' .. text1[self.textpos] .. '\n' .. self.text2[self.textpos] .. text,
-                x + dx, y + dy, 1, color(COLOR_WHITE, alpha), color(COLOR_BLACK, alpha))
-        else
-            DrawText("main_font_en_us", '    ♪ ', x + dx + note_dx, y + dy, 1, color(COLOR_WHITE, alpha), color(COLOR_BLACK, alpha))
-            DrawText("main_font_zh_cn", '            ' .. '\n' .. self.text4,
-                x + dx + warn_dx, y + dy, 1, color(COLOR_DEEP_PURPLE, alpha), color(COLOR_BLACK, alpha))
-        end
+    if self.CheckRecord(self.textpos) or not self.warn1 then
+        DrawText("main_font_en_us", '    ♪ ', x + dx + note_dx, y + dy, 1, color(COLOR_WHITE, alpha), color(COLOR_BLACK, alpha))
+        DrawText("main_font_zh_cn", '            ' .. text1[self.textpos] .. '\n' .. self.text2[self.textpos],
+            x + dx, y + dy, 1, color(COLOR_WHITE, alpha), color(COLOR_BLACK, alpha))
     else
-        if self.CheckRecord(self.textpos) or not self.warn1 then
-            DrawText("main_font_en_us", '    ♪ ', x + dx + note_dx, y + dy, 1, color(COLOR_WHITE, alpha), color(COLOR_BLACK, alpha))
-            if self.full_flag then
-                DrawText("main_font_zh_cn", '            ' .. text1[self.textpos] .. '(full ver.)\n' .. self.text2[self.textpos],
-                    x + dx, y + dy, 1, color(COLOR_WHITE, alpha), color(COLOR_BLACK, alpha))
-            else
-                DrawText("main_font_zh_cn", '            ' .. text1[self.textpos] .. '\n' .. self.text2[self.textpos],
-                    x + dx, y + dy, 1, color(COLOR_WHITE, alpha), color(COLOR_BLACK, alpha))
-            end
-        else
-            DrawText("main_font_zh_cn", '            ' .. '\n' .. self.text3,
-                x + dx + warn_dx, y + dy, 1, color(COLOR_RED, alpha), color(COLOR_BLACK, alpha))
-        end
+        DrawText("main_font_zh_cn", '            ' .. '\n' .. self.text3,
+            x + dx + warn_dx, y + dy, 1, color(COLOR_RED, alpha), color(COLOR_BLACK, alpha))
     end
     if self.debug then
         local str = tostring
         DrawText("main_font_zh_cn", 'warn1=' .. str(self.warn1) .. '\nwarn2=' .. str(self.warn2)
-            .. '\npos=' .. self.pos .. '\ntextpos=' .. self.textpos .. '\ncurr_bgm=' .. self.curr_bgm, 500, 300, 1,
+            .. '\npos=' .. self.pos .. '\ntextpos=' .. self.textpos .. '\ncurr_bgm=' .. self.curr_bgm, x + 180, y + 60, 1,
             color(COLOR_WHITE, alpha), color(COLOR_BLACK, alpha))
         local music_pos = int(self.music_pos / 60)
-        DrawText("main_font_zh_cn", l10n.ui.music_room.curr_play_pos .. int(music_pos / 60) .. ':' .. (music_pos % 60), 500, 150, 1,
+        DrawText("main_font_zh_cn", l10n.ui.music_room.curr_play_pos .. int(music_pos / 60) .. ':' .. (music_pos % 60), x + 180, y - 90, 1,
             color(COLOR_WHITE, alpha), color(COLOR_BLACK, alpha))
     end
     SetViewMode('world')

@@ -7,7 +7,7 @@ lib.manual = Class(object)
 
 function lib.manual:init(l, t)
     self.class = lib.manual
-    self.num = 9
+    self.num = 8
     self.x = screen.width * 0.5
     self.y = screen.height * 0.5
     self.x = self.x + screen.width
@@ -16,7 +16,7 @@ function lib.manual:init(l, t)
     self.default_y = self.y
     self.pos = 1
     self.t = t or 16
-    self.l = l or 11
+    self.l = l or 4
     self.alpha = 255
     self.scale = 0.5
     self.level = 1
@@ -24,41 +24,25 @@ function lib.manual:init(l, t)
     self.bound = false
     self.flyin = function()
         self.locked = true
-        --self.wait = self.t
-        self.x = self.default_x + screen.width * 0.5
-        self.y = self.default_y
+        --alpha统一由切换菜单时置为255，这里不再做渐入
         task.New(self, function()
             task.Wait(self.t / 4)
-            for i = 1, self.t * 3 / 4 do
-                self.alpha = i * 255 / (self.t * 3 / 4)
-                task.Wait()
-            end
             self.locked = false
-        end)
-        task.New(self, function()
-            task.MoveTo(self.default_x, self.y, self.t, 2)
         end)
     end
     self.flyout = function(dir)
         self.locked = true
-        --self.wait = self.t
-        task.New(self, function()
-            for i = 1, self.t do
-                self.alpha = 255 - i * 255 / self.t
-                task.Wait()
-            end
-        end)
         if dir == 1 then
             task.New(self, function()
-                --task.MoveTo(self.x, screen.height * 1.5, self.t, 2)
                 task.MoveTo(self.x, self.y + 20, self.t, 2)
             end)
         elseif dir == -1 then
             task.New(self, function()
-                --task.MoveTo(self.x, screen.height * -0.5, self.t, 2)
                 task.MoveTo(self.x, self.y - 20, self.t, 2)
             end)
         elseif dir == 'quit' then
+            --本次是直接退回上一级菜单，不会再走flyin把它解锁，所以这里必须解开
+            self.locked = false
             lib.PopMenuStack()
         end
     end
@@ -154,6 +138,11 @@ end
 
 function lib.manual:render()
     SetViewMode('ui')
+    ---菜单背景与标题
+    local _w, _h = GetTextureSize("general_bg")
+    Render('general_bg', self.x, self.y, 0, screen.width / _w, screen.height / _h)
+    DrawText('menuttf', 'Manual', self.x, self.y + 190, 1.5,
+        Color(self.alpha, 47, 45, 42), Color(self.alpha, 255, 255, 255), 'centerpoint')
     --副标题
     lib.DrawTips(self, { l10n.ui.tips.select, l10n.ui.tips.back })
 

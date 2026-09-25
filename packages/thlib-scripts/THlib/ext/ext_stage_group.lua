@@ -9,7 +9,7 @@ stage.group = {}
 stage.groups = {}
 
 gamecontinueflag = false
-local deathmusic = 'bgm1'--疮痍曲
+local deathmusic = 'bgm0'--疮痍曲
 
 function stage.group.New(title, stages, name, item_init, allow_practice, difficulty)
     local sg = { ['title'] = title, number = #stages }
