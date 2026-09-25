@@ -6,11 +6,14 @@ local lib = aic.menu
 lib.manual = Class(object)
 
 function lib.manual:init(l, t)
-    self.num = 7
+    self.class = lib.manual
+    self.num = 9
     self.x = screen.width * 0.5
     self.y = screen.height * 0.5
-    self.default_x = screen.width * 0.5
-    self.default_y = screen.height * 0.5
+    self.x = self.x + screen.width
+    self.y = self.y + screen.height
+    self.default_x = self.x
+    self.default_y = self.y
     self.pos = 1
     self.t = t or 16
     self.l = l or 11
@@ -59,11 +62,13 @@ function lib.manual:init(l, t)
             lib.PopMenuStack()
         end
     end
-    lib.Fly(self, 1, 'right')
+    lib.RegistMenu(self)
 end
 
 function lib.manual:frame()
     task.Do(self)
+    --只有活跃的菜单才响应玩家操作
+    if not lib.IsActive(self) then return end
     self.wait = max(self.wait - 1, 0)
     if self.wait < 1 and not self.locked then
         --local lastkey = GetLastKey()
@@ -150,7 +155,6 @@ end
 function lib.manual:render()
     SetViewMode('ui')
     --副标题
-    lib.DrawSubTitle(self)
     lib.DrawTips(self, { l10n.ui.tips.select, l10n.ui.tips.back })
 
     local d, x, y = 30, self.x, self.y

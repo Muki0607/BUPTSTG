@@ -7,8 +7,9 @@ lib.save_replay = Class(object)
 
 ---@param data table @分数数据
 ---@param rep_saved boolean @是否已保存录像
-function lib.save_replay:init(data, rep_saved)
-    self.num = 12 --菜单编号
+function lib.save_replay:init()
+    self.class = lib.save_replay
+    self.num = 11 --菜单编号
     self.group = GROUP_GHOST
     self.layer = LAYER_TOP
     self.level = 1
@@ -23,8 +24,10 @@ function lib.save_replay:init(data, rep_saved)
     self.slot = nil --当前位置rep
     self.x = screen.width * 0.5
     self.y = screen.height * 0.5
-    self.default_x = screen.width * 0.5
-    self.default_y = screen.height * 0.5
+    self.x = self.x - screen.width
+    self.y = self.y + screen.height * 2
+    self.default_x = self.x
+    self.default_y = self.y
     self.bound = false
     self.t = 8
     self.wait = 30
@@ -114,7 +117,6 @@ function lib.save_replay:init(data, rep_saved)
     function self.quit()
         lib.last_replay = nil
         self.wait = 114514
-        lib.Fly(self, 0, 'right', true)
         lib.ClearMenuStack(0)
         lib.PushMenuStack(lib.title)
     end
@@ -126,33 +128,18 @@ function lib.save_replay:init(data, rep_saved)
         lib.FetchReplaySlots(self)
         PlaySound('extend', 1)
         self.warn1, self.warn2 = false
-        self.wait = self.t * 2
-        lib.Fly(self, 0, 'down')
-        task.New(self, function()
-            task.Wait(self.t)
-            self.level = 1
-            self.x = self.default_x + 20
-            self.y = self.default_y
-            lib.Fly(self, 1, "left")
-        end)
+        self.wait = self.t
+        self.level = 1
     end
     
-    lib.FetchReplaySlots(self)
-    lib.Fly(self, 1, 'left')
-    --我完全不知道为什么发生的bug，name_regist在PushMenuStack(save_replay)时在lib.Fly(save_replay)这一句出错了，
-    --做了一个IsValid判断跳过之后发现没飞的不是save_replay而是name_regist
-    --而且这种情况仅在创建过ending之后出现
-    --就见鬼了吧，目前只能用这种暂时性的解决办法
-    for _, o in ObjList(GROUP_GHOST) do
-        if o.num == 11 then
-            RawDel(o)
-        end
-    end
-    
+    lib.FetchReplaySlots(self)    
+    lib.RegistMenu(self)
 end
 
 function lib.save_replay:frame()
     task.Do(self)
+    --只有活跃的菜单才响应玩家操作
+    if not lib.IsActive(self) then return end
     self.name = aic.string.Filter(self.name, '\"')
     self.wait = max(self.wait - 1, 0)
     self.posX = (self.posX + 13) % 13
@@ -285,15 +272,8 @@ function lib.save_replay:frame()
                 end
             elseif KeyIsPressed("spell") or aic.input.CheckLastKey('menu') then
                 if #self.name == 0 then
-                    self.wait = self.t * 2
-                    lib.Fly(self, 0, 'down')
-                    task.New(self, function()
-                        task.Wait(self.t)
-                        self.level = 1
-                        self.x = self.default_x + 20
-                        self.y = self.default_y
-                        lib.Fly(self, 1, "left")
-                    end)
+                    self.wait = self.t
+                    self.level = 1
                 else
                     self.wait = self.t
                     self.name = string.sub(self.name, 1, -2)
@@ -306,7 +286,6 @@ end
 
 function lib.save_replay:render()
     SetViewMode('ui')
-    lib.DrawSubTitle(self)
     local _color = color
     local x, y, text, pos, timer = self.x, self.y, sp.copy(self.text1), self.pos1, self.timer
     local lineh = 15

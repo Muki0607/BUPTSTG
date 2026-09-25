@@ -101,7 +101,6 @@ end
 ---'Manual'（新增）
 ---'Option'（新增）
 ---'Return to Waypoint'（新增）
----'Watch Ending'（新增）
 ---@param msg string
 function ext.PushPauseMenuOrder(msg)
     ext.pause_menu_order = msg

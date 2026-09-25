@@ -1,33 +1,48 @@
 local lib = aic.menu
 
 ------------------------------------------------------------
-
 ---主菜单
+---由原pretitle与title合并而来，使用报纸的上半部分
+---刚进入时只显示“Press to Start”，任意键按下后才显示菜单
+
 lib.title = Class(object)
 
 ---@param pos number @初始选择位置
 ---@param l number @菜单长度
 function lib.title:init(pos, l)
-    self.num = 0 --菜单编号
+    self.class = lib.title
+    self.num = 2 --菜单编号
     self.group = GROUP_GHOST
     self.layer = LAYER_TOP
-    self.pos = pos or 1
-    self.x = screen.width * 0.8
-    self.y = screen.height * 0.3
-    self.default_x = screen.width * 0.8
-    self.default_y = screen.height * 0.3
     self.bound = false
+    self.pos = pos or 1
     self.t = 30
     self.wait = 30
     self.alpha = 0
-    self.scale = 0.45
+    --false时只显示Press to Start
+    self.started = false
+    --是否处于活跃状态（用于从子菜单返回时重置等待）
+    self.was_active = false
+    ----------------------------------------
+    ---Press to Start → 菜单的过渡动画
+    ---按下shoot后，Press to Start向下移动并渐隐，菜单选项向上移动并渐显，均在60帧内线性完成
+    self.anim_time = 15 --动画总帧数
+    self.anim_frame = 0 --0表示Press to Start状态，1表示菜单已完全展开
+    self.pts_fade_dist = screen.height / 10 --Press to Start向下移动的距离
+    self.menu_rise_dist = screen.height / 10 --菜单选项向上移动的距离
+    ----------------------------------------
+    ---菜单坐标
+    ---所有菜单常驻在同一个坐标系里，切换活跃菜单时由lib.MoveAll把所有菜单与desk一起平移
+    ---基准坐标：title在屏幕中心，pre_start在它正下方一个屏幕
+    self.x, self.y = lib.GetScreenCenter()
+    self.default_x, self.default_y = self.x, self.y
     self.text =
     {
         "Game Start",
         "Practice",
         "Spell Practice",
         "Replay",
-        "Library",
+        "Player Data",
         "Music Room",
         "Option",
         "Manual",
@@ -35,90 +50,102 @@ function lib.title:init(pos, l)
     }
     self.jump =
     {
-        { lib.difficulty_select },
+        { lib.pre_start, {'down'} },
         {
-            lib.difficulty_select,
-            function() practice = 'stage' end,
+            lib.practice, 
+            {'down', 'left'},
+            function() practice = 'stage' end
         },
         {
             lib.spell_practice,
+            {'down', 'right'},
             function() practice = 'spell' end
         },
-        { lib.replay },
-        { lib.library },
-        { lib.music_room },
-        { lib.option },
-        { lib.manual },
-        { lib.pretitle }
+        { lib.replay, {'left', 'up'} },
+        { lib.player_data, {'right'} },
+        { lib.music_room, {'up'} },
+        { lib.option, {'left'} },
+        { lib.manual, {'left', 'up'} },
+        {},
     }
     self.l = l or #self.jump
-    lib.Fly(self, 1, 'left')
-    lstg.tmpvar.current_menu = self
-
+    --尚未完成的菜单（进入时会提示无效）
     self.invalid_menu = { 2, 3 }
-    if aic.misc.GetCurrentBGM() ~= 'bgm0' then
-        _play_music('bgm0', nil, false)
-    end
+    lib.RegistMenu(self)
 end
 
 function lib.title:frame()
     task.Do(self)
+    --只有活跃的菜单才响应玩家操作
+    if not lib.IsActive(self) then
+        self.was_active = false
+        return
+    end
+    --从子菜单返回时重置等待，否则会一直不响应操作
+    if not self.was_active then
+        self.was_active = true
+        self.wait = 10
+    end
 
     self.wait = max(self.wait - 1, 0)
     if self.wait < 1 then
-        local lastkey = GetLastKey()
-        --高速开始
-        if lastkey == KEY.S then
-            if not scoredata.player_select then return end
-            New(tasker, function()
+        --Press to Start：等待任意键
+        if not self.started then
+            if KeyIsPressed('shoot') or KeyIsPressed('spell') or aic.input.CheckLastKey('menu')
+                or KeyIsDown('up') or KeyIsDown('down') then
+                self.started = true
+                PlaySound('ok00', 0.3)
+                --Press to Start向下渐隐，菜单选项向上渐显，60帧内线性完成
                 task.New(self, function()
-                    lib.BgmFadeOut(aic.misc.GetCurrentBGM(), 59)
+                    for i = 1, self.anim_time do
+                        self.anim_frame = i / self.anim_time
+                        task.Wait()
+                    end
+                    self.anim_frame = 1
                 end)
-                lstg.var.player_name = player_list[scoredata.player_select][2]
-                lstg.var.rep_player = player_list[scoredata.player_select][3]
-                Del(self)
-                if _debug.skip_loading or GetKeyState(KEY.S) then
-                    New(mask_fader, 'close')
-                    task.Wait(30)
-                    New(mask_fader, 'open')
-                else
-                    New(aic.misc.loading_scene)
-                    task.Wait(270)
-                    New(mask_fader, 'open')
-                end
-                if stage.groups.SpellCard then
-                    stage.group.Start(stage.groups.SpellCard)
-                else
-                    --其他难度待添加
-                    stage.group.Start(stage.groups.Normal)
-                end
-            end)
+            end
+            return
         end
+        --取消键：回到Quit项
         if KeyIsPressed('spell') or aic.input.CheckLastKey('menu') then
             PlaySound('cancel00', 0.3)
             if self.pos == self.l then
                 self.wait = 114514
-                lib.PopMenuStackWithDir('down')
+                task.New(self, function()
+                    task.Wait(self.t)
+                    stage.QuitGame()
+                end)
             else
                 self.pos = self.l
             end
+            return
+        end
+        if GetKeyState(KEY.S) then --快速开始
+            self.wait = 114514
+            PlaySound('ok00', 0.3)
+            lib.StartGame()
         end
         if KeyIsPressed('shoot') then
-            if not aic.table.Search(self.invalid_menu, self.pos) then
-                self.wait = 114514
-                PlaySound('ok00', 0.3)
-                lib.Fly(self, 0, 'left')
-            end
-            if self.pos == self.l then
-                lib.PopMenuStackWithDir('down')
-                return
-            elseif aic.table.Search(self.invalid_menu, self.pos) then
+            --尚未完成的菜单
+            if aic.table.Search(self.invalid_menu, self.pos) then
                 PlaySound('invalid', 0.5)
                 return
             end
-            if self.jump[self.pos][2] then self.jump[self.pos][2]() end
-            self.param = { self.pos }
-            lib.PushMenuStack(self.jump[self.pos][1])
+            if self.pos == self.l then
+                self.wait = 114514
+                PlaySound('ok00', 0.3)
+                task.New(self, function()
+                    task.Wait(self.t)
+                    stage.QuitGame()
+                end)
+                return
+            end
+            self.wait = 114514
+            PlaySound('ok00', 0.3)
+            if self.jump[self.pos][3] then self.jump[self.pos][3]() end
+            if self.jump[self.pos][1] then
+                lib.PushMenuStack(self.jump[self.pos][1], self.jump[self.pos][2])
+            end
         end
         if KeyIsDown('up') then
             self.wait = 10
@@ -142,27 +169,31 @@ end
 
 function lib.title:render()
     SetViewMode('ui')
-    SetImageState('logo', '', Color(self.alpha, 255, 255, 255))
-    if self.timer <= self.t or self.wait > 9999 then
-        Render('logo', screen.width * 0.2, screen.height * 0.9, 0, 0.75)
-    else
-        Render('logo', self.x - screen.width * 0.6, self.y + screen.height * 0.6, 0, 0.75)
-    end
-    --local colors = { Color(255, 255, 0, 0), Color(255, 255, 0, 0),
-    --    Color(255, 0, 255, 255), Color(255, 0, 255, 255) }
-    local d, x, y = 30, self.x - 180, self.y + 50
+    ---菜单背景：title.png缩放到宽screen.width、高screen.height*2
+    ---随本菜单（即随所有对象）一起移动：
+    ---显示title时背景中心在屏幕底部，上半部分正好是整个屏幕；
+    ---切到pre_start后整体上移一个屏幕，背景中心升到屏幕中心，屏幕上就是它的下半部分
+    local w, h = GetTextureSize("title")
+    Render('title', self.x, self.y - screen.height * 0.5, 0, screen.width / w, screen.height * 2 / h)
+    ---过渡进度：0为Press to Start状态，1为菜单完全展开
+    local p = self.anim_frame
+    ---Press to Start：按shoot后向下移动并渐隐
+    local pts_alpha = (1 - p) * self.alpha
+    DrawText('menuttf', 'Press to Start', self.x, self.y - p * self.pts_fade_dist - 150, 2.5,
+        Color(pts_alpha * abs(sin(3 * self.timer)), 47, 45, 42), Color(pts_alpha * abs(sin(3 * self.timer)), 255, 255, 255), 'centerpoint')
+    ---菜单选项：从下方向上移动并渐显
+    local menu_alpha = p * self.alpha
+    local d, x, y = 30, self.x + 10, self.y - screen.height * 0.2
+    y = y - (1 - p) * self.menu_rise_dist
     for i = 1, self.l do
-        local co
+        DrawText('menuttf', self.text[i], x, y + (5 - i) * d, 1,
+            Color(menu_alpha, 47, 45, 42), Color(menu_alpha, 255, 255, 255))
         if i == self.pos then
-            co = Color(self.alpha, 32, 208, 255)
-        else
-            co = Color(self.alpha, 255, 255, 255)
+            DrawText('menuttf', '▶', x - 15, y + (5 - i) * d - 3, 0.75,
+                Color(menu_alpha, 47, 45, 42), Color(menu_alpha, 255, 255, 255))
         end
-        --Render('Muki_AiC_menu_title' .. i, x, y + (5 - i) * d, 0, self.scale)
-        DrawText('main_font_en_us', self.text[i], x, y + (5 - i) * d, 1.5,
-            Color(self.alpha, 85, 76, 74), co, 'centerpoint')
     end
     DrawText('main_font_zh_cn', "v" .. aic.version, 5, 15, 0.75,
-        color(COLOR_WHITE, self.alpha), nil, "left")
+        color(COLOR_WHITE, menu_alpha), nil, "left")
     SetViewMode('world')
 end

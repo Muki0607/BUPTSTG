@@ -1,7 +1,5 @@
 local lib = aic.menu
 
-
-
 ---音乐相关的函数，因为经常暴毙所以套一层TryExcept
 
 --- 获取全局音乐音量
@@ -60,7 +58,8 @@ end
 lib.music_room = Class(object)
 
 function lib.music_room:init(pos, l)
-    self.num = 5 --菜单编号
+    self.class = lib.music_room
+    self.num = 7 --菜单编号
     self.group = GROUP_GHOST
     self.layer = LAYER_TOP
     self.pos = pos or 1
@@ -77,8 +76,9 @@ function lib.music_room:init(pos, l)
     self.curr_bgm = 'bgm0'
     self.x = screen.width * 0.5
     self.y = screen.height * 0.5
-    self.default_x = screen.width * 0.5
-    self.default_y = screen.width * 0.5
+    self.y = self.y + screen.height
+    self.default_x = self.x
+    self.default_y = self.y
     self.bound = false
     self.t = 8
     self.wait = 30
@@ -103,11 +103,13 @@ function lib.music_room:init(pos, l)
     function self.CheckRecord(num)
         return scoredata.music_record['bgm' .. num]
     end
-    lib.Fly(self, 1, 'left')
+    lib.RegistMenu(self)
 end
 
 function lib.music_room:frame()
     task.Do(self)
+    --只有活跃的菜单才响应玩家操作
+    if not lib.IsActive(self) then return end
     if not self.init_sign then self.Initialize() end
     self.wait = max(self.wait - 1, 0)
     self.curr_bgm = aic.misc.GetCurrentBGM() or self.curr_bgm --当前播放bgm，若暂停则为暂停前播放bgm
@@ -206,7 +208,6 @@ end
 
 function lib.music_room:render()
     SetViewMode('ui')
-    lib.DrawSubTitle(self)
     lib.DrawTips(self, { l10n.ui.tips.play_music, l10n.ui.tips.back, l10n.ui.tips.pause_continue_music }, { l10n.ui.tips.select_music })
     local d, x, y, text1 = 20, self.x - 260, self.y + 110, self.text1
     for i = 1, self.l do

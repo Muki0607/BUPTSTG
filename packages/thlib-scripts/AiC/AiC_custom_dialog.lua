@@ -100,16 +100,16 @@ sp.string = sp.string or lib.spstring --在无法调用sp.string时启用备用s
 
 ---
 
----执行AiC对话
+---执行对话
 ---@param num number @对话编号
 ---@param start_pos number @对话开始位置
 ---@param end_pos number @对话结束位置
-function lib:AiCDialog(num, start_pos, end_pos)
+function lib:Dialog(num, start_pos, end_pos)
     local d = aic.l10n[setting.locale].dialog["dialog" .. num]
     start_pos = start_pos or 1
     end_pos = end_pos or #d.text
     d.name = lib.MakeParamList(d.name, end_pos - start_pos + 1, '')
-    lib.sp.SetDisplayer(self, true, 'image:Muki_AiC_dialog_frame', 0.7, 0.25, 0, 20, '', nil, Color(150, 255, 255, 255), nil, Color(255, 85, 76, 74))
+    lib.sp.SetDisplayer(self, true, nil, 0.7, 0.25, 0, 20, '', nil, Color(150, 255, 255, 255), nil, Color(255, 85, 76, 74))
     local dialog_name = New(lib.dialog_name, d.name[start_pos])
     for i = start_pos, end_pos do
         dialog_name.name = d.name[i]

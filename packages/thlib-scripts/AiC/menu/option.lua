@@ -6,11 +6,13 @@ local lib = aic.menu
 lib.option = Class(object)
 
 function lib.option:init()
-    self.num = 6
+    self.class = lib.option
+    self.num = 8
     self.x = screen.width * 0.5
     self.y = screen.height * 0.5
-    self.default_x = screen.width * 0.5
-    self.default_y = screen.height * 0.5
+    self.x = self.x - screen.width
+    self.default_x = self.x
+    self.default_y = self.y
     self.pos1 = 1
     self.pos2 = 1
     self.t = 16
@@ -151,11 +153,13 @@ function lib.option:init()
     end
 
     self.reload()
-    lib.Fly(self, 1, 'right')
+    lib.RegistMenu(self)
 end
 
 function lib.option:frame()
     task.Do(self)
+    --只有活跃的菜单才响应玩家操作
+    if not lib.IsActive(self) then return end
     self.timer = self.timer + 1
     self.wait = max(self.wait - 1, 0)
     if self.wait < 1 and not self.locked then
@@ -395,8 +399,6 @@ function lib.option:render()
     SetViewMode('ui')
     --SetImageState('white', '', Color(150, 85, 76, 74))
     --RenderRect('white', 0, screen.width, 0, screen.height)
-    --副标题
-    lib.DrawSubTitle(self, screen.width * 0.8)
     SetImageState('Muki_AiC_square_empty', '', color(COLOR_WHITE, self.alpha))
     SetImageState('Muki_AiC_square_middle', '', color(COLOR_WHITE, self.alpha))
     local d, x, y = 30, self.x - 30, self.y + screen.height * 0.45

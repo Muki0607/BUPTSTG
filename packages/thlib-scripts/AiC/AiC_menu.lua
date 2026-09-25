@@ -32,6 +32,13 @@
 ---完善了option的用户名修改功能
 ---增加了'music_room'菜单
 ---为精简主文件将所有菜单分别移至单独的文件中
+---v1.05a
+---标题菜单重写：底层改为desk大画布，窗口作为取景框，所有菜单常驻画布上
+---切换菜单由“删除并新建”改为移动取景框，只有活跃菜单响应玩家操作
+---'pretitle'合并入'title'（报纸上半部分），'difficulty_select'与'player_select'
+---合并为'pre_start'（报纸下半部分，固定hifuu_player与Hard难度）
+---新增lib.SetActive、lib.IsActive、lib.GetMenu、lib.MoveAll等接口
+
 
 ---@class aic.menu @东方梦摇篮菜单
 aic.menu = {}
@@ -42,13 +49,34 @@ local lib = aic.menu
 ---不过正因如此怎么加新东西都没问题
 -------------------------------------------------------------
 
----副标题名称
-local subtitle = { 'Stage Select', 'Spell Select', 'Replay', 'Library', 'Music Room', 'Option', 'Manual',
-    'Rank Select', 'Player Select', 'Name Regist', 'Save Replay', 'Player Data', 'Ending' }
-
 ---菜单名称
-local menu = { 'pretitle', 'title', 'practice', 'spell_practice', 'replay', 'library', 'music_room', 'option', 'manual',
-    'difficulty_select', 'player_select', 'name_regist', 'save_replay', 'player_data', 'ending' }
+local menu = { 'scene', 'title', 'pre_start', 'practice', 'spell_practice', 'replay', 'music_room', 'option',
+    'manual', 'name_regist', 'save_replay', 'player_data' }
+
+------------------------------------------------------------
+---屏幕坐标系与菜单坐标
+---
+---渲染一律在UI模式下进行，坐标系以窗口左下角为原点、向右向上为正，
+---范围恒定是(0,0)到(screen.width, screen.height)。
+---
+---所有菜单（连同底层的desk）常驻在同一个坐标系里，各菜单在init中设置自己的基准坐标。
+---切换活跃菜单时不做任何渲染上的干涉，而是把所有菜单对象与desk一起平移，
+---使目标菜单进入屏幕：由title切到pre_start（它位于title正下方一个屏幕）时，
+---所有对象一起上移一个屏幕。
+
+---菜单静止位置的基准（屏幕中心）
+---@return number @屏幕中心X
+---@return number @屏幕中心Y
+function lib.GetScreenCenter()
+    return screen.width * 0.5, screen.height * 0.5
+end
+
+---一个屏幕的宽高
+---@return number @屏幕宽
+---@return number @屏幕高
+function lib.GetScreenSize()
+    return screen.width, screen.height
+end
 
 ---练习模式标志
 ---@type string
@@ -67,57 +95,62 @@ lib.last_replay_finish = false
 
 ------------------------------------------------------------
 
----菜单飞入飞出，要求单位有t参数（飞入飞出时间）
+---各菜单的实例（所有菜单同时存在于屏幕上）
+---只以class为键
+lib.instances = {}
+
+---注册一个菜单实例
+---@param obj lstg.GameObject @菜单实例
+function lib.RegistMenu(obj)
+    if not obj or not obj.class then error("invalid menu") end
+    lib.instances[obj.class] = obj
+    return obj
+end
+
+---判断某菜单当前是否活跃
+---@param m lstg.GameObject @要检查的菜单
+---@return boolean
+function lib.IsActive(m)
+    return lstg.tmpvar.current_menu == m
+end
+
+---@alias direction string | "'up'" | "'down'" | "'left'" | "'right'" | "'none'" @移动方向
+
+---菜单移动
+---要求单位有t参数（移动时间）
 ---@param self lstg.GameObject @菜单
----@param flyin number @为1时飞入，否则飞出
----@param dir string | "'up'" | "'down'" | "'left'" | "'right'" @移动方向
----@param del boolean @为true时在飞入飞出结束后删除菜单
----@overload fun(flyin:number, x:number, y:number) @指定移动目的坐标
-function lib.Fly(self, flyin, dir, del)
-    if flyin == 1 then
-        task.New(self, function()
-            task.Wait(self.t / 4)
-            for i = 1, self.t * 3 / 4 do
-                self.alpha = i * 255 / (self.t * 3 / 4)
-                task.Wait()
-            end
-        end)
-    else
-        task.New(self, function()
-            for i = 1, self.t do
-                self.alpha = 255 - i * 255 / self.t
-                task.Wait()
-            end
-        end)
-    end
+---@param dir direction[] @移动方向
+function lib.Fly(self, dir)
     if not IsValid(self) then return end
-    if type(dir) == 'string' then
-        local x, y
-        if dir == 'up' then
-            x, y = self.x, self.y + 20
-        elseif dir == 'down' then
-            x, y = self.x, self.y - 20
-        elseif dir == 'left' then
-            x, y = self.x - 20, self.y
-        elseif dir == 'right' then
-            x, y = self.x + 20, self.y
-        else
-            return
+    local t = self.t or 30
+    task.New(self, function()
+        local x, y = 0, 0
+        for _, d in ipairs(dir) do
+            if d == 'up' then
+                y = y + screen.height
+            elseif d == 'down' then
+                y = y - screen.height
+            elseif d == 'left' then
+                x = x - screen.width
+            elseif d == 'right' then
+                x = x + screen.width
+            else
+                return
+            end
+            task.MoveTo(self.x + x, self.y + y, t * #dir, 2)
         end
-        task.New(self, function()
-            task.MoveTo(x, y, self.t, 2)
-            if del then
-                Del(self)
-            end
-        end)
-    elseif type(dir) == 'number' then
-        local x, y = dir, del or self.y
-        task.New(self, function()
-            task.MoveTo(x, y, self.t, 2)
-            if del then
-                Del(self)
-            end
-        end)
+    end)
+
+end
+
+---把所有菜单与desk一起平移（切换活跃菜单时用）
+---各菜单的移动是并行的，不会互相等待
+---@param dir direction[] @移动方向
+function lib.MoveAll(dir)
+    for _, m in pairs(lib.instances) do
+        if IsValid(m) then
+            lib.Fly(m, dir)
+        end
     end
 end
 
@@ -143,105 +176,91 @@ function lib.BgmFadeOut(bgm, t)
     end
 end
 
----向菜单栈加入一个菜单，可以追加创建菜单时传入的参数
----可以看成是一种New函数
----@param menu class @菜单（注意是传入类而不是object）
-function lib.PushMenuStack(menu, ...)
+---向菜单栈加入一个菜单
+---@param menu class @菜单类
+---@param dir direction[] @新菜单相对于屏幕中央的方向
+function lib.PushMenuStack(menu, dir)
     --向菜单栈加入一个菜单
     table.insert(lib.menu_stack, menu)
-    --上一级菜单飞出
-    lib.Fly(lstg.tmpvar.current_menu, 0, 'left', true)
-    --新建菜单
-    lstg.tmpvar.current_menu = New(menu, ...)
-    --菜单飞入
-    lstg.tmpvar.current_menu.x = lstg.tmpvar.current_menu.x + 20
-    lib.Fly(lstg.tmpvar.current_menu, 1, 'left')
-    --存储参数，以便在弹出下一级菜单时重新以同样的参数创建本级菜单
-    lstg.tmpvar.current_menu_param = { ... }
-end
-
----临时添加的有向PushMenuStack函数
----@param menu class @菜单
----@param dir string | "'up'" | "'down'" | "'left'" | "'right'" @移动方向
-function lib.PushMenuStackWithDir(menu, dir, ...)
-    if not dir then dir = 'left' end
-    --向菜单栈加入一个菜单
-    table.insert(lib.menu_stack, menu)
-    --上一级菜单飞出
-    lib.Fly(lstg.tmpvar.current_menu, 0, dir, true)
-    --新建菜单
-    lstg.tmpvar.current_menu = New(menu, ...)
-    --菜单飞入
-    if dir == 'up' then
-        lstg.tmpvar.current_menu.y = lstg.tmpvar.current_menu.y - 20
-    elseif dir == 'down' then
-        lstg.tmpvar.current_menu.y = lstg.tmpvar.current_menu.y + 20
-    elseif dir == 'left' then
-        lstg.tmpvar.current_menu.x = lstg.tmpvar.current_menu.x + 20
-    elseif dir == 'right' then
-        lstg.tmpvar.current_menu.x = lstg.tmpvar.current_menu.x - 20
+    --菜单移动
+    for i, d in ipairs(dir) do
+        if d == 'up' then
+            dir[i] = 'down'
+        elseif d == 'down' then
+            dir[i] = 'up'
+        elseif d == 'left' then
+            dir[i] = 'right'
+        elseif d == 'right' then
+            dir[i] = 'left'
+        else
+            dir[i] = 'none'
+        end
     end
-    lib.Fly(lstg.tmpvar.current_menu, 1, dir)
-    --存储参数，以便在弹出下一级菜单时重新以同样的参数创建本级菜单
-    lstg.tmpvar.current_menu_param = { ... }
+    lib.MoveAll(dir)
+    lib.last_move_dir = dir
+    lstg.tmpvar.current_menu = lib.instances[menu]
 end
 
 ---从菜单栈弹出一个菜单
----将会删除当前菜单然后重新创建上一级菜单
 function lib.PopMenuStack()
     ---从菜单栈弹出一个菜单
     table.remove(lib.menu_stack)
-    --菜单飞出
-    lib.Fly(lstg.tmpvar.current_menu, 0, 'right', true)
-    --使用预先存储的参数新建上一级菜单
-    if lstg.tmpvar.current_menu_param and #lstg.tmpvar.current_menu_param > 0 then
-        lstg.tmpvar.current_menu = New(lib.menu_stack[#lib.menu_stack], unpack(lstg.tmpvar.current_menu_param))
-    else
-        lstg.tmpvar.current_menu = New(lib.menu_stack[#lib.menu_stack])
+    local dir = {}
+    for i, d in ipairs(lib.last_move_dir) do
+        if d == 'up' then
+            dir[i] = 'down'
+        elseif d == 'down' then
+            dir[i] = 'up'
+        elseif d == 'left' then
+            dir[i] = 'right'
+        elseif d == 'right' then
+            dir[i] = 'left'
+        else
+            dir[i] = 'none'
+        end
     end
-    --上一级菜单飞入
-    lstg.tmpvar.current_menu.x = lstg.tmpvar.current_menu.x - 20
-    lib.Fly(lstg.tmpvar.current_menu, 1, 'right')
-end
-
-function lib.PopMenuStackWithDir(dir)
-    ---从菜单栈弹出一个菜单
-    table.remove(lib.menu_stack)
-    --菜单飞出
-    lib.Fly(lstg.tmpvar.current_menu, 0, dir, true)
-    --使用预先存储的参数新建上一级菜单
-    if lstg.tmpvar.current_menu_param and #lstg.tmpvar.current_menu_param > 0 then
-        lstg.tmpvar.current_menu = New(lib.menu_stack[#lib.menu_stack], unpack(lstg.tmpvar.current_menu_param))
-    else
-        lstg.tmpvar.current_menu = New(lib.menu_stack[#lib.menu_stack])
-    end
-    --上一级菜单飞入
-    if dir == 'up' then
-        lstg.tmpvar.current_menu.y = lstg.tmpvar.current_menu.y - 20
-    elseif dir == 'down' then
-        lstg.tmpvar.current_menu.y = lstg.tmpvar.current_menu.y + 20
-    elseif dir == 'left' then
-        lstg.tmpvar.current_menu.x = lstg.tmpvar.current_menu.x + 20
-    elseif dir == 'right' then
-        lstg.tmpvar.current_menu.x = lstg.tmpvar.current_menu.x - 20
-    end
-    lib.Fly(lstg.tmpvar.current_menu, 1, dir)
+    --菜单移动
+    lib.MoveAll(dir)
+    lstg.tmpvar.current_menu = lib.instances[lib.menu_stack[#lib.menu_stack]]
 end
 
 ---清空菜单栈
----@param level number @要保留的层数
-function lib.ClearMenuStack(level)
-    level = level or 1
-    while #lib.menu_stack > level do
-        table.remove(lib.menu_stack)
+---@param move boolean @是否移动
+function lib.ClearMenuStack(move)
+    lib.menu_stack = {}
+    if move then
+        task.New(function()
+            local m = lstg.tmpvar.current_menu
+            local dx, dy = m.default_x - m.x, m.default_y - m.y
+            for _, m in pairs(lib.instances) do
+                if IsValid(m) then
+                    task.MoveTo(m.x + dx, m.y + dy, 30, 2)
+                end
+            end
+        end)
     end
 end
 
----向菜单栈中插入菜单
----@param menu class @菜单
----@param pos number @插入的位置
-function lib.InsertMenuStack(menu, pos)
-    table.insert(lib.menu_stack, pos, menu)
+---开始游戏，因为没有需要改的变量所以直接写死
+function lib.StartGame()
+    --固定使用hifuu_player与Hard难度
+    scoredata.player_select = 4
+    scoredata.difficulty_select = 3
+    lstg.var.player_name = player_list[scoredata.player_select][2]
+    lstg.var.rep_player = player_list[scoredata.player_select][3]
+    New(tasker, function()
+        lib.BgmFadeOut(aic.misc.GetCurrentBGM(), 59)
+        if _debug.skip_loading or GetKeyState(KEY.S) then
+            New(mask_fader, 'close')
+            task.Wait(30)
+            New(mask_fader, 'open')
+        else
+            New(aic.misc.loading_scene)
+            task.Wait(270)
+            New(mask_fader, 'open')
+        end
+        stage.group.Start(stage.groups.Hard)
+    end)
 end
 
 ---获取rep中的信息
@@ -266,7 +285,7 @@ function lib.GetReplayData(i)
         totalScore = totalScore + slot.stages[i].score
         --由于目前没有在stage上做难度差分，不能用这种方法
         --diff = string.match(k.stageName, '^.+@(.+)$')
-        diff = ({ 'Easy', 'Normal', 'Hard', 'Lunatic' })[scoredata.difficulty_select]
+        diff = ({ 'Hard' })[scoredata.difficulty_select]
         tmp = string.match(k.stageName, '^(.+)@.+$')
         if string.match(tmp, '%d+') == nil then
             stage_num = tmp
@@ -342,29 +361,6 @@ function lib:GetExtRepInfo()
     else
         self.text3_kt = nil
     end
-end
-
----绘制菜单背景
-function lib:DrawSubTitle(x, y)
-    local x = x or screen.width * 0.5
-    local y = y or screen.height * 0.9
-    local name = subtitle[self.num]
-    SetImageState('Muki_AiC_subtitle_bg', '', Color(self.alpha, 255, 255, 255))
-    Render('Muki_AiC_subtitle_bg', x, y, 0, 0.4)
-    aic.ui.SetPostEffectParam('fx:outer_glow', {
-        -- user_data_0: 发光颜色(R,G,B)和不透明度(A)
-        { 102 / 255.0, 252 / 255.0, 205 / 255.0, 0.75 },
-        
-        -- user_data_1: 发光参数
-        { 5.0, 0.8, 0.5, 0.0 }, -- 大小5像素，强度80%，扩展15%，光源=边缘
-        
-        -- user_data_2: 高级参数
-        { 0.0, 50.0, 0.0, 0.0 }, -- 阻塞0%，范围50%，无杂色，无抖动
-    }, '')
-    aic.ui.DrawTextWithShader('main_font_en_us', name, x, y + 15, 1.25,
-        Color(self.alpha, 255, 255, 255), nil, nil, nil, true)
-    aic.ui.DrawTextWithShader('main_font_zh_cn', l10n.ui.subtitle[self.num], x, y - 15, 1,
-        Color(self.alpha, 255, 255, 255), nil, nil, nil, true)
 end
 
 
@@ -514,32 +510,35 @@ function lib.GetReplayDelay()
     return ret
 end
 
-for _, m in ipairs(menu) do
-    DoFile('AiC/menu/' .. m .. '.lua')
+function lib.Initialize()
+    ---加载所有菜单
+    for _, m in ipairs(menu) do
+        DoFile('AiC/menu/' .. m .. '.lua')
+    end
+    for _, m in ipairs(menu) do
+        New(lib[m])
+    end
 end
+
+lib.Initialize()
+
 
 ----------------------------------------
 ---资源
 
 --标题菜单
-for _, m in ipairs({ { 'difficulty_select', 4 }, { 'player_select', 8 } }) do
-    for i = 1, m[2] do
-        LoadImageFromFile('Muki_AiC_menu_' .. m[1] .. i,
-            'THlib/UI/menu/' .. m[1] .. '/Muki_AiC_menu_' .. m[1] .. i .. '.png')
-    end
-end
---manual
-for i = 1, 12 do
-    LoadImageFromFile('Muki_AiC_help' .. i, 'THlib/UI/pause_menu/help/Muki_AiC_help' .. i .. '.png')
-    LoadImageFromFile('Muki_AiC_help_menu' .. i, 'THlib/UI/pause_menu/help/Muki_AiC_help_menu' .. i .. '.png')
-end
-SetImageCenter('Muki_AiC_help_menu11', 148, 25)
-SetImageCenter('Muki_AiC_help_menu12', 148, 25)
---replay菜单的普莉姆拉
-LoadImageFromFile('Muki_AiC_menu_replay_Primula', 'THlib/UI/menu/replay/Muki_AiC_Primula_face_smile.png')
---副标题
-LoadImageFromFile('Muki_AiC_subtitle_bg', 'THlib/UI/menu/subtitle/Muki_AiC_subtitle_bg.png')
---背景
-LoadImageFromFile('Muki_AiC_menu_bg', 'THlib/UI/menu/bg/Muki_AiC_menu_bg.png')
-LoadImageFromFile('Muki_AiC_menu_bg_music_room', 'THlib/UI/menu/bg/Muki_AiC_menu_bg_music_room.png')
-LoadImageFromFile('Muki_AiC_menu_bg_Noel', 'THlib/UI/menu/bg/Muki_AiC_menu_bg_Noel.png')
+
+LoadImageFromFile("desk", "THlib/UI/menu/desk.png")
+
+lib.bgw, lib.bgh = GetTextureSize("desk")
+
+LoadImageFromFile("title", "THlib/UI/menu/title.png")
+
+---title背景图像的原始尺寸（用于把它缩放到宽screen.width、高screen.height*2）
+lib.bgtw, lib.bgth = GetTextureSize("title")
+
+LoadImageFromFile("general_bg", "THlib/UI/menu/general_bg.png")
+LoadImageFromFile("general_bg2", "THlib/UI/menu/general_bg2.png")
+LoadImageFromFile("player_data", "THlib/UI/menu/player_data.png")
+LoadImageFromFile("option", "THlib/UI/menu/option.png")
+LoadImageFromFile("music_room", "THlib/UI/menu/music_room.png")

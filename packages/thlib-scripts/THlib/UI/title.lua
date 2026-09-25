@@ -34,7 +34,7 @@ function stage_menu:init()
         New(mask_fader, 'open')
     end
     New(mask_fader, 'open')
-    New(aic.menu.pretitle)
+    New(aic.menu.scene)
     --[[
     if stage.IsReplay then
         --rep播放后返回rep菜单 add by OLC

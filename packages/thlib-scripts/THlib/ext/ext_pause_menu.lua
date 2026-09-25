@@ -1289,7 +1289,7 @@ LoadImage('pause_eff', 'pause', 408, 320, 104, 384)
 
 local pause = { 'pausemenu', 'gameover', 'replayover', 'Return to Game', 'Return to Title', 'Give up and Retry',
     'Yes', 'No', 'Quit and Save Replay', 'really', 'Save Replay', --以后谁再把replay写成reply我打死他
-    'Replay Again', 'Continue', 'Manual', 'Option', 'missionincomplete', 'Return to Waypoint', 'endingB', 'Watch Ending' }
+    'Replay Again', 'Continue', 'Manual', 'Option', 'missionincomplete', 'Return to Waypoint' }
 
 local center = { { 0, 35 }, { 0, 35 }, { 0, 35 }, { 0, 30 }, { 0, 28 }, { 0, 29 }, { 0, 29 },
     { 0, 30 }, { 0, 30 }, { 0, 29 }, { 0, 30 }, { 0, 30 }, { 0, 28 }, { 0, 29 }, { 0, 28 },
@@ -1300,7 +1300,6 @@ for k, v in ipairs(pause) do
     if center[k] then SetImageCenter('pause_' .. v, center[k][1], center[k][2]) end
 end
 LoadImageFromFile('pause_eff', 'THlib/UI/pause_menu/pause_eff_new.png')
---重复加载，这是不ao的
 LoadImageFromFile('pause_Restart', 'THlib/UI/pause_menu/pause_Give up and Retry.png')
 SetImageCenter('pause_Restart', 0, 29)
 

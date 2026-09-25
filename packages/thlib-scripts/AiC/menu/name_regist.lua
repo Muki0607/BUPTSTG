@@ -8,15 +8,17 @@ local lib = aic.menu
 lib.name_regist = Class(object)
 
 function lib.name_regist:init()
-    self.num = 11 --菜单编号
+    self.class = lib.name_regist
+    self.num = 10 --菜单编号
     self.group = GROUP_GHOST
     self.layer = LAYER_TOP
     self.posX = 0
     self.posY = 0
     self.x = screen.width * 0.5
-    self.y = screen.height * 0.2
-    self.default_x = screen.width * 0.5
-    self.default_y = screen.height * 0.5
+    self.y = screen.height * 0.5
+    self.y = self.y + screen.height * 2
+    self.default_x = self.x
+    self.default_y = self.y
     self.bound = false
     self.t = 8
     self.wait = 30
@@ -29,8 +31,8 @@ function lib.name_regist:init()
     self.name = setting.username or ''
     self._posX = aic.sys.GetPlayer() --由于没有开始新的一局，此时可直接使用上一局选择来判断
     self._posY = aic.sys.GetDiff()
-    self.player_list = { "reimu_player", "marisa_player", "sakuya_player", "hifuu_player" }
-    self.diff_list = { "Easy", "Normal", "Hard", "Lunatic", --[["Extra"]] }
+    self.player_list = { "hifuu_player" }
+    self.diff_list = { "Hard" }
     self.l = 10
 
     lstg.tmpvar.current_menu = self
@@ -105,12 +107,13 @@ function lib.name_regist:init()
         return _keyboard
     end
     self.keyboard = self.GetKeyboard()
-
-    lib.Fly(self, 1, 'left')
+    lib.RegistMenu(self)
 end
 
 function lib.name_regist:frame()
     task.Do(self)
+    --只有活跃的菜单才响应玩家操作
+    if not lib.IsActive(self) then return end
     ---疮痍曲
     if not self.music_flag then
         _play_music('bgm20', nil, false)
@@ -143,7 +146,8 @@ function lib.name_regist:frame()
                 --由OLC添加，保存rep时菜单用来记录名称的参数
                 scoredata.repsaver = self.name
                 -- 跳转至保存录像菜单
-                lib.PushMenuStack(lib.save_replay, self.slot)
+                lib.save_slot = self.slot
+                lib.PushMenuStack(lib.save_replay, { 'left' })
                 PlaySound('ok00', 0.3)
             end
             if #self.name == self.lname then
@@ -171,7 +175,8 @@ function lib.name_regist:frame()
                 --由OLC添加，保存rep时菜单用来记录名称的参数
                 scoredata.repsaver = self.name
                 -- 跳转至保存录像菜单
-                lib.PushMenuStack(lib.save_replay, self.slot)
+                lib.save_slot = self.slot
+                lib.PushMenuStack(lib.save_replay, { 'left' })
             else
                 self.wait = self.t
                 self.name = string.sub(self.name, 1, -2)
@@ -184,7 +189,6 @@ end
 
 function lib.name_regist:render()
     SetViewMode('ui')
-    lib.DrawSubTitle(self)
     lib.DrawTips(self, { l10n.ui.tips.input_char, l10n.ui.tips.delete_char })
 
     -- 绘制键盘
@@ -192,7 +196,7 @@ function lib.name_regist:render()
     SetFontState("replay", "", Color(255 * self.alpha, unpack(ui.menu.unfocused_color)))
     --是谁写的在Lua里还从0开始数啊（恼）
     --担心哪里会有逻辑出问题就没改了
-    local w, h, _y = 18, 15, self.y - 45
+    local w, h, _y = 18, 15, self.y - screen.height - 45
     local co
     for x = 0, 12 do
         for y = 0, 6 do    
@@ -223,7 +227,7 @@ function lib.name_regist:render()
         end
     end
     
-    local x, y = self.x, self.y + 90
+    local x, y = self.x, self.y - screen.height + 90
     local lineh = 20
     local yos = (self.l + 1) * lineh * 0.5
     local co1, co2 = { 247, 225, 158 }, { 166, 129, 193 }
@@ -239,7 +243,7 @@ function lib.name_regist:render()
     DrawText('main_font_zh_cn', player[self._posX], x, y + 195, 1.25,
         Color(self.alpha, unpack(player_co[self._posX])), nil, 'center')
     
-    local diff = { "EASY", "NORMAL", "HARD", "LUNATIC", "EXTRA" }
+    local diff = { "HARD" }
     DrawText('main_font_zh_cn', diff[self._posY], x, y + 165, 1.25,
         color(COLOR_WHITE, self.alpha), nil, 'center')
     y = y + 25

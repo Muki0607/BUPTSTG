@@ -7,20 +7,22 @@ local lib = aic.menu
 lib.player_data = Class(object)
 
 ---@param scnum number @总符卡数
-function lib.player_data:init(scnum)
-    self.num = 13 --菜单编号
+function lib.player_data:init()
+    self.class = lib.player_data
+    self.num = 12 --菜单编号
     self.group = GROUP_GHOST
     self.layer = LAYER_TOP
     self.x = screen.width * 0.5
     self.y = screen.height * 0.5
-    self.default_x = screen.width * 0.5
-    self.default_y = screen.height * 0.5
+    self.x = self.x + screen.width
+    self.default_x = self.x
+    self.default_y = self.y
     self.bound = false
     self.t = 30
     self.wait = 30
     self.alpha = 0
-    self.player_list = { "reimu_player", "marisa_player", "sakuya_player", "hifuu_player" }
-    self.diff_list = { "Easy", "Normal", "Hard", "Lunatic", --[["Extra"]] }
+    self.player_list = { "hifuu_player" }
+    self.diff_list = { "Hard" }
     self.sc_list = aic.l10n[setting.locale].ui.sc_list
     self.data = nil
     self.playdata = nil
@@ -28,9 +30,10 @@ function lib.player_data:init(scnum)
     self.posY = 1 --难度选择
     self.lX = #self.player_list
     self.lY = #self.diff_list
-    self.lsc = scnum --总符卡数
+    self.lsc = 7 --总符卡数
     self.l = 10 --一页中显示的符卡数
     self.page = 1 --当前页数
+    self.is_SC_hist = false
 
     ---获取玩家数据
     ---
@@ -114,19 +117,16 @@ function lib.player_data:init(scnum)
         self.playdata = ret
     end
 
-    if self.lsc then
-        self.lpage = int(self.lsc / self.l) + 1 --总页数
-        self.GetSCHist()
-    else
-        self.GetData()
-    end
+    self.lpage = int(self.lsc / self.l) + 1 --总页数
+    self.GetData()
     self.GetPlayData()
-
-    lib.Fly(self, 1, 'left')
+    lib.RegistMenu(self)
 end
 
 function lib.player_data:frame()
     task.Do(self)
+    --只有活跃的菜单才响应玩家操作
+    if not lib.IsActive(self) then return end
     self.wait = max(self.wait - 1, 0)
     if self.wait < 1 then
         local lastkey = GetLastKey()
@@ -141,7 +141,11 @@ function lib.player_data:frame()
             self.wait = 114514
             lib.PopMenuStack()
             PlaySound('cancel00', 0.3)
-        elseif KeyIsDown('up') then
+        end
+        if KeyIsPressed('special') then
+            self.is_SC_hist = not self.is_SC_hist
+        end
+        if KeyIsDown('up') then
             self.wait = self.t
             if self.posY > 1 then
                 self.posY = self.posY - 1
@@ -179,7 +183,7 @@ function lib.player_data:frame()
         --有按键输入时进行一次刷新
         if lastkey ~= KEY.NULL and aic.table.Search(key, lastkey) then
             self.GetPlayData()
-            if self.lsc then
+            if self.is_SC_hist then
                 self.GetSCHist()
             else
                 self.GetData()
@@ -191,7 +195,6 @@ end
 --真的是调参地狱，我不想再碰这玩意了
 function lib.player_data:render()
     SetViewMode('ui')
-    lib.DrawSubTitle(self)
     lib.DrawTips(self, { nil, l10n.ui.tips.back }, { l10n.ui.select_diff, l10n.ui.select_player })
     local x, y = self.x, self.y - 70
     local lineh = 20
@@ -209,7 +212,7 @@ function lib.player_data:render()
         DrawText('main_font_zh_cn', '>', x + d * 3.25 + d / 5 * sin(3 * self.timer),
             y + 195, 1.25, color(COLOR_WHITE, self.alpha), nil, 'right')
         
-        local diff = { "EASY", "NORMAL", "HARD", "LUNATIC", "EXTRA" }
+        local diff = { "HARD" }
         DrawText('main_font_zh_cn', diff[self.posY], x, y + 160, 1.25,
             color(COLOR_WHITE, self.alpha), nil, 'center')
         DrawText('main_font_zh_cn', '︿', x - 7, y + 150 + d / 2.25 + d / 7 * sin(3 * self.timer),

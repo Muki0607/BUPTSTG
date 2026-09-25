@@ -9,7 +9,8 @@ lib.replay = Class(object)
 ---@param pos number @初始选择位置
 ---@param page number @初始页数
 function lib.replay:init(pos, page)
-    self.num = 3 --菜单编号
+    self.class = lib.replay
+    self.num = 6 --菜单编号
     self.group = GROUP_GHOST
     self.layer = LAYER_TOP
     self.level = 1 --self.state
@@ -26,8 +27,10 @@ function lib.replay:init(pos, page)
     self.slot = nil --当前位置rep
     self.x = screen.width * 0.5
     self.y = screen.height * 0.5
-    self.default_x = screen.width * 0.5
-    self.default_y = screen.height * 0.5
+    self.x = self.x - screen.width
+    self.y = self.y + screen.height
+    self.default_x = self.x
+    self.default_y = self.y
     self.bound = false
     self.t = 8
     self.wait = 30
@@ -52,8 +55,6 @@ function lib.replay:init(pos, page)
 
             -- 创建新任务，在菜单阶段等待一段时间后执行以下操作
             New(tasker, function()
-                -- 菜单退出函数
-                lib.Fly(self, 0, 'down', true)
 
                 -- 创建一个新的蒙版淡出效果
                 New(mask_fader, 'close')
@@ -76,15 +77,8 @@ function lib.replay:init(pos, page)
         if self.slot ~= nil then
             self.text2 = {}
             self.pos2 = 1
-            self.wait = self.t * 2
-            lib.Fly(self, 0, 'down')
-            task.New(self, function()
-                task.Wait(self.t)
-                self.level = 2
-                self.x = self.default_x + 20
-                self.y = self.default_y
-                lib.Fly(self, 1, "left")
-            end)
+            self.wait = self.t
+            self.level = 2
 
             for _, v in ipairs(self.slot.stages) do
                 local stage = string.match(v.stageName, '^(.+)@.+$')
@@ -120,11 +114,13 @@ function lib.replay:init(pos, page)
     end
 
     lib.FetchReplaySlots(self)
-    lib.Fly(self, 1, 'left')
+    lib.RegistMenu(self)
 end
 
 function lib.replay:frame()
     task.Do(self)
+    --只有活跃的菜单才响应玩家操作
+    if not lib.IsActive(self) then return end
     self.wait = max(self.wait - 1, 0)
     if self.wait < 1 then
         --local lastkey = GetLastKey()
@@ -211,15 +207,8 @@ function lib.replay:frame()
         else
             if KeyIsPressed('spell') or aic.input.CheckLastKey('menu') then
                 PlaySound('cancel00', 0.5)
-                self.wait = self.t * 2
-                lib.Fly(self, 0, 'down')
-                task.New(self, function()
-                    task.Wait(self.t)
-                    self.level = 1
-                    self.x = self.default_x + 20
-                    self.y = self.default_y
-                    lib.Fly(self, 1, "left")
-                end)
+                self.wait = self.t
+                self.level = 1
             elseif KeyIsPressed('shoot') then
                 PlaySound('ok00', 0.3)
                 self.wait = 114514
@@ -253,7 +242,6 @@ end
 
 function lib.replay:render()
     SetViewMode('ui')
-    lib.DrawSubTitle(self)
     local _color = color
     if self.level == 1 then
         local x, y, text, pos, timer = self.x, self.y, sp.copy(self.text1), self.pos1, self.timer

@@ -336,9 +336,9 @@ end
 _tmp_sc.perform=false
 table.insert(_editor_class["Aya"].cards,_tmp_sc)
 table.insert(_sc_table,{"Aya","伊奘诺「神秘的具象」",_tmp_sc,#_editor_class["Aya"].cards,false})
-stage.group.New('menu',{},"Normal",{lifeleft=7,power=400,faith=50000,bomb=3},true,1)
-stage.group.AddStage('Normal','SpellCard@Normal',{lifeleft=7,power=400,faith=50000,bomb=3},true)
-stage.group.DefStageFunc('SpellCard@Normal','init',function(self)
+stage.group.New('menu',{},"Hard",{lifeleft=7,power=400,faith=50000,bomb=3},true,1)
+stage.group.AddStage('Hard','SpellCard@Hard',{lifeleft=7,power=400,faith=50000,bomb=3},true)
+stage.group.DefStageFunc('SpellCard@Hard','init',function(self)
     _init_item(self)
     difficulty=self.group.difficulty
     New(mask_fader,'open')
