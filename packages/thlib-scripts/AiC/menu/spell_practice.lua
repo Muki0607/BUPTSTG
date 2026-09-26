@@ -19,7 +19,13 @@ lib.spell_practice_last_pos = nil
 ---不能放在init里：菜单是在模块加载阶段创建的，那时编辑器数据还没准备好
 ---@return table
 local function GetSCList()
-    return _sc_table or {}
+    local t = sp.copy(_sc_table)
+    for k, c in pairs(t) do
+        if c[2] == '「通常攻击-显示对话用」' then --排除不应该出现在这里的卡
+            t[k] = nil
+        end
+    end
+    return t
 end
 
 ---总页数

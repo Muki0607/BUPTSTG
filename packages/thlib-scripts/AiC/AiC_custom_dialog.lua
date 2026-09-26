@@ -108,19 +108,19 @@ function lib:Dialog(num, start_pos, end_pos)
     local d = aic.l10n[setting.locale].dialog["dialog" .. num]
     start_pos = start_pos or 1
     end_pos = end_pos or #d.text
-    d.name = lib.MakeParamList(d.name, end_pos - start_pos + 1, '')
-    lib.sp.SetDisplayer(self, true, nil, 0.7, 0.25, 0, 20, '', nil, Color(150, 255, 255, 255), nil, Color(255, 85, 76, 74))
-    local dialog_name = New(lib.dialog_name, d.name[start_pos])
+    --d.name = lib.MakeParamList(d.name, end_pos - start_pos + 1, '')
+    lib.sp.SetDisplayer(self, true, nil, 1, 1.5, 0, 10, '', nil, Color(255, 255, 255, 255), nil, Color(255, 255, 255, 255))
+    --local dialog_name = New(lib.dialog_name, d.name[start_pos])
     for i = start_pos, end_pos do
-        dialog_name.name = d.name[i]
-        lib.sp.multi_sentence_ex(self, d.img, d.pos, d.text, d.canskip, d.t, d.hscale, d.vscale, d.num, nil, nil, 1, d.snd, d.vol, nil, i, i)
+        --dialog_name.name = d.name[i]
+        lib.sp.multi_sentence_ex(self, d.img, d.pos, d.text, d.canskip, d.t, d.hscale, d.vscale, d.num, d.px, d.py, 1, d.snd, d.vol, nil, i, i)
     end
 end
 
 lib.dialog_name = Class(object)
 
 function lib.dialog_name:init(name)
-    self.x, self.y = -175, -50
+    self.x, self.y = -175, -100
     self.layer = LAYER_TOP + 10
     self.name = name
 end
@@ -132,7 +132,8 @@ function lib.dialog_name:frame()
 end
 
 function lib.dialog_name:render()
-    RenderTTF('dialog', self.name, self.x, self.x, self.y, self.y, Color(255, 230, 227, 219), 'vcenter')
+    DrawText('main_font_zh_cn', self.name, self.x, self.y, 1,
+        Color(255, 230, 227, 219), Color(255, 0, 0, 0), 'vcenter')
 end
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -289,9 +290,9 @@ function lib.sp.SetDisplayer(self, p_dialog, dialogbox, dialogbox_hscale, dialog
     text_co1 = text_co1 or Color(255, 255, 200, 200)
     text_co2 = text_co2 or Color(255, 200, 200, 255)
     dialogbox = dialogbox or 'dialog_box'
-    dialogTTF = dialogTTF or 'dialog'
+    dialogTTF = dialogTTF or 'main_font_zh_cn'
     dialogbox_hscale = dialogbox_hscale or 1
-    dialogbox_vscale = dialogbox_hscale or dialogbox_vscale or 1
+    dialogbox_vscale = dialogbox_vscale or dialogbox_hscale
     dialogbox_yu = dialogbox_yu or 0
     text_yu = text_yu or 0
     text_scale = text_scale or 1

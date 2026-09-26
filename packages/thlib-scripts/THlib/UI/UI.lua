@@ -368,7 +368,7 @@ function lstg_ui:drawFrame()
     local dx = self.bgdx
     x = x + 96 * hs
     Render("ui_bg", x + dx, y, 0, hs, vs)
-    Render("logo", -16 + w.scrr + dx + 15, 150, 0, 0.5, 0.5)
+    Render("logo", -16 + w.scrr + dx + 55, 150, 0, 0.5, 0.5)
     SetFontState("menu", "", Color(0xFFFFFFFF))
     RenderText("menu",
             string.format("%.1ffps", GetFPS()),

@@ -12,9 +12,22 @@ _LoadImageFromFile('image:'..'cdbg04a','cdbg04a.png',true,0,0,false,0)
 _LoadImageFromFile('image:'..'cdbg04b','cdbg04b.png',true,0,0,false,0)
 _LoadImageFromFile('image:'..'charge','charge.png',true,0,0,false,0)
 _LoadImageFromFile('image:'..'Maribel_face','Maribel_face.png',true,0,0,false,0)
+_LoadImageFromFile('image:'..'Maribel_face_happy','Maribel_face_happy.png',true,0,0,false,0)
+_LoadImageFromFile('image:'..'Maribel_face_surprise','Maribel_face_surprise.png',true,0,0,false,0)
+_LoadImageFromFile('image:'..'Maribel_face_speechless','Maribel_face_speechless.png',true,0,0,false,0)
+_LoadImageFromFile('image:'..'Maribel_face_confused','Maribel_face_confused.png',true,0,0,false,0)
 _LoadImageFromFile('image:'..'Renko_face','Renko_face.png',true,0,0,false,0)
+_LoadImageFromFile('image:'..'Renko_face_angry','Renko_face_angry.png',true,0,0,false,0)
+_LoadImageFromFile('image:'..'Renko_face_happy','Renko_face_happy.png',true,0,0,false,0)
+_LoadImageFromFile('image:'..'Renko_face_confused','Renko_face_confused.png',true,0,0,false,0)
+_LoadImageFromFile('image:'..'Renko_face_speechless','Renko_face_speechless.png',true,0,0,false,0)
+_LoadImageFromFile('image:'..'Renko_face_suprise','Renko_face_suprise.png',true,0,0,false,0)
 _LoadImageFromFile('image:'..'Hiffu_face','Hiffu_face.png',true,0,0,false,0)
-_LoadImageFromFile('image:'..'Aya_face','Hiffu_face.png',true,0,0,false,0)
+_LoadImageFromFile('image:'..'Aya_face','Aya_face.png',true,0,0,false,0)
+_LoadImageFromFile('image:'..'Aya_face_contempt','Aya_face_contempt.png',true,0,0,false,0)
+_LoadImageFromFile('image:'..'Aya_face_hidden','Aya_face_hidden.png',true,0,0,false,0)
+_LoadImageFromFile('image:'..'Aya_face_defeated','Aya_face_defeated.png',true,0,0,false,0)
+_LoadImageFromFile('image:'..'Aya_face_defeated_contempt','Aya_face_defeated_contempt.png',true,0,0,false,0)
 _LoadImageFromFile('image:'..'sp1_1_bg','sp1_1_bg.png',true,0,0,false,0)
 _LoadImageFromFile('image:'..'sp1_2_bg_1','sp1_2_bg_1.png',true,0,0,false,0)
 _LoadImageFromFile('image:'..'sp1_2_bg_2','sp1_2_bg_2.png',true,0,0,false,0)
@@ -25,9 +38,29 @@ _LoadImageFromFile('image:'..'sp1_4_bg_2','sp1_4_bg_2.png',true,0,0,false,0)
 _LoadImageFromFile('image:'..'photo_dark','photo_dark.png',true,0,0,true,0)
 _LoadImageFromFile('image:'..'photo_light','photo_light.png',true,256,192,true,0)
 _LoadImageFromFile('image:'..'dark_fog','dark_fog.png',true,0,0,false,0)
+_LoadImageFromFile('image:'..'deer0','deer0.png',false,8,8,false,0)
+_LoadImageFromFile('image:'..'deer1','deer1.png',false,8,8,false,0)
+_LoadImageFromFile('image:'..'deer2','deer2.png',false,8,8,false,0)
+_LoadImageFromFile('image:'..'deer3','deer3.png',false,8,8,false,0)
+_LoadImageFromFile('image:'..'deer4','deer4.png',false,8,8,false,0)
+_LoadImageFromFile('image:'..'deer5','deer5.png',false,8,8,false,0)
+_LoadImageFromFile('image:'..'deer6','deer6.png',false,8,8,false,0)
+_LoadImageFromFile('image:'..'deer7','deer7.png',false,8,8,false,0)
+--[[ 狼弹素材：enm7.png 第10行前三格（绿色狼）；每格32×32。贴图文件与工程一同保存。]]
+
+_LoadImageFromFile('image:'..'BD_WolfAtlas','enm7.png',false,0,0,false,0)
+--[[ 从图集 y=288、x=0/32/64 提取三帧；资源名 BD_WolfRun1～3。]]
+
+for i = 1, 3 do
+    LoadImage("image:BD_WolfRun" .. i, "image:BD_WolfAtlas", (i - 1) * 32, 288, 32, 32, 10, 7, false)
+end
+--[[ 夜空背景：符卡使用 bd_night_sky.png，保持画面比例，居中铺满。]]
+
+_LoadImageFromFile('image:'..'BD_NightSky','bd_night_sky.png',false,0,0,false,0)
 LoadAniFromFile('ani:'..'crow','crow.png',true,4,1,4,16,16,false)
 LoadAniFromFile('ani:'..'beer','beer.png',true,4,1,4,16,16,false)
 LoadAniFromFile('ani:'..'bu_bird','bu_bird.png',true,3,1,8,5,5,false)
+LoadAniFromFile('ani:'..'bu_bird_2','bu_bird_2.png',true,3,1,8,5,5,false)
 _editor_class["dialog_boss_name"]=Class(_object)
 _editor_class["dialog_boss_name"].init=function(self,_x,_y,name1,name2)
     self.x,self.y=_x,_y
@@ -35,16 +68,19 @@ _editor_class["dialog_boss_name"].init=function(self,_x,_y,name1,name2)
     self.layer=LAYER_TOP+5
     self.group=GROUP_GHOST
     self.hide=false
-    self.bound=true
+    self.bound=false
     self.navi=false
     self.hp=10
     self.maxhp=10
     self.colli=true
     self._servants={}
     self._blend,self._a,self._r,self._g,self._b='',255,255,255,255
-    self.x = 50
-    self.y = -50
+    self.x = 380
+    self.y = 160
+    self.layer = LAYER_TOP + 114514
     self.alpha = 0
+    self.name1 = name1
+    self.name2 = name2
     lasttask=task.New(self,function()
         local x0=(self.x)
         do
@@ -53,19 +89,33 @@ _editor_class["dialog_boss_name"].init=function(self,_x,_y,name1,name2)
             for _=1,30 do
                 self.x=x
                 self.alpha = al
-                self.rot = rot
                 task._Wait(1)
                 al=al+_d_al
                 x=x+_d_x
             end
         end
+        task._Wait(60)
+        do
+            local _beg_al=255 local al=_beg_al local _end_al=0 local _d_al=(_end_al-_beg_al)/(30)
+            local _beg_x=x0+30 local x=_beg_x local _end_x=x0+60 local _d_x=(_end_x-_beg_x)/(30)
+            for _=1,30 do
+                self.x=x
+                self.alpha = al
+                task._Wait(1)
+                al=al+_d_al
+                x=x+_d_x
+            end
+        end
+        _del(self,true)
     end)
 end
 _editor_class["dialog_boss_name"].render=function(self)
+    SetViewMode('ui')
     DrawText('main_font_zh_cn', self.name1, self.x, self.y, 1,
         Color(self.alpha, 182, 109, 112), Color(self.alpha, 0, 0, 0), 'centerpoint')
     DrawText('main_font_zh_cn', self.name2, self.x, self.y - 30, 1.75,
         Color(self.alpha, 255, 255, 255), Color(self.alpha, 177, 42, 44), 'centerpoint')
+    SetViewMode('world')
     self.class.base.render(self)
 end
 _editor_class["NB_Portrait_AI"]=Class(_object)
@@ -180,6 +230,226 @@ _editor_class["aya_charge"].init=function(self,_x,_y,type, t, r, g, b)
         end)
     end
 end
+_editor_class["straght"]=Class(laser)
+_editor_class["straght"].init=function(self,_x,_y,a,v)
+    laser.init(self,COLOR_RED,_x,_y,0,40,90,40,11,1,0)
+    
+    lasttask=task.New(self,function()
+        SetV2(self,v,a,true,false)
+        laser._TurnOn(self,30,false,true)
+    end)
+end
+--[[ 激光，参数为速度和角度
+]]
+_editor_class["scar"]=Class(bullet)
+_editor_class["scar"].init=function(self,_x,_y,a)
+bullet.init(self,ball_light_dark,COLOR_ORANGE,true,true)
+self.x,self.y=_x,_y
+    lasttask=task.New(self,function()
+        task.MoveTo(a,150,60,MOVE_DECEL)
+        SetV2(self,3,0,false,true)
+    end)
+end
+--[[ 固定高度的延时自机狙，参数为x轴
+]]
+_editor_class["scar1"]=Class(bullet)
+_editor_class["scar1"].init=function(self,_x,_y,a,v)
+bullet.init(self,square,COLOR_RED,true,true)
+self.x,self.y=_x,_y
+    lasttask=task.New(self,function()
+        SetV2(self,1,a+20,true,false)
+        task._Wait(60)
+        SetV2(self,v,0,true,true)
+    end)
+end
+--[[ 依旧延时自机狙，参数为角度和速度
+]]
+_editor_class["scar2"]=Class(bullet)
+_editor_class["scar2"].init=function(self,_x,_y,a)
+bullet.init(self,square,COLOR_ORANGE,true,true)
+self.x,self.y=_x,_y
+    lasttask=task.New(self,function()
+        SetV2(self,3,a,false,false)
+        task._Wait(30)
+        SetV2(self,0,a,true,false)
+        task._Wait(15)
+        SetV2(self,3,a+90,true,false)
+    end)
+end
+--[[ 延时逆时针拐弯90度子弹，参数为角度
+]]
+_editor_class["scar3"]=Class(bullet)
+_editor_class["scar3"].init=function(self,_x,_y,a)
+bullet.init(self,square,COLOR_ORANGE,true,true)
+self.x,self.y=_x,_y
+    lasttask=task.New(self,function()
+        SetV2(self,3,a,false,false)
+        task._Wait(30)
+        SetV2(self,0,a,true,false)
+        task._Wait(15)
+        SetV2(self,3,a-90,true,false)
+    end)
+end
+--[[ 
+]]
+_editor_class["awm1"]=Class(enemy)
+_editor_class["awm1"].init=function(self,_x,_y,awmv)
+    enemy.init(self,30,6,false,true,true)
+    self.x,self.y=_x,_y
+    self.drop={0,0,3}
+    task.New(self,function() self.protect=true task.Wait(10) self.protect=false end)
+    lasttask=task.New(self,function()
+        SetV2(self,2.4,awmv,false,false)
+        for _=1,_infinite do
+            task._Wait(45)
+            PlaySound("tan00",0.1,self.x/256,false)
+            if self.y>=-150 then
+                do local a1,_d_a1=(5),(-0.5) for _=1,8 do
+                    last=New(_straight,grain_b,COLOR_DEEP_GREEN,self.x,self.y,a1,0,true,0,true,true,0,false,0,0,4,false)
+                a1=a1+_d_a1 end end
+            else
+            end
+        end
+    end)
+end
+--[[ 自机狙妖精，参数为移动方向
+]]
+_editor_class["awm2"]=Class(enemy)
+_editor_class["awm2"].init=function(self,_x,_y,awmv)
+    enemy.init(self,1,30,false,true,true)
+    self.x,self.y=_x,_y
+    self.drop={5,0,0}
+    task.New(self,function() self.protect=true task.Wait(4) self.protect=false end)
+    lasttask=task.New(self,function()
+        SetV2(self,2.4,awmv,false,false)
+        for _=1,_infinite do
+            task._Wait(60)
+            PlaySound("tan00",0.1,self.x/256,false)
+            if self.y>=-150 then
+                do local a1,_d_a1=(5),(-0.5) for _=1,8 do
+                    last=New(_straight,grain_b,COLOR_BLUE,self.x,self.y,a1,10,true,0,true,true,0,false,0,0,4,false)
+                    last=New(_straight,grain_b,COLOR_BLUE,self.x,self.y,a1,-10,true,0,true,true,0,false,0,0,4,false)
+                a1=a1+_d_a1 end end
+            else
+            end
+        end
+    end)
+end
+--[[ 偶数自机狙妖精，参数为移动方向
+]]
+_editor_class["awm3"]=Class(enemy)
+_editor_class["awm3"].init=function(self,_x,_y,awmv)
+    enemy.init(self,4,30,false,true,true)
+    self.x,self.y=_x,_y
+    self.drop={5,3,5}
+    task.New(self,function() self.protect=true task.Wait(30) self.protect=false end)
+    lasttask=task.New(self,function()
+        SetV2(self,2.4,awmv,false,false)
+        for _=1,_infinite do
+            task._Wait(30)
+            PlaySound("tan00",0.1,self.x/256,false)
+            if self.y>=-150 then
+                do local a1,_d_a1=(5),(-0.5) for _=1,8 do
+                    last=New(_straight,grain_b,COLOR_RED,self.x,self.y,a1,10,true,0,true,true,0,false,0,0,4,false)
+                    last=New(_straight,grain_b,COLOR_RED,self.x,self.y,a1,-10,true,0,true,true,0,false,0,0,4,false)
+                    last=New(_straight,grain_b,COLOR_YELLOW,self.x,self.y,a1,0,true,0,true,true,0,false,0,0,4,false)
+                a1=a1+_d_a1 end end
+            else
+            end
+        end
+    end)
+end
+--[[ 奇偶自机狙妖精，参数为移动方向
+]]
+_editor_class["awm4"]=Class(enemy)
+_editor_class["awm4"].init=function(self,_x,_y,awmv)
+    enemy.init(self,2,30,false,true,true)
+    self.x,self.y=_x,_y
+    self.drop={10,7,10}
+    task.New(self,function() self.protect=true task.Wait(30) self.protect=false end)
+    lasttask=task.New(self,function()
+        SetV2(self,2.4,awmv,false,false)
+        for _=1,_infinite do
+            task._Wait(45)
+            PlaySound("tan00",0.1,self.x/256,false)
+            if self.y>=-150 then
+                do local a1,_d_a1=(5),(-0.5) for _=1,8 do
+                    last=New(_straight,grain_b,COLOR_RED,self.x,self.y,a1,25,true,0,true,true,0,false,0,0,4,false)
+                    last=New(_straight,grain_b,COLOR_RED,self.x,self.y,a1,-25,true,0,true,true,0,false,0,0,4,false)
+                    last=New(_straight,grain_b,COLOR_YELLOW,self.x,self.y,a1,0,true,0,true,true,0,false,0,0,4,false)
+                a1=a1+_d_a1 end end
+            else
+            end
+        end
+    end)
+end
+--[[ 
+]]
+_editor_class["bigone"]=Class(enemy)
+_editor_class["bigone"].init=function(self,_x,_y,_)
+    enemy.init(self,9,350,false,true,false)
+    self.x,self.y=_x,_y
+    self.drop={25,10,25}
+    task.New(self,function() self.protect=true task.Wait(60) self.protect=false end)
+    lasttask=task.New(self,function()
+        task.MoveTo(0,150,60,MOVE_NORMAL)
+        for _=1,10 do
+            do local a,_d_a=(10),(ran:Float(15,30)) for _=1,3 do
+                task._Wait(14)
+                PlaySound("tan01",0.1,self.x/256,false)
+                do local b,_d_b=(0),(1.5) for _=1,5 do
+                    last=New(_straight,silence,COLOR_ORANGE,self.x,self.y,3,b+a,false,0,true,true,0,false,0.5,b+a,4.5,false)
+                    last=New(_straight,silence,COLOR_ORANGE,self.x,self.y,3,b+a+60,false,0,true,true,0,false,0.5,b+a+60,4.5,false)
+                    last=New(_straight,silence,COLOR_ORANGE,self.x,self.y,3,b+a+120,false,0,true,true,0,false,0.5,b+a+120,4.5,false)
+                    last=New(_straight,silence,COLOR_ORANGE,self.x,self.y,3,b+a+180,false,0,true,true,0,false,0.5,b+a+180,4.5,false)
+                    last=New(_straight,silence,COLOR_ORANGE,self.x,self.y,3,b+a+240,false,0,true,true,0,false,0.5,b+a+240,4.5,false)
+                    last=New(_straight,silence,COLOR_ORANGE,self.x,self.y,3,b+a+300,false,0,true,true,0,false,0.5,b+a+300,4.5,false)
+                    last=New(_straight,silence,COLOR_ORANGE,self.x,self.y,3,b+a+330,false,0,true,true,0,false,0.5,b+a+300,4.5,false)
+                    last=New(_straight,silence,COLOR_ORANGE,self.x,self.y,3,b+a+270,false,0,true,true,0,false,0.5,b+a+240,4.5,false)
+                    last=New(_straight,silence,COLOR_ORANGE,self.x,self.y,3,b+a+210,false,0,true,true,0,false,0.5,b+a+180,4.5,false)
+                    last=New(_straight,silence,COLOR_ORANGE,self.x,self.y,3,b+a+150,false,0,true,true,0,false,0.5,b+a+120,4.5,false)
+                    last=New(_straight,silence,COLOR_ORANGE,self.x,self.y,3,b+a+90,false,0,true,true,0,false,0.5,b+a+60,4.5,false)
+                    last=New(_straight,silence,COLOR_ORANGE,self.x,self.y,3,b+a+30,false,0,true,true,0,false,0.5,b+a,4.5,false)
+                b=b+_d_b end end
+            a=a+_d_a end end
+            PlaySound("tan02",0.1,self.x/256,false)
+            last=New(_editor_class["scar"],self.x,self.y,90)
+            last=New(_editor_class["scar"],self.x,self.y,-90)
+        end
+        SetV2(self,3,90,false,false)
+    end)
+end
+_editor_class["bigone"].kill=function(self)
+    _drop_item(item_extend,1,self.x,self.y)
+    PlaySound("bonus",0.1,self.x/256,false)
+    self.class.base.kill(self)
+end
+_editor_class["aya_bg_sp_0"]=Class(_spellcard_background)
+_editor_class["aya_bg_sp_0"].init=function(self)
+    _spellcard_background.init(self)
+    _spellcard_background.AddLayer(self,"image:cdbg04b",true,0,0,0,-0.3,0.3,0,"mul+alpha",1,1,
+        function(self)
+            self.task={}
+            self.a = 100
+        end,
+        function(self)
+            task.Do(self)
+        end,
+        function(self)
+        end
+    )
+    _spellcard_background.AddLayer(self,"image:cdbg04a",false,0,0,0,0,0,0,"mul+alpha",1,1,
+        function(self)
+            self.task={}
+            self.a = 200
+        end,
+        function(self)
+            task.Do(self)
+        end,
+        function(self)
+        end
+    )
+end
 _editor_class["aya_bg_sp_1"]=Class(_spellcard_background)
 _editor_class["aya_bg_sp_1"].init=function(self)
     _spellcard_background.init(self)
@@ -259,6 +529,20 @@ _editor_class["aya_bg_sp_4"].init=function(self)
         end
     )
     _spellcard_background.AddLayer(self,"image:sp1_4_bg_1",false,0,0,0,0,0,0,"mul+alpha",0.5,0.5,
+        function(self)
+            self.task={}
+        end,
+        function(self)
+            task.Do(self)
+        end,
+        function(self)
+        end
+    )
+end
+_editor_class["BD_NightSkySpell"]=Class(_spellcard_background)
+_editor_class["BD_NightSkySpell"].init=function(self)
+    _spellcard_background.init(self)
+    _spellcard_background.AddLayer(self,"image:BD_NightSky",false,(lstg.world.l + lstg.world.r) / 2, (lstg.world.b + lstg.world.t) / 2,0,0,0,0,"",math.max((lstg.world.r - lstg.world.l) / 1254, (lstg.world.t - lstg.world.b) / 1254), math.max((lstg.world.r - lstg.world.l) / 1254, (lstg.world.t - lstg.world.b) / 1254),
         function(self)
             self.task={}
         end,
@@ -1396,31 +1680,340 @@ self.x,self.y=_x,_y
         SetV2(self,1,self.rot,true,false)
     end)
 end
-_editor_class["aya_bg_sp_0"]=Class(_spellcard_background)
-_editor_class["aya_bg_sp_0"].init=function(self)
-    _spellcard_background.init(self)
-    _spellcard_background.AddLayer(self,"image:cdbg04b",true,0,0,0,-0.3,0.3,0,"mul+alpha",1,1,
-        function(self)
-            self.task={}
-            self.a = 100
-        end,
-        function(self)
-            task.Do(self)
-        end,
-        function(self)
+_editor_class["GreenHugeRow"]=Class(bullet)
+--[[ 绿色大玉保留敌弹判定；从上边界之外生成，进屏幕后正常出界删除。]]
+
+_editor_class["GreenHugeRow"].init=function(self,_x,_y,owner,speed,horizontal_speed)
+bullet.init(self,ball_huge,COLOR_GREEN,false,true)
+self.x,self.y=_x,_y
+    SetV2(self,speed,270,false,false)
+    self.vx = horizontal_speed
+    self.bound = false -- 出生在屏幕外时暂不触发引擎出界删除
+    self.layer = LAYER_ENEMY_BULLET - 1 -- 金色子弹绘制在绿色大玉之上
+    self.huge_gold_owner = owner
+    self.huge_gold_lane_spacing = math.max(0.001, math.abs(horizontal_speed) * owner.huge_gold_interval)
+    local lane_index = (self.x - lstg.world.l) / self.huge_gold_lane_spacing
+    if horizontal_speed < 0 then
+        self.huge_gold_next_x = lstg.world.l + (math.ceil(lane_index) - 1) * self.huge_gold_lane_spacing
+    else
+        self.huge_gold_next_x = lstg.world.l + (math.floor(lane_index) + 1) * self.huge_gold_lane_spacing
+    end
+end
+_editor_class["GreenHugeRow"].frame=function(self)
+    task.Do(self)
+    if self.y < lstg.world.b - 33 then
+        RawDel(self) -- 补弹即使没有完全进入画面，也会在离开底边后删除
+        return
+    end
+    if self.x >= lstg.world.l and self.x <= lstg.world.r and self.y >= lstg.world.b and self.y <= lstg.world.t then
+        self.bound = true
+    end
+    if IsValid(self.huge_gold_owner) and self.bound and self.huge_gold_next_x >= lstg.world.l and self.huge_gold_next_x <= lstg.world.r and self.y > lstg.world.b and ((self.vx < 0 and self.x <= self.huge_gold_next_x) or (self.vx > 0 and self.x >= self.huge_gold_next_x)) then
+        last=New(_editor_class["HugeGoldenShot"],self.huge_gold_next_x, self.y,self.huge_gold_owner.huge_gold_speed, 270)
+        self.huge_gold_next_x = self.huge_gold_next_x + (self.vx < 0 and -1 or 1) * self.huge_gold_lane_spacing
+    end
+end
+_editor_class["HugeGoldenShot"]=Class(bullet)
+--[[ 移动的绿色大玉经过固定发射列时，生成向下的金色中玉。]]
+
+_editor_class["HugeGoldenShot"].init=function(self,_x,_y,speed,angle)
+bullet.init(self,ball_mid,COLOR_GOLDEN_YELLOW,false,true)
+self.x,self.y=_x,_y
+    SetV2(self,speed,angle,true,false)
+end
+_editor_class["FourCornerChaser"]=Class(_object)
+--[[ 四角追踪弹使用deer0～deer7八张贴图循环；on init的Image默认显示deer0，实际贴图由传入的编号选择。]]
+
+_editor_class["FourCornerChaser"].init=function(self,_x,_y,owner,deer_index)
+    self.x,self.y=_x,_y
+    self.img="image:deer0"
+    self.layer=LAYER_ENEMY_BULLET - 1
+    self.group=GROUP_ENEMY_BULLET
+    self.hide=false
+    self.bound=false
+    self.navi=false
+    self.hp=1
+    self.maxhp=1
+    self.colli=true
+    self._servants={}
+    self._blend,self._a,self._r,self._g,self._b='',255,255,255,255
+    self.a, self.b = 8,8
+    self.rect = false
+    self.chase_owner = owner
+    self.chase_deer_index = deer_index -- 第i颗鹿弹使用deer(i mod 8)
+    self.img = "image:deer" .. self.chase_deer_index
+    local deer_width = ({160,240,240,240,240,240,240,120})[self.chase_deer_index + 1]
+    self.hscale, self.vscale = owner.chase_deer_size / deer_width, owner.chase_deer_size / deer_width
+    self.chase_slow_radius = owner.chase_slow_radius + (math.random() * 2 - 1) * owner.chase_slow_jitter
+    self.chase_stop_radius = owner.chase_stop_radius + (math.random() * 2 - 1) * owner.chase_stop_jitter
+    self.chase_state = "follow" -- follow追踪、pause暂停、straight固定直飞
+    self.chase_pause_left = 0
+    self.chase_rearm_left = 0
+    self.chase_visited_screen = false
+    self.chase_last_px = IsValid(player) and player.x or self.x
+    self.chase_last_py = IsValid(player) and player.y or self.y
+    self.vx, self.vy = 0, 0
+end
+_editor_class["FourCornerChaser"].frame=function(self)
+    local owner = self.chase_owner
+    if not IsValid(owner) or owner.hp <= 0 then
+        RawDel(self)
+        return
+    end
+    if self.x >= lstg.world.l and self.x <= lstg.world.r and self.y >= lstg.world.b and self.y <= lstg.world.t then
+        self.chase_visited_screen = true
+    end
+    if self.chase_state == "straight" then
+        if self.chase_visited_screen and (self.x < lstg.world.l - owner.chase_spawn_margin or self.x > lstg.world.r + owner.chase_spawn_margin or self.y < lstg.world.b - owner.chase_spawn_margin or self.y > lstg.world.t + owner.chase_spawn_margin) then
+            RawDel(self)
         end
-    )
-    _spellcard_background.AddLayer(self,"image:cdbg04a",false,0,0,0,0,0,0,"mul+alpha",1,1,
-        function(self)
-            self.task={}
-            self.a = 200
-        end,
-        function(self)
-            task.Do(self)
-        end,
-        function(self)
+        return -- 直飞阶段不再改变vx与vy
+    end
+    local target = player
+    if not IsValid(target) then
+        self.vx, self.vy = 0, 0
+        return
+    end
+    local dx, dy = target.x - self.x, target.y - self.y
+    local dist = math.sqrt(dx * dx + dy * dy)
+    local player_dx, player_dy = target.x - self.chase_last_px, target.y - self.chase_last_py
+    self.chase_last_px, self.chase_last_py = target.x, target.y
+    if self.timer >= owner.chase_track_frames then
+        if self.chase_state == "pause" or self.vx * self.vx + self.vy * self.vy < 0.0001 then
+            local mx, my = target.__move_dx or 0, target.__move_dy or 0
+            local length = math.sqrt(mx * mx + my * my)
+            if length < 0.01 then
+                mx, my = player_dx, player_dy
+                length = math.sqrt(mx * mx + my * my)
+            end
+            if length < 0.01 then
+                mx, my, length = dx, dy, dist -- 自机未移动时朝其当前位置飞去
+            end
+            if length < 0.01 then
+                mx, my, length = 0, -1, 1
+            end
+            self.vx = owner.chase_final_speed * mx / length
+            self.vy = owner.chase_final_speed * my / length
         end
-    )
+        self.chase_state = "straight" -- 移动中的弹保留原有vx/vy
+        return
+    end
+    if self.chase_state == "pause" then
+        self.vx, self.vy = 0, 0
+        self.chase_pause_left = self.chase_pause_left - 1
+        if self.chase_pause_left <= 0 then
+            self.chase_state = "follow"
+            self.chase_rearm_left = owner.chase_rearm_frames
+        end
+        return -- 停顿帧不进入下方追踪逻辑
+    end
+    if self.chase_rearm_left > 0 then
+        self.chase_rearm_left = self.chase_rearm_left - 1
+    end
+    if self.chase_rearm_left <= 0 and dist <= self.chase_stop_radius then
+        self.chase_state = "pause"
+        self.chase_pause_left = math.random(math.floor(owner.chase_pause_min), math.floor(owner.chase_pause_max))
+        self.vx, self.vy = 0, 0
+        return
+    end
+    if dist > 0.01 then
+        local speed = dist <= self.chase_slow_radius and owner.chase_near_speed or owner.chase_far_speed
+        self.vx, self.vy = speed * dx / dist, speed * dy / dist
+    else
+        self.vx, self.vy = 0, 0
+    end
+end
+_editor_class["BD_Star"]=Class(bullet)
+--[[ 七个实例共用此定义。发射源名称在 self.bd_name，坐标在 self.x / self.y。]]
+
+_editor_class["BD_Star"].init=function(self,_x,_y,owner, name, offset_x, offset_y, star_color)
+bullet.init(self,ball_light,star_color,false,false)
+self.x,self.y=_x,_y
+    self.bd_owner = owner
+    self.bd_token = owner.bd_token
+    self.bd_name = name
+    self.bd_dx, self.bd_dy = offset_x, offset_y
+    --[[ 光玉颜色由创建各星点时传入的 star_color 控制；J红 I橙 H黄 G绿 F青 E蓝 D紫。跳过出生雾化以保持图层稳定。]]
+    
+    self.class = self.logclass
+    self.bound = false
+    self.colli = true
+    self.group = GROUP_INDES
+    self.layer = LAYER_ENEMY_BULLET + 5
+    self.hscale, self.vscale = owner.bd_star_scale, owner.bd_star_scale
+    --[[ 开花弹在 Boss → on start → Create task → 05 顺序开花 中修改。]]
+    
+end
+_editor_class["BD_Star"].frame=function(self)
+    self.class.base.frame(self)
+    local owner = self.bd_owner
+    if not IsValid(owner) or owner.bd_token ~= self.bd_token then
+        RawDel(self)
+        return
+    end
+    local c, s = cos(owner.bd_angle), sin(owner.bd_angle)
+    self.x = owner.bd_kx + owner.bd_scale * (self.bd_dx * c - self.bd_dy * s)
+    self.y = owner.bd_ky + owner.bd_scale * (self.bd_dx * s + self.bd_dy * c)
+end
+_editor_class["BD_Flower"]=Class(bullet)
+--[[ 开花弹：小圆弹，自出生位置沿指定方向直线飞行，有正常敌弹判定。]]
+
+_editor_class["BD_Flower"].init=function(self,_x,_y,color, speed, angle)
+bullet.init(self,ball_mid,color,false,true)
+self.x,self.y=_x,_y
+    SetV2(self,speed,angle,true,false)
+end
+_editor_class["BD_Wolf"]=Class(bullet)
+--[[ 绿色狼弹使用enm7.png第10行三帧循环。左侧朝右跑、右侧水平翻转朝左跑；判定与速度保留原设定。]]
+
+_editor_class["BD_Wolf"].init=function(self,_x,_y,owner, speed, angle)
+bullet.init(self,ball_mid,COLOR_GREEN,false,true)
+self.x,self.y=_x,_y
+    self.bd_owner = owner
+    self.bd_token = owner.bd_token
+    self.colli = true
+    self.class = self.logclass
+    self.img = "image:BD_WolfRun1"
+    self.bd_anim_interval = owner.bd_wolf_anim_interval
+    self.bound = false
+    --[[ 暂时关闭引擎出界删除，允许从画面外生成；越过对侧边缘后自行回收。]]
+    
+    SetV2(self,speed,angle,true,false)
+    self.vy = 0
+    self.bd_direction = (angle == 0) and 1 or -1
+    self.rot = 0
+    self.hscale = self.bd_direction
+    self.vscale = 1
+    self.bd_life = 0
+end
+_editor_class["BD_Wolf"].frame=function(self)
+    self.class.base.frame(self)
+    self.bd_life = self.bd_life + 1
+    self.img = "image:BD_WolfRun" .. (math.floor(self.bd_life / self.bd_anim_interval) % 3 + 1)
+    local owner = self.bd_owner
+    if not IsValid(owner) or owner.bd_token ~= self.bd_token then
+        RawDel(self)
+        return
+    end
+    --[[ 只检查前进方向的出口，避免出生在边缘外时被提前删除。20秒兜底回收。]]
+    
+    if (self.bd_direction == 1 and self.x > lstg.world.r + 32) or (self.bd_direction == -1 and self.x < lstg.world.l - 32) or self.bd_life > 1200 then
+        RawDel(self)
+    else
+    end
+end
+_editor_class["BD_Link"]=Class(_object)
+_editor_class["BD_Link"].init=function(self,_x,_y,owner, star_a, star_b)
+    self.x,self.y=_x,_y
+    self.img="white"
+    self.layer=LAYER_ENEMY_BULLET + 4
+    self.group=GROUP_GHOST
+    self.hide=false
+    self.bound=true
+    self.navi=false
+    self.hp=10
+    self.maxhp=10
+    self.colli=true
+    self._servants={}
+    self._blend,self._a,self._r,self._g,self._b='',255,255,255,255
+    self.bd_owner = owner
+    self.bd_token = owner.bd_token
+    self.bd_a, self.bd_b = star_a, star_b
+end
+_editor_class["BD_Link"].frame=function(self)
+    local owner = self.bd_owner
+    if not IsValid(owner) or owner.bd_token ~= self.bd_token
+        or not IsValid(self.bd_a) or not IsValid(self.bd_b) then
+        RawDel(self)
+    end
+end
+_editor_class["BD_Link"].render=function(self)
+    local a, b, owner = self.bd_a, self.bd_b, self.bd_owner
+    if not IsValid(owner) or owner.bd_token ~= self.bd_token
+        or not IsValid(a) or not IsValid(b) then return end
+    local dx, dy = b.x - a.x, b.y - a.y
+    local length = math.sqrt(dx * dx + dy * dy)
+    if length < 0.001 then return end
+    local nx = -dy / length * owner.bd_line_width * 0.5
+    local ny = dx / length * owner.bd_line_width * 0.5
+    SetImageState("white", "", Color(owner.bd_line_alpha, 255, 255, 255))
+    Render4V("white",a.x + nx, a.y + ny,0.5
+                    ,b.x + nx, b.y + ny,0.5
+                    ,b.x - nx, b.y - ny,0.5
+                    ,a.x - nx, a.y - ny,0.5)
+    SetImageState("white", "", Color(255, 255, 255, 255))
+end
+_editor_class["sc_4_p1_bu1"]=Class(bullet)
+_editor_class["sc_4_p1_bu1"].init=function(self,_x,_y,v, angle)
+bullet.init(self,arrow_big,COLOR_ORANGE,true,true)
+self.x,self.y=_x,_y
+    lasttask=task.New(self,function()
+        do
+            local _beg_v1=v local v1=_beg_v1  local _w_v1=-90 local _end_v1=0 local _d_w_v1=180/(30-1)
+            for _=1,30 do
+                SetV2(self,v1,angle,true,false)
+                task._Wait(1)
+                _w_v1=_w_v1+_d_w_v1 v1=(_end_v1-_beg_v1)/2*sin(_w_v1)+((_end_v1+_beg_v1)/2)
+            end
+        end
+        do
+            local _beg_v1=0 local v1=_beg_v1  local _w_v1=-90 local _end_v1=v local _d_w_v1=90/(30-1)
+            for _=1,30 do
+                SetV2(self,v1,angle,true,false)
+                task._Wait(1)
+                _w_v1=_w_v1+_d_w_v1 v1=(_end_v1-_beg_v1)*sin(_w_v1)+(_end_v1)
+            end
+        end
+    end)
+end
+_editor_class["sc_4_bu_bird"]=Class(_object)
+_editor_class["sc_4_bu_bird"].init=function(self,_x,_y,v, angle, rot)
+    self.x,self.y=_x,_y
+    self.img="ani:bu_bird_2"
+    self.layer=LAYER_ENEMY_BULLET
+    self.group=GROUP_ENEMY_BULLET
+    self.hide=false
+    self.bound=true
+    self.navi=false
+    self.hp=10
+    self.maxhp=10
+    self.colli=true
+    self._servants={}
+    self._blend,self._a,self._r,self._g,self._b='',255,255,255,255
+    SetV2(self,0,angle,true,false)
+    lasttask=task.New(self,function()
+        do
+            local _beg_v1=0 local v1=_beg_v1  local _w_v1=-90 local _end_v1=v local _d_w_v1=90/(30)
+            for _=1,30 do
+                SetV2(self,v1,angle,true,false)
+                task._Wait(1)
+                _w_v1=_w_v1+_d_w_v1 v1=(_end_v1-_beg_v1)*sin(_w_v1)+(_end_v1)
+            end
+        end
+    end)
+    lasttask=task.New(self,function()
+        do
+            local _beg_a1=angle local a1=_beg_a1  local _w_a1=-90 local _end_a1=angle + rot * 180 local _d_w_a1=180/(180)
+            for _=1,180 do
+                SetV2(self,v,a1,true,false)
+                task._Wait(1)
+                _w_a1=_w_a1+_d_w_a1 a1=(_end_a1-_beg_a1)/2*sin(_w_a1)+((_end_a1+_beg_a1)/2)
+            end
+        end
+    end)
+end
+_editor_class["sc_4_p4_la1"]=Class(laser)
+_editor_class["sc_4_p4_la1"].init=function(self,_x,_y,angle, t1, t2, t3, t4)
+    laser.init(self,COLOR_YELLOW,_x,_y,0,64,300,2,8,0,0)
+    
+    lasttask=task.New(self,function()
+        SetV2(self,0,angle,true,false)
+        laser._TurnHalfOn(self,t1,true)
+        laser._TurnOn(self,t2,true,true)
+        task._Wait(t3)
+        laser._TurnOn(self,t4,true,true)
+        _del(self,true)
+    end)
 end
 _editor_class["Aya"]=Class(boss)
 _editor_class["Aya"].cards={}
@@ -1429,11 +2022,36 @@ _editor_class["Aya"].bgm="bgm3"
 _editor_class["Aya"]._bg=nil
 _editor_class["Aya"].difficulty="All"
 _editor_class["Aya"].init=function(self,cards)
-boss.init(self,-150,160,_editor_class["Aya"].name,cards,New(_editor_class["aya_bg_sp_0"]),_editor_class["Aya"].difficulty)
+boss.init(self,-220,160,_editor_class["Aya"].name,cards,New(_editor_class["aya_bg_sp_0"]),_editor_class["Aya"].difficulty)
     self._wisys = BossWalkImageSystem(self)
     self._wisys:SetImage("aya_walkImage.png",4,11,{4,7,7,11},{1,1,1},6,16,16)
     boss.SetUIDisplay(self,true,true,true,false,true,true)
 end
+table.insert(_editor_class["Aya"].cards,boss.move.New(0,120,60,MOVE_ACC_DEC))
+_tmp_sc=boss.dialog.New(true)
+function _tmp_sc:init()
+    lstg.player.dialog=true
+    _dialog_can_skip=true
+    self.dialog_displayer=New(dialog_displayer)
+    lasttask=task.New(self,function()
+        task._Wait(60)
+        local name
+        if NoHitFlag then
+            name = lib.Dialog(self, 1, 1, 11)
+        else
+            lib.Dialog(self, 1, 1, 4)
+            lib.Dialog(self, 1, 6, 10)
+        end
+        last=New(_editor_class["dialog_boss_name"],self.x,self.y,'满世界提取素材的幻想记者','射命丸文')
+        name = lib.Dialog(self, 1, 11, 13)
+        last=New(_editor_class["dialog_boss_name"],self.x,self.y,'满世界提取素材的幻想记者','射命丸文？')
+        name = lib.Dialog(self, 1, 14, 16)
+        LoadMusicRecord("bgm3")
+        _play_music("bgm3")
+        name = lib.Dialog(self, 1, 17)
+    end)
+end
+table.insert(_editor_class["Aya"].cards,_tmp_sc)
 _tmp_sc=boss.card.New("「通常攻击-1」",2,5,45,1200,{0,0,0},false)
 function _tmp_sc:before()
 end
@@ -1510,6 +2128,7 @@ end
 _tmp_sc.perform=false
 table.insert(_editor_class["Aya"].cards,_tmp_sc)
 table.insert(_sc_table,{"Aya","「通常攻击-1」",_tmp_sc,#_editor_class["Aya"].cards,false})
+table.insert(_editor_class["Aya"].cards,boss.move.New(0,120,60,MOVE_ACC_DEC))
 _tmp_sc=boss.card.New("旧约「以酒还酒」",2,5,90,800,{50,0,20},false)
 function _tmp_sc:before()
     last=New(_editor_class["NB_Portrait_AI"],0,0,_)
@@ -1596,6 +2215,7 @@ function _tmp_sc:del()
     if IsValid(self.crow_drank) then
     	Del(self.crow_drank)
     end
+    _drop_item(item_extend,1,self.x,self.y)
 end
 function _tmp_sc:after()
 end
@@ -1674,186 +2294,228 @@ end
 _tmp_sc.perform=false
 table.insert(_editor_class["Aya"].cards,_tmp_sc)
 table.insert(_sc_table,{"Aya","「通常攻击-2」",_tmp_sc,#_editor_class["Aya"].cards,false})
-table.insert(_editor_class["Aya"].cards,boss.move.New(0,120,60,MOVE_ACC_DEC))
-_tmp_sc=boss.card.New("广重「卯酉之道，心之旅」",93,93,93,1800,{0,0,0},false)
+table.insert(_editor_class["Aya"].cards,boss.move.New(0,0,60,MOVE_ACC_DEC))
+_tmp_sc=boss.card.New("北斗「虹色之花与七石之狼」",2,5,60,1200,{0,0,0},false)
 function _tmp_sc:before()
+    if IsValid(_boss.bg) then Del(_boss.bg) end
+    _boss.bg = New(_editor_class["BD_NightSkySpell"])
     last=New(_editor_class["NB_Portrait_AI"],0,0,_)
-    self.spellname=aic.ui.NewSpellname(self, '广重「卯酉之道，心之旅」')
+    self.spellname=aic.ui.NewSpellname(self, '北斗「虹色之花与七石之狼」')
 end
 function _tmp_sc:init()
-    AddSPPoint(9999,1019,nil)
-    AddSPPoint(9999,2579,nil)
-    AddSPPoint(9999,4079,nil)
     lasttask=task.New(self,function()
-        _boss.bound = false
-        boss.show_aura(self,false)
-        boss.SetUIDisplay(self,true,true,true,false,true,false)
-        task.MoveTo(0,260,60,MOVE_ACC_DEC)
-        do
-            PlaySound("heal",1.0,self.x/256,true)
-            if IsValid(_boss.bg) then Del(_boss.bg) end
-                _boss.bg = New(_editor_class["aya_bg_sp_1"])
-            local banner = aic.ui.NewSpellname(self, "「始发·15s的蓝色大海」", 1, 0, -45)
-            banner.no_info=true
-            misc.ShakeScreen(60,3)
-            New(boss_cast_ef, 192, -170, 250, 100, 150, 255, 45)
-            task._Wait(60)
-            for _=1,90 do
-                for _=1,30 do
-                    last=New(_editor_class["sc_1_p1_bu1"],ran:Float(210,220),ran:Float(-120,-240),ran:Float(160,170), ran:Float(2.8,3))
+        --[[ 角速度单位：度/帧；60帧/秒。0.5=12秒一圈；负数顺时针；0静止。]]
+        
+        self.bd_kx, self.bd_ky = 0, 0
+        self.bd_omega = 1.0
+        self.bd_angle = 0
+        self.bd_scale = 1.0
+        self.bd_star_scale = 0.65
+        self.bd_line_width = 1.2
+        self.bd_line_alpha = 150
+        self.bd_token = {}
+        self.bd_stars = {}
+        self.bd_lines = {}
+        self.bd_flower_count = 10
+        self.bd_flower_speed = 1.0
+        self.bd_flower_speed_outer = 1.5
+        self.bd_flower_interval = 30 / math.abs(self.bd_omega)
+        self.bd_flower_rest = 180 / math.abs(self.bd_omega)
+        self.bd_flower_safe_height = 50
+        self.bd_flower_angle = 0
+        --[[ 每圈J→D依次在0°、30°、60°、90°、120°、150°、180°发射；剩余180°不发弹。只有星点高于自机至少100像素才开花。 每点同时发两圈，颗数由bd_flower_count决定，外圈速度由bd_flower_speed_outer设置。]]
+        
+        self.bd_wolf_speed = 2.5
+        self.bd_wolf_interval = 36
+        self.bd_wolf_anim_interval = 5
+        self.bd_wolf_y_range = 24
+        self.bd_wolf_start_delay = 90
+        self.bd_wolf_edge_offset = 8
+        --[[ 每36帧左右各一颗；取出生时自机y上下24范围，随后仅水平运动。start_delay为开花开始后等待帧数。edge_offset为屏幕外出生距离，默认8。 wolf_anim_interval为每帧姿势持续帧数，默认5。]]
+        
+        --[[ Boss 位于旋转中心 K。第一个任务负责 Boss 与星阵的整体流程。]]
+        
+        task.MoveTo(self.bd_kx,self.bd_ky,60,MOVE_ACC_DEC)
+        PlaySound("boon01",0.1,self.x/256,false)
+        last=New(_editor_class["BD_Star"],self.bd_kx + (-133.6135880929452) * self.bd_scale, self.bd_ky + (-36.6090659263431) * self.bd_scale,self, "D", -133.6135880929452, -36.6090659263431, COLOR_PURPLE)
+        self.bd_stars.D = last
+        last=New(_editor_class["BD_Star"],self.bd_kx + (-77.3636071205269) * self.bd_scale, self.bd_ky + (11.0725028767094) * self.bd_scale,self, "E", -77.3636071205269, 11.0725028767094, COLOR_BLUE)
+        self.bd_stars.E = last
+        last=New(_editor_class["BD_Star"],self.bd_kx + (-29.6194578004523) * self.bd_scale, self.bd_ky + (13.1634875184645) * self.bd_scale,self, "F", -29.6194578004523, 13.1634875184645, COLOR_CYAN)
+        self.bd_stars.F = last
+        last=New(_editor_class["BD_Star"],self.bd_kx + (27.1856249672278) * self.bd_scale, self.bd_ky + (19.4364414437298) * self.bd_scale,self, "G", 27.1856249672278, 19.4364414437298, COLOR_GREEN)
+        self.bd_stars.G = last
+        last=New(_editor_class["BD_Star"],self.bd_kx + (59.7946210235228) * self.bd_scale, self.bd_ky + (-13.2236149248016) * self.bd_scale,self, "H", 59.7946210235228, -13.2236149248016, COLOR_YELLOW)
+        self.bd_stars.H = last
+        last=New(_editor_class["BD_Star"],self.bd_kx + (128.2975017317231) * self.bd_scale, self.bd_ky + (26.2780462135037) * self.bd_scale,self, "I", 128.2975017317231, 26.2780462135037, COLOR_ORANGE)
+        self.bd_stars.I = last
+        last=New(_editor_class["BD_Star"],self.bd_kx + (112.7968498926413) * self.bd_scale, self.bd_ky + (77.7802120014206) * self.bd_scale,self, "J", 112.7968498926413, 77.7802120014206, COLOR_RED)
+        self.bd_stars.J = last
+        last=New(_editor_class["BD_Link"],self.bd_kx, self.bd_ky,self, self.bd_stars.D, self.bd_stars.E)
+        table.insert(self.bd_lines, last)
+        last=New(_editor_class["BD_Link"],self.bd_kx, self.bd_ky,self, self.bd_stars.E, self.bd_stars.F)
+        table.insert(self.bd_lines, last)
+        last=New(_editor_class["BD_Link"],self.bd_kx, self.bd_ky,self, self.bd_stars.F, self.bd_stars.G)
+        table.insert(self.bd_lines, last)
+        last=New(_editor_class["BD_Link"],self.bd_kx, self.bd_ky,self, self.bd_stars.G, self.bd_stars.H)
+        table.insert(self.bd_lines, last)
+        last=New(_editor_class["BD_Link"],self.bd_kx, self.bd_ky,self, self.bd_stars.H, self.bd_stars.I)
+        table.insert(self.bd_lines, last)
+        last=New(_editor_class["BD_Link"],self.bd_kx, self.bd_ky,self, self.bd_stars.I, self.bd_stars.J)
+        table.insert(self.bd_lines, last)
+        --[[ 先展示初始形状30帧，再开始匀速旋转。]]
+        
+        task._Wait(30)
+        --[[ J到D顺序各发两圈（每圈12颗），转角每增加30°轮到下一点；D发射完等待另外半圈后J开始下一轮。接近底部自机的星点不发射。]]
+        
+        lasttask=task.New(self,function()
+            for _=1,_infinite do
+                PlaySound("kira00",0.1,self.x/256,false)
+                if IsValid(self.bd_stars.J) and IsValid(player) and self.bd_stars.J.y >= player.y + self.bd_flower_safe_height then
+                    do local a,_d_a=(self.bd_flower_angle),(360 / self.bd_flower_count) for _=1,self.bd_flower_count do
+                        last=New(_editor_class["BD_Flower"],self.bd_stars.J.x, self.bd_stars.J.y,COLOR_PURPLE, self.bd_flower_speed, a)
+                        last=New(_editor_class["BD_Flower"],self.bd_stars.J.x, self.bd_stars.J.y,COLOR_PURPLE, self.bd_flower_speed_outer, a)
+                    a=a+_d_a end end
+                else
                 end
-                PlaySound("tan02",0.1,self.x/256,false)
-                task._Wait(10)
+                task._Wait(self.bd_flower_interval)
+                if IsValid(self.bd_stars.I) and IsValid(player) and self.bd_stars.I.y >= player.y + self.bd_flower_safe_height then
+                    do local a,_d_a=(self.bd_flower_angle),(360 / self.bd_flower_count) for _=1,self.bd_flower_count do
+                        last=New(_editor_class["BD_Flower"],self.bd_stars.I.x, self.bd_stars.I.y,COLOR_BLUE, self.bd_flower_speed, a)
+                        last=New(_editor_class["BD_Flower"],self.bd_stars.I.x, self.bd_stars.I.y,COLOR_BLUE, self.bd_flower_speed_outer, a)
+                    a=a+_d_a end end
+                else
+                end
+                task._Wait(self.bd_flower_interval)
+                if IsValid(self.bd_stars.H) and IsValid(player) and self.bd_stars.H.y >= player.y + self.bd_flower_safe_height then
+                    do local a,_d_a=(self.bd_flower_angle),(360 / self.bd_flower_count) for _=1,self.bd_flower_count do
+                        last=New(_editor_class["BD_Flower"],self.bd_stars.H.x, self.bd_stars.H.y,COLOR_CYAN, self.bd_flower_speed, a)
+                        last=New(_editor_class["BD_Flower"],self.bd_stars.H.x, self.bd_stars.H.y,COLOR_CYAN, self.bd_flower_speed_outer, a)
+                    a=a+_d_a end end
+                else
+                end
+                task._Wait(self.bd_flower_interval)
+                if IsValid(self.bd_stars.G) and IsValid(player) and self.bd_stars.G.y >= player.y + self.bd_flower_safe_height then
+                    do local a,_d_a=(self.bd_flower_angle),(360 / self.bd_flower_count) for _=1,self.bd_flower_count do
+                        last=New(_editor_class["BD_Flower"],self.bd_stars.G.x, self.bd_stars.G.y,COLOR_GREEN, self.bd_flower_speed, a)
+                        last=New(_editor_class["BD_Flower"],self.bd_stars.G.x, self.bd_stars.G.y,COLOR_GREEN, self.bd_flower_speed_outer, a)
+                    a=a+_d_a end end
+                else
+                end
+                task._Wait(self.bd_flower_interval)
+                if IsValid(self.bd_stars.F) and IsValid(player) and self.bd_stars.F.y >= player.y + self.bd_flower_safe_height then
+                    do local a,_d_a=(self.bd_flower_angle),(360 / self.bd_flower_count) for _=1,self.bd_flower_count do
+                        last=New(_editor_class["BD_Flower"],self.bd_stars.F.x, self.bd_stars.F.y,COLOR_YELLOW, self.bd_flower_speed, a)
+                        last=New(_editor_class["BD_Flower"],self.bd_stars.F.x, self.bd_stars.F.y,COLOR_YELLOW, self.bd_flower_speed_outer, a)
+                    a=a+_d_a end end
+                else
+                end
+                task._Wait(self.bd_flower_interval)
+                if IsValid(self.bd_stars.E) and IsValid(player) and self.bd_stars.E.y >= player.y + self.bd_flower_safe_height then
+                    do local a,_d_a=(self.bd_flower_angle),(360 / self.bd_flower_count) for _=1,self.bd_flower_count do
+                        last=New(_editor_class["BD_Flower"],self.bd_stars.E.x, self.bd_stars.E.y,COLOR_ORANGE, self.bd_flower_speed, a)
+                        last=New(_editor_class["BD_Flower"],self.bd_stars.E.x, self.bd_stars.E.y,COLOR_ORANGE, self.bd_flower_speed_outer, a)
+                    a=a+_d_a end end
+                else
+                end
+                task._Wait(self.bd_flower_interval)
+                if IsValid(self.bd_stars.D) and IsValid(player) and self.bd_stars.D.y >= player.y + self.bd_flower_safe_height then
+                    do local a,_d_a=(self.bd_flower_angle),(360 / self.bd_flower_count) for _=1,self.bd_flower_count do
+                        last=New(_editor_class["BD_Flower"],self.bd_stars.D.x, self.bd_stars.D.y,COLOR_RED, self.bd_flower_speed, a)
+                        last=New(_editor_class["BD_Flower"],self.bd_stars.D.x, self.bd_stars.D.y,COLOR_RED, self.bd_flower_speed_outer, a)
+                    a=a+_d_a end end
+                else
+                end
+                task._Wait(self.bd_flower_rest)
             end
-            _clear_bullet(false,false)
-            _del(banner,true)
-        end
-        do
-            PlaySound("heal",1.0,self.x/256,true)
-            if IsValid(_boss.bg) then Del(_boss.bg) end
-                _boss.bg = New(_editor_class["aya_bg_sp_2"])
-            local banner = aic.ui.NewSpellname(self, "「地下段·青木原传说」", 1, 0, -45)
-            banner.no_info=true
-            misc.ShakeScreen(60,3)
-            New(boss_cast_ef, 0, 224, 250, 0, 230, 0, 45)
-            task._Wait(60)
-            last=New(_editor_class["sc_1_p2_bu1"],0, 224,_)
-            task._Wait(1500)
-            _clear_bullet(false,true)
-            _del(banner,true)
-        end
-        do
-            PlaySound("heal",1.0,self.x/256,true)
-            if IsValid(_boss.bg) then Del(_boss.bg) end
-                _boss.bg = New(_editor_class["aya_bg_sp_3"])
-            local banner = aic.ui.NewSpellname(self, "「经停·富士枯山水」", 1, 0, -45)
-            banner.no_info=true
-            misc.ShakeScreen(60,3)
-            task._Wait(120)
-            last=New(_editor_class["sc_1_p3_bu1"],-192,224,-45, 3)
-            task._Wait(540)
-            last=New(_editor_class["sc_1_p3_bu1.5"],192,224,-135, 3)
-            task._Wait(840)
-            _clear_bullet(false,true)
-            _del(banner,true)
-        end
-        do
-            PlaySound("heal",1.0,self.x/256,true)
-            if IsValid(_boss.bg) then Del(_boss.bg) end
-                _boss.bg = New(_editor_class["aya_bg_sp_4"])
-            banner = aic.ui.NewSpellname(self, "「终点·千本鸟居之京城」", 1, 0, -45)
-            banner.no_info=true
-            misc.ShakeScreen(60,3)
-            task._Wait(120)
-            do local t,_d_t=(60),(-2) for _=1,40 do
-                last=New(_editor_class["sc_1_p4_bu1"],-200, 230,3,0)
-                last=New(_editor_class["sc_1_p4_bu1"],200, 230,3,180)
-                task._Wait(max(t, 20))
-            t=t+_d_t end end
-            task._Wait(180)
-            _del(banner,true)
+        end)
+        --[[ 独立任务：与北斗旋转和彩虹开花同时运行。绿色中圆弹暂代狼图；每次刷新只读取一次自机高度。]]
+        
+        lasttask=task.New(self,function()
+            task._Wait(self.bd_wolf_start_delay)
+            for _=1,_infinite do
+                if IsValid(player) then
+                    local wolf_player_y = player.y
+                    local wolf_left_y = math.max(lstg.world.b + 12, math.min(lstg.world.t - 12, wolf_player_y + ran:Float(-self.bd_wolf_y_range, self.bd_wolf_y_range)))
+                    last=New(_editor_class["BD_Wolf"],lstg.world.l - self.bd_wolf_edge_offset, wolf_left_y,self, self.bd_wolf_speed, 0)
+                    local wolf_right_y = math.max(lstg.world.b + 12, math.min(lstg.world.t - 12, wolf_player_y + ran:Float(-self.bd_wolf_y_range, self.bd_wolf_y_range)))
+                    last=New(_editor_class["BD_Wolf"],lstg.world.r + self.bd_wolf_edge_offset, wolf_right_y,self, self.bd_wolf_speed, 180)
+                else
+                end
+                task._Wait(self.bd_wolf_interval)
+            end
+        end)
+        for _=1,_infinite do
+            self.bd_angle = (self.bd_angle + self.bd_omega) % 360
+            task._Wait(1)
         end
     end)
 end
 function _tmp_sc:beforedel()
 end
 function _tmp_sc:del()
-    if IsValid(self.spellname) then
-        _del(self.spellname,true)
-    else
+    --[[ 结束时回收星点和连线；不影响其他符卡对象。]]
+    
+    self.bd_token = nil
+    for _, o in pairs(self.bd_stars or {}) do
+        if IsValid(o) then RawDel(o) end
     end
+    for _, o in ipairs(self.bd_lines or {}) do
+        if IsValid(o) then RawDel(o) end
+    end
+    self.bd_stars = nil
+    self.bd_lines = nil
+    if IsValid(_boss.bg) then Del(_boss.bg) end
+    _boss.bg = New(_editor_class["aya_bg_sp_0"])
+    _drop_item(item_bomb,1,self.x,self.y)
 end
 function _tmp_sc:after()
-    if IsValid(_boss.bg) then Del(_boss.bg) end
-        _boss.bg = New(_editor_class["aya_bg_sp_0"])
-    boss.SetUIDisplay(self,true,true,true,false,true,true)
-    boss.show_aura(self,true)
 end
 _tmp_sc.perform=false
 table.insert(_editor_class["Aya"].cards,_tmp_sc)
-table.insert(_sc_table,{"Aya","广重「卯酉之道，心之旅」",_tmp_sc,#_editor_class["Aya"].cards,false})
+table.insert(_sc_table,{"Aya","北斗「虹色之花与七石之狼」",_tmp_sc,#_editor_class["Aya"].cards,false})
 table.insert(_editor_class["Aya"].cards,boss.move.New(0,120,60,MOVE_ACC_DEC))
-_tmp_sc=boss.card.New("鸟船「奇美拉摄影展」",2,5,90,1600,{0,0,0},false)
+_tmp_sc=boss.card.New("「通常攻击-3」",2,5,45,1200,{0,0,0},false)
 function _tmp_sc:before()
-    last=New(_editor_class["NB_Portrait_AI"],0,0,_)
-    self.spellname=aic.ui.NewSpellname(self, '鸟船「奇美拉摄影展」')
 end
 function _tmp_sc:init()
     lasttask=task.New(self,function()
         task.MoveTo(0,120,60,MOVE_NORMAL)
-        lasttask=task.New(self,function()
-            task._Wait(120)
-            for _=1,_infinite do
-                do local a,_d_a=(ran:Float(0,360)),(12) for _=1,30 do
-                    last=New(_editor_class["sc_3_dark_fog"],self.x,self.y,1,a, 0.3)
-                a=a+_d_a end end
-                do local a,_d_a=(ran:Float(0,360)),(9) for _=1,40 do
-                    last=New(_editor_class["sc_3_bu_bird_2"],self.x,self.y,1, a, 255, 255, 255, 0.3)
-                    last=New(_editor_class["sc_3_bu_bird_2"],self.x,self.y,1, a, 255, 255, 255, -0.3)
-                a=a+_d_a end end
-                PlaySound("tan01",0.1,self.x/256,false)
-                local a1 = Angle(self, player)
-                local d = 0
-                local dp = Dist(self, player)
-                if dp > 150 then
-                	d = dp - 150
-                end
-                task._Wait(240)
-                last=New(_editor_class["sc_3_photo"],self.x + d * cos(a1), self.y + d * sin(a1),Angle(self,player), 10, 60, 5, 15)
-                last=New(_editor_class["sc_3_photo_light"],self.x + d * cos(a1), self.y + d * sin(a1),Angle(self,player), 10, 60, 5, 15)
+        do
+            last=New(_editor_class["aya_charge"],self.x,self.y,'in', 60, 245, 220, 0)
+            task._Wait(75)
+            last=New(_editor_class["aya_charge"],self.x,self.y,'out', 30, 245, 220, 0)
+        end
+        for _=1,_infinite do
+            do
+                lasttask=task.New(self,function()
+                    do local a,_d_a=(Angle(self,player)),(120) for _=1,12 do
+                        PlaySound("tan02",0.1,self.x/256,false)
+                        do local b,_d_b=(a),(72) for _=1,5 do
+                            do local d,_d_d=(b),(24) for _=1,15 do
+                                last=New(_straight,ball_mid_c,COLOR_RED,self.x + 30 * cos(d),self.y + 30 * sin(d),5,b,false,0,true,true,0,false,0,0,0,false)
+                                last=New(_straight,ball_mid_c,COLOR_BLUE,self.x + 20 * cos(d),self.y + 20 * sin(d),5,b+36,false,0,true,true,0,false,0,0,0,false)
+                            d=d+_d_d end end
+                        b=b+_d_b end end
+                        task._Wait(3)
+                    a=a+_d_a end end
+                end)
             end
-        end)
-        lasttask=task.New(self,function()
-            do local i,_d_i=(ran:Float(0, 360)),(17) for _=1,_infinite do
-                do local a,_d_a=(i),(15) for _=1,30 do
-                    do local b,_d_b=(a),(120) for _=1,3 do
-                        last=New(_editor_class["sc_3_bu_bird"],self.x + 10 * cos(b),self.y + 10 * sin(b),2, b, 180, 180, 0)
-                    b=b+_d_b end end
-                    PlaySound("tan00",0.1,self.x/256,false)
-                    task._Wait(10)
-                a=a+_d_a end end
-                do local a,_d_a=(i),(-15) for _=1,30 do
-                    do local b,_d_b=(a),(120) for _=1,3 do
-                        last=New(_editor_class["sc_3_bu_bird"],self.x + 10 * cos(b),self.y + 10 * sin(b),2, b, 180, 180, 0)
-                    b=b+_d_b end end
-                    PlaySound("tan00",0.1,self.x/256,false)
-                    task._Wait(10)
-                a=a+_d_a end end
-            i=i+_d_i end end
-        end)
-        lasttask=task.New(self,function()
-            for _=1,_infinite do
-                do local a,_d_a=(ran:Float(0,360)),(18) for _=1,20 do
-                    last=New(_editor_class["sc_3_bu_bird"],self.x + 10 * cos(a),self.y + 10 * sin(a),3, a, 0, 255, 150)
-                a=a+_d_a end end
-                PlaySound("tan00",0.1,self.x/256,false)
-                task._Wait(10)
-                do local a,_d_a=(ran:Float(0,360)),(18) for _=1,20 do
-                    last=New(_editor_class["sc_3_bu_bird"],self.x + 10 * cos(a),self.y + 10 * sin(a),3, a, 0, 255, 150)
-                a=a+_d_a end end
-                PlaySound("tan00",0.1,self.x/256,false)
-                task.MoveToPlayer(30,-96,96,112,144,16,32,8,16,MOVE_ACC_DEC,MOVE_X_TOWARDS_PLAYER)
-                task._Wait(60)
-            end
-        end)
+            task._Wait(60)
+            task.MoveToPlayer(30,-96,96,112,144,16,32,8,16,MOVE_NORMAL,MOVE_X_TOWARDS_PLAYER)
+        end
     end)
 end
 function _tmp_sc:beforedel()
 end
 function _tmp_sc:del()
-    lstg.var.timeslow = nil
-    if IsValid(self.spellname) then
-        _del(self.spellname,true)
-    else
-    end
 end
 function _tmp_sc:after()
 end
 _tmp_sc.perform=false
 table.insert(_editor_class["Aya"].cards,_tmp_sc)
-table.insert(_sc_table,{"Aya","鸟船「奇美拉摄影展」",_tmp_sc,#_editor_class["Aya"].cards,false})
-table.insert(_editor_class["Aya"].cards,boss.move.New(0,120,60,MOVE_ACC_DEC))
-_tmp_sc=boss.card.New("莲台野「墓碑后的冥界」",2,5,60,400,{0,0,0},false)
+table.insert(_sc_table,{"Aya","「通常攻击-3」",_tmp_sc,#_editor_class["Aya"].cards,false})
+_tmp_sc=boss.card.New("莲台野「墓碑后的冥界」",2,5,60,800,{50,0,20},false)
 function _tmp_sc:before()
     last=New(_editor_class["NB_Portrait_AI"],0,0,_)
     self.spellname=aic.ui.NewSpellname(self, '莲台野「墓碑后的冥界」')
@@ -2038,6 +2700,186 @@ _tmp_sc.perform=false
 table.insert(_editor_class["Aya"].cards,_tmp_sc)
 table.insert(_sc_table,{"Aya","莲台野「墓碑后的冥界」",_tmp_sc,#_editor_class["Aya"].cards,false})
 table.insert(_editor_class["Aya"].cards,boss.move.New(0,120,60,MOVE_ACC_DEC))
+_tmp_sc=boss.card.New("广重「卯酉之道，心之旅」",93,93,93,1800,{0,0,0},false)
+function _tmp_sc:before()
+    last=New(_editor_class["NB_Portrait_AI"],0,0,_)
+    self.spellname=aic.ui.NewSpellname(self, '广重「卯酉之道，心之旅」')
+end
+function _tmp_sc:init()
+    AddSPPoint(9999,1019,nil)
+    AddSPPoint(9999,2579,nil)
+    AddSPPoint(9999,4079,nil)
+    lasttask=task.New(self,function()
+        _boss.bound = false
+        boss.show_aura(self,false)
+        boss.SetUIDisplay(self,true,true,true,false,true,false)
+        task.MoveTo(0,260,60,MOVE_ACC_DEC)
+        do
+            PlaySound("heal",1.0,self.x/256,true)
+            if IsValid(_boss.bg) then Del(_boss.bg) end
+                _boss.bg = New(_editor_class["aya_bg_sp_1"])
+            local banner = aic.ui.NewSpellname(self, "「始发·15s的蓝色大海」", 1, 0, -45)
+            banner.no_info=true
+            misc.ShakeScreen(60,3)
+            New(boss_cast_ef, 192, -170, 250, 100, 150, 255, 45)
+            task._Wait(60)
+            for _=1,90 do
+                for _=1,30 do
+                    last=New(_editor_class["sc_1_p1_bu1"],ran:Float(210,220),ran:Float(-120,-240),ran:Float(160,170), ran:Float(2.8,3))
+                end
+                PlaySound("tan02",0.1,self.x/256,false)
+                task._Wait(10)
+            end
+            _clear_bullet(false,false)
+            _del(banner,true)
+        end
+        do
+            PlaySound("heal",1.0,self.x/256,true)
+            if IsValid(_boss.bg) then Del(_boss.bg) end
+                _boss.bg = New(_editor_class["aya_bg_sp_2"])
+            local banner = aic.ui.NewSpellname(self, "「地下段·青木原传说」", 1, 0, -45)
+            banner.no_info=true
+            misc.ShakeScreen(60,3)
+            New(boss_cast_ef, 0, 224, 250, 0, 230, 0, 45)
+            task._Wait(60)
+            last=New(_editor_class["sc_1_p2_bu1"],0, 224,_)
+            task._Wait(1500)
+            _clear_bullet(false,true)
+            _del(banner,true)
+        end
+        do
+            PlaySound("heal",1.0,self.x/256,true)
+            if IsValid(_boss.bg) then Del(_boss.bg) end
+                _boss.bg = New(_editor_class["aya_bg_sp_3"])
+            local banner = aic.ui.NewSpellname(self, "「经停·富士枯山水」", 1, 0, -45)
+            banner.no_info=true
+            misc.ShakeScreen(60,3)
+            task._Wait(120)
+            last=New(_editor_class["sc_1_p3_bu1"],-192,224,-45, 3)
+            task._Wait(540)
+            last=New(_editor_class["sc_1_p3_bu1.5"],192,224,-135, 3)
+            task._Wait(840)
+            _clear_bullet(false,true)
+            _del(banner,true)
+        end
+        do
+            PlaySound("heal",1.0,self.x/256,true)
+            if IsValid(_boss.bg) then Del(_boss.bg) end
+                _boss.bg = New(_editor_class["aya_bg_sp_4"])
+            banner = aic.ui.NewSpellname(self, "「终点·千本鸟居之京城」", 1, 0, -45)
+            banner.no_info=true
+            misc.ShakeScreen(60,3)
+            task._Wait(120)
+            do local t,_d_t=(60),(-2) for _=1,40 do
+                last=New(_editor_class["sc_1_p4_bu1"],-200, 230,3,0)
+                last=New(_editor_class["sc_1_p4_bu1"],200, 230,3,180)
+                task._Wait(max(t, 20))
+            t=t+_d_t end end
+            task._Wait(180)
+            _del(banner,true)
+        end
+    end)
+end
+function _tmp_sc:beforedel()
+end
+function _tmp_sc:del()
+    if IsValid(self.spellname) then
+        _del(self.spellname,true)
+    else
+    end
+    _drop_item(item_extend,1,self.x,self.y)
+end
+function _tmp_sc:after()
+    if IsValid(_boss.bg) then Del(_boss.bg) end
+    _boss.bg = New(_editor_class["aya_bg_sp_0"])
+    boss.SetUIDisplay(self,true,true,true,false,true,true)
+    boss.show_aura(self,true)
+end
+_tmp_sc.perform=false
+table.insert(_editor_class["Aya"].cards,_tmp_sc)
+table.insert(_sc_table,{"Aya","广重「卯酉之道，心之旅」",_tmp_sc,#_editor_class["Aya"].cards,false})
+table.insert(_editor_class["Aya"].cards,boss.move.New(0,120,60,MOVE_ACC_DEC))
+_tmp_sc=boss.card.New("鸟船「奇美拉摄影展」",2,5,90,1500,{50,0,20},false)
+function _tmp_sc:before()
+    last=New(_editor_class["NB_Portrait_AI"],0,0,_)
+    self.spellname=aic.ui.NewSpellname(self, '鸟船「奇美拉摄影展」')
+end
+function _tmp_sc:init()
+    lasttask=task.New(self,function()
+        task.MoveTo(0,120,60,MOVE_NORMAL)
+        lasttask=task.New(self,function()
+            task._Wait(120)
+            for _=1,_infinite do
+                do local a,_d_a=(ran:Float(0,360)),(12) for _=1,30 do
+                    last=New(_editor_class["sc_3_dark_fog"],self.x,self.y,1,a, 0.3)
+                a=a+_d_a end end
+                do local a,_d_a=(ran:Float(0,360)),(9) for _=1,40 do
+                    last=New(_editor_class["sc_3_bu_bird_2"],self.x,self.y,1, a, 255, 255, 255, 0.3)
+                    last=New(_editor_class["sc_3_bu_bird_2"],self.x,self.y,1, a, 255, 255, 255, -0.3)
+                a=a+_d_a end end
+                PlaySound("tan01",0.1,self.x/256,false)
+                local a1 = Angle(self, player)
+                local d = 0
+                local dp = Dist(self, player)
+                if dp > 150 then
+                	d = dp - 150
+                end
+                task._Wait(240)
+                last=New(_editor_class["sc_3_photo"],self.x + d * cos(a1), self.y + d * sin(a1),Angle(self,player), 10, 60, 5, 15)
+                last=New(_editor_class["sc_3_photo_light"],self.x + d * cos(a1), self.y + d * sin(a1),Angle(self,player), 10, 60, 5, 15)
+            end
+        end)
+        lasttask=task.New(self,function()
+            do local i,_d_i=(ran:Float(0, 360)),(17) for _=1,_infinite do
+                do local a,_d_a=(i),(15) for _=1,30 do
+                    do local b,_d_b=(a),(120) for _=1,3 do
+                        last=New(_editor_class["sc_3_bu_bird"],self.x + 10 * cos(b),self.y + 10 * sin(b),2, b, 180, 180, 0)
+                    b=b+_d_b end end
+                    PlaySound("tan00",0.1,self.x/256,false)
+                    task._Wait(10)
+                a=a+_d_a end end
+                do local a,_d_a=(i),(-15) for _=1,30 do
+                    do local b,_d_b=(a),(120) for _=1,3 do
+                        last=New(_editor_class["sc_3_bu_bird"],self.x + 10 * cos(b),self.y + 10 * sin(b),2, b, 180, 180, 0)
+                    b=b+_d_b end end
+                    PlaySound("tan00",0.1,self.x/256,false)
+                    task._Wait(10)
+                a=a+_d_a end end
+            i=i+_d_i end end
+        end)
+        lasttask=task.New(self,function()
+            for _=1,_infinite do
+                do local a,_d_a=(ran:Float(0,360)),(18) for _=1,20 do
+                    last=New(_editor_class["sc_3_bu_bird"],self.x + 10 * cos(a),self.y + 10 * sin(a),3, a, 0, 255, 150)
+                a=a+_d_a end end
+                PlaySound("tan00",0.1,self.x/256,false)
+                task._Wait(10)
+                do local a,_d_a=(ran:Float(0,360)),(18) for _=1,20 do
+                    last=New(_editor_class["sc_3_bu_bird"],self.x + 10 * cos(a),self.y + 10 * sin(a),3, a, 0, 255, 150)
+                a=a+_d_a end end
+                PlaySound("tan00",0.1,self.x/256,false)
+                task.MoveToPlayer(30,-96,96,112,144,16,32,8,16,MOVE_ACC_DEC,MOVE_X_TOWARDS_PLAYER)
+                task._Wait(60)
+            end
+        end)
+    end)
+end
+function _tmp_sc:beforedel()
+end
+function _tmp_sc:del()
+    lstg.var.timeslow = nil
+    if IsValid(self.spellname) then
+        _del(self.spellname,true)
+    else
+    end
+    _drop_item(item_bomb,1,self.x,self.y)
+end
+function _tmp_sc:after()
+end
+_tmp_sc.perform=false
+table.insert(_editor_class["Aya"].cards,_tmp_sc)
+table.insert(_sc_table,{"Aya","鸟船「奇美拉摄影展」",_tmp_sc,#_editor_class["Aya"].cards,false})
+table.insert(_editor_class["Aya"].cards,boss.move.New(0,0,60,MOVE_ACC_DEC))
 _tmp_sc=boss.card.New("伊奘诺「神秘的具象」",50,50,50,1800,{0,0,0},false)
 function _tmp_sc:before()
     last=New(_editor_class["NB_Portrait_AI"],0,0,_)
@@ -2106,7 +2948,230 @@ end
 _tmp_sc.perform=false
 table.insert(_editor_class["Aya"].cards,_tmp_sc)
 table.insert(_sc_table,{"Aya","伊奘诺「神秘的具象」",_tmp_sc,#_editor_class["Aya"].cards,false})
-_tmp_sc=boss.card.New("「通常攻击-显示对话用」",5,5,5,1800,{0,0,0},false)
+table.insert(_editor_class["Aya"].cards,boss.move.New(0,120,60,MOVE_ACC_DEC))
+_tmp_sc=boss.card.New("新益京「鹿之都市」",2,5,60,1500,{50,0,20},false)
+function _tmp_sc:before()
+    last=New(_editor_class["NB_Portrait_AI"],0,0,_)
+    self.spellname=aic.ui.NewSpellname(self, '新益京「鹿之都市」')
+end
+function _tmp_sc:init()
+    lasttask=task.New(self,function()
+        task.MoveTo(0,120,60,MOVE_NORMAL)
+        self.huge_row_spacing = 56
+        self.huge_row_radius = 32 -- ball_huge 的图像半径
+        self.huge_row_y = lstg.world.t + self.huge_row_radius + 1 -- 整颗弹幕从画面上方进入
+        self.huge_row_speed = 1.5
+        self.huge_row_horizontal_speed = 64 / 120 -- 120帧移动一个大玉直径（64游戏坐标）
+        self.huge_row_interval = 180
+        self.huge_gold_interval = 90 -- 大玉沿x方向每走60帧的距离发射一颗
+        self.huge_gold_speed = 2 -- 金色中玉向下的速度
+        --[[ 固定发射列间距=大玉水平速度×60帧；弹玉经过该列时发射，金色弹纵向对齐。]]
+        
+        --[[ 中央一列留空；每排交替横移，沿进入方向从屏幕侧边连续补弹。]]
+        
+        self.chase_deer_size = 48 -- 每张鹿图缩放后的画布宽度（游戏坐标）
+        self.chase_deer_serial = 0 -- 全部四角追踪弹共享的序号，从deer0开始
+        --[[ 按创建顺序为deer0～deer7循环；显示大小单独调，chase_hitbox判定不变。]]
+        
+        self.chase_hitbox = 8 -- 维持ball_big判定，换贴图也不改变判定
+        --[[ 八张图在Resources节点选择文件；鹿弹保持chase_hitbox设置的圆形判定，改显示尺寸不改判定。]]
+        
+        self.chase_spawn_margin = 25 -- 48宽鹿图的半径24 + 1，出生时在屏幕外
+        self.chase_spawn_interval = 300 -- 每5秒四角同时生成（60FPS）
+        self.chase_track_frames = 600 -- 每颗追踪弹出生后累计10秒，停顿时间也计入
+        self.chase_far_speed = 1.0 -- 你设置的较远追踪速度
+        self.chase_near_speed = 0.5 -- 你设置的接近自机时的速度
+        self.chase_final_speed = 0.5 -- 10秒时若恰好静止，按自机方向直飞的速度
+        self.chase_slow_radius = 60
+        self.chase_slow_jitter = 12 -- 各颗子弹各自浮动±12
+        self.chase_stop_radius = 30
+        self.chase_stop_jitter = 8 -- 各颗子弹各自浮动±8
+        self.chase_pause_min = 60 -- 停顿至少1秒
+        self.chase_pause_max = 120 -- 停顿至多2秒
+        self.chase_rearm_frames = 60 -- 第一次恢复后至少继续追踪1秒，避免连续停两次
+        lasttask=task.New(self,function()
+            for _=1,_infinite do
+                last=New(_editor_class["FourCornerChaser"],lstg.world.l - self.chase_spawn_margin, lstg.world.t + self.chase_spawn_margin,self, self.chase_deer_serial % 8)
+                self.chase_deer_serial = self.chase_deer_serial + 1
+                last=New(_editor_class["FourCornerChaser"],lstg.world.l - self.chase_spawn_margin, lstg.world.b - self.chase_spawn_margin,self, self.chase_deer_serial % 8)
+                self.chase_deer_serial = self.chase_deer_serial + 1
+                last=New(_editor_class["FourCornerChaser"],lstg.world.r + self.chase_spawn_margin, lstg.world.t + self.chase_spawn_margin,self, self.chase_deer_serial % 8)
+                self.chase_deer_serial = self.chase_deer_serial + 1
+                last=New(_editor_class["FourCornerChaser"],lstg.world.r + self.chase_spawn_margin, lstg.world.b - self.chase_spawn_margin,self, self.chase_deer_serial % 8)
+                self.chase_deer_serial = self.chase_deer_serial + 1
+                task._Wait(self.chase_spawn_interval)
+            end
+        end)
+        local row_direction = -1 -- 第一排向左，下一排向右
+        for _=1,_infinite do
+            local row_count = math.floor((lstg.world.r - lstg.world.l) / math.max(1, self.huge_row_spacing)) + 1
+            local row_start_x = (lstg.world.l + lstg.world.r) / 2 - (row_count - 1) * self.huge_row_spacing / 2
+            local middle_column = math.floor(row_count / 2) -- 从0计数的中央列
+            local refill_direction = row_direction -- 锁定本排方向，供补弹任务使用
+            local row_birth = self.timer -- 用于补弹与原本一排的高度对齐
+            do local column,_d_column=(0),(1) for _=1,row_count do
+                if column ~= middle_column then
+                    last=New(_editor_class["GreenHugeRow"],row_start_x + column * self.huge_row_spacing, self.huge_row_y,self, self.huge_row_speed, row_direction * self.huge_row_horizontal_speed)
+                end
+            column=column+_d_column end end
+            lasttask=task.New(self,function()
+                local side_direction = refill_direction
+                local horizontal_speed = math.max(0.001, math.abs(self.huge_row_horizontal_speed))
+                local side_interval = math.max(1, math.floor(self.huge_row_spacing / horizontal_speed + 0.5))
+                local side_x = side_direction < 0 and (lstg.world.r + self.huge_row_radius + 1) or (lstg.world.l - self.huge_row_radius - 1)
+                local last_y = lstg.world.b - self.huge_row_radius -- 整排完全离开板底才停止补弹
+                local side_count = math.max(0, math.floor((self.huge_row_y - last_y) / math.max(0.001, self.huge_row_speed) / side_interval) + 1)
+                do local side_step,_d_side_step=(0),(1) for _=1,side_count do
+                    last=New(_editor_class["GreenHugeRow"],side_x, self.huge_row_y - (self.timer - row_birth) * self.huge_row_speed,self, self.huge_row_speed, side_direction * self.huge_row_horizontal_speed)
+                    task._Wait(side_interval)
+                side_step=side_step+_d_side_step end end
+            end)
+            row_direction = -row_direction
+            task._Wait(self.huge_row_interval)
+        end
+    end)
+end
+function _tmp_sc:beforedel()
+end
+function _tmp_sc:del()
+    _drop_item(item_bomb,1,self.x,self.y)
+end
+function _tmp_sc:after()
+end
+_tmp_sc.perform=false
+table.insert(_editor_class["Aya"].cards,_tmp_sc)
+table.insert(_sc_table,{"Aya","新益京「鹿之都市」",_tmp_sc,#_editor_class["Aya"].cards,false})
+table.insert(_editor_class["Aya"].cards,boss.move.New(0,120,60,MOVE_ACC_DEC))
+_tmp_sc=boss.card.New("「科学世纪的少年少女」",2,5,120,4200,{0,0,0},true)
+function _tmp_sc:before()
+    last=New(_editor_class["NB_Portrait_AI"],0,0,_)
+    self.spellname=aic.ui.NewSpellname(self, '「科学世纪的少年少女」')
+end
+function _tmp_sc:init()
+    lasttask=task.New(self,function()
+        AddSPPoint(1200,9999,nil)
+        AddSPPoint(2800,9999,nil)
+        AddSPPoint(3600,9999,nil)
+        task._Wait(120)
+        lasttask=task.New(self,function()
+            do
+                do local a,_d_a,b,_d_b=(0),(4.5),(0),(-4.5) for _=1,_infinite do
+                    PlaySound("tan01",0.1,self.x/256,false)
+                    do local c,_d_c=(a),(90) for _=1,4 do
+                        last=New(_editor_class["sc_4_p1_bu1"],self.x + 20 * cos(c),self.y + 20 * sin(c),2.5, c)
+                    c=c+_d_c end end
+                    do local d,_d_d=(b),(90) for _=1,4 do
+                        last=New(_editor_class["sc_4_p1_bu1"],self.x + 20 * cos(d),self.y + 20 * sin(d),2.5, d)
+                    d=d+_d_d end end
+                    task._Wait(6)
+                a=a+_d_a b=b+_d_b end end
+            end
+        end)
+        lasttask=task.New(self,function()
+            do
+                for _=1,_infinite do
+                    if self.hp < 3600 or self.timer > 30 * 60 then
+                        do break end
+                    else
+                    end
+                    task._Wait(1)
+                end
+                _clear_bullet(false,false)
+                do local a,_d_a=(ran:Float(0,360)),(10) for _=1,_infinite do
+                    PlaySound("tan00",0.08,self.x/256,false)
+                    do local b,_d_b=(a),(12) for _=1,30 do
+                        last=New(_editor_class["sc_4_bu_bird"],self.x,self.y,1.8, b, 0.3)
+                        last=New(_editor_class["sc_4_bu_bird"],self.x,self.y,1.8, b, -0.3)
+                    b=b+_d_b end end
+                    if self.hp < 2800 or self.timer > 60 * 60 then
+                        do break end
+                    else
+                    end
+                    task._Wait(60)
+                a=a+_d_a end end
+            end
+        end)
+        lasttask=task.New(self,function()
+            do
+                for _=1,_infinite do
+                    if self.hp < 2800 or self.timer > 60 * 60 then
+                        do break end
+                    else
+                    end
+                    task._Wait(1)
+                end
+                _clear_bullet(false,false)
+                do local a,_d_a=(ran:Float(0,360)),(10) for _=1,_infinite do
+                    PlaySound("tan00",0.08,self.x/256,false)
+                    do local b,_d_b=(a),(12) for _=1,30 do
+                        last=New(_editor_class["sc_4_bu_bird"],self.x,self.y,1.8, b, 0.3)
+                        last=New(_editor_class["sc_4_bu_bird"],self.x,self.y,1.8, b, -0.3)
+                    b=b+_d_b end end
+                    task._Wait(60)
+                    PlaySound("tan02",0.08,self.x/256,false)
+                    do local c,_d_c=(a),(6) for _=1,60 do
+                        last=New(_straight,ball_mid,COLOR_ORANGE,self.x,self.y,1.5,c,false,0,true,true,0,false,0,0,0,false)
+                        _object.set_color(last,"mul+add",255,255,255,255)
+                    c=c+_d_c end end
+                a=a+_d_a end end
+            end
+        end)
+        lasttask=task.New(self,function()
+            do
+                for _=1,_infinite do
+                    if self.hp < 1200 or self.timer > 90 * 60 then
+                        do break end
+                    else
+                    end
+                    task._Wait(1)
+                end
+                for _=1,_infinite do
+                    do local a,_d_a=(0),(4) for _=1,6 do
+                        do local b,_d_b=(a),(36) for _=1,10 do
+                            last=New(_editor_class["sc_4_p4_la1"],self.x + 30 * cos(b),self.y + 30 * sin(b),b, 60, 30, 30, 45)
+                        b=b+_d_b end end
+                        task._Wait(10)
+                    a=a+_d_a end end
+                    task._Wait(165)
+                    do local a,_d_a=(0),(-4) for _=1,6 do
+                        do local b,_d_b=(a),(36) for _=1,10 do
+                            last=New(_editor_class["sc_4_p4_la1"],self.x + 30 * cos(b),self.y + 30 * sin(b),b, 60, 30, 30, 45)
+                        b=b+_d_b end end
+                        task._Wait(10)
+                    a=a+_d_a end end
+                    task._Wait(165)
+                end
+            end
+        end)
+    end)
+end
+function _tmp_sc:beforedel()
+end
+function _tmp_sc:del()
+end
+function _tmp_sc:after()
+end
+_tmp_sc.perform=false
+table.insert(_editor_class["Aya"].cards,_tmp_sc)
+table.insert(_sc_table,{"Aya","「科学世纪的少年少女」",_tmp_sc,#_editor_class["Aya"].cards,false})
+_tmp_sc=boss.dialog.New(true)
+function _tmp_sc:init()
+    lstg.player.dialog=true
+    _dialog_can_skip=true
+    self.dialog_displayer=New(dialog_displayer)
+    lasttask=task.New(self,function()
+        task._Wait(60)
+        if gamecontinueflag then
+            lib.Dialog(self, 3)
+        else
+            lib.Dialog(self, 2, 1, 3)
+            last=New(_editor_class["dialog_boss_name"],self.x,self.y,'满世界提取素材的幻想记者','射命丸文')
+            lib.Dialog(self, 2, 4)
+        end
+    end)
+end
+table.insert(_editor_class["Aya"].cards,_tmp_sc)
+_tmp_sc=boss.card.New("「通常攻击-显示对话用」",5,5,5,1,{0,0,0},false)
 function _tmp_sc:before()
 end
 function _tmp_sc:init()
@@ -2121,7 +3186,7 @@ end
 _tmp_sc.perform=false
 table.insert(_editor_class["Aya"].cards,_tmp_sc)
 table.insert(_sc_table,{"Aya","「通常攻击-显示对话用」",_tmp_sc,#_editor_class["Aya"].cards,false})
-stage.group.New('menu',{},"Hard",{lifeleft=7,power=400,faith=50000,bomb=3},true,1)
+stage.group.New('menu',{},"Hard",{lifeleft=2,power=400,faith=50000,bomb=3},true,3)
 stage.group.AddStage('Hard','SpellCard@Hard',{lifeleft=7,power=400,faith=50000,bomb=3},true)
 stage.group.DefStageFunc('SpellCard@Hard','init',function(self)
     _init_item(self)
@@ -2129,11 +3194,784 @@ stage.group.DefStageFunc('SpellCard@Hard','init',function(self)
     New(mask_fader,'open')
     if jstg then jstg.CreatePlayers() else New(_G[lstg.var.player_name]) end
     lasttask=task.New(self,function()
-        LoadMusic('spellcard','THlib\\music\\spellcard.ogg',75,0xc36e80/44100/4)
         New(HM_hzc4_background)
-        task._Wait(60)
         LoadMusicRecord("bgm2")
         _play_music("bgm2")
+        PlaySound("kira01",0.1,self.x/256,false)
+        last=New(_editor_class["straght"],-200,100,10,10)
+        task._Wait(60)
+        for _=1,2 do
+            task._Wait(60)
+            last=New(_editor_class["awm1"],200,150,180)
+            last=New(_editor_class["awm1"],-200,150,0)
+            last=New(EnemySimple,6,5,205,ran:Float(0,80),{2,0,0},1,false,true,true,function(self)
+                task.New(self,function()
+                    lasttask=task.New(self,function()
+                        SetV2(self,ran:Float(3.5,5),180,false,false)
+                    end)
+                end)
+            end)
+            last=New(EnemySimple,6,5,205,ran:Float(0,80),{2,0,0},1,false,true,true,function(self)
+                task.New(self,function()
+                    lasttask=task.New(self,function()
+                        SetV2(self,ran:Float(3.5,5),180,false,false)
+                    end)
+                end)
+            end)
+            last=New(EnemySimple,6,5,-205,ran:Float(0,80),{2,0,0},1,false,true,true,function(self)
+                task.New(self,function()
+                    lasttask=task.New(self,function()
+                        SetV2(self,ran:Float(3.5,5),0,false,false)
+                    end)
+                end)
+            end)
+            last=New(EnemySimple,6,5,-205,ran:Float(0,80),{2,0,0},1,false,true,true,function(self)
+                task.New(self,function()
+                    lasttask=task.New(self,function()
+                        SetV2(self,ran:Float(3.5,5),0,false,false)
+                    end)
+                end)
+            end)
+            task._Wait(45)
+            last=New(_editor_class["awm2"],200,150,180)
+            last=New(_editor_class["awm2"],-200,150,0)
+            last=New(_editor_class["awm3"],0,200,270)
+            last=New(EnemySimple,6,5,-205,ran:Float(0,80),{2,0,0},1,false,true,true,function(self)
+                task.New(self,function()
+                    lasttask=task.New(self,function()
+                        SetV2(self,ran:Float(3.5,5),0,false,false)
+                    end)
+                end)
+            end)
+            last=New(EnemySimple,6,5,205,ran:Float(0,80),{2,0,0},1,false,true,true,function(self)
+                task.New(self,function()
+                    lasttask=task.New(self,function()
+                        SetV2(self,ran:Float(3.5,5),180,false,false)
+                    end)
+                end)
+            end)
+            task._Wait(20)
+            --[[ 两波自机狙小妖精和挡枪小妖精
+            ]]
+        end
+        task._Wait(60)
+        last=New(_editor_class["straght"],200,100,170,4)
+        do
+            local self = last
+            lasttask=task.New(self,function()
+                do local a,_d_a,b,_d_b=(200),(-60),(0),(ran:Float(-5,5)) for _=1,13 do
+                    task._Wait(8)
+                    last=New(_straight,grain_a,COLOR_RED,self.x+ran:Float(-30,30),self.y+ran:Float(-20,20),1,ran:Float(75,105),false,0,true,true,0,false,0,0,3,false)
+                    do
+                        local self = last
+                        SetV2(self,1,ran:Float(75,105),true,false)
+                        _set_g(self,0.05)
+                    end
+                a=a+_d_a b=b+_d_b end end
+            end)
+            --[[ 激光穿过，留下米弹
+            ]]
+        end
+        PlaySound("kira01",0.1,self.x/256,false)
+        task._Wait(60)
+        for _=1,9 do
+            task._Wait(20)
+            last=New(EnemySimple,19,5,-150,-230,{1,0,1},1,false,true,true,function(self)
+                task.New(self,function()
+                    lasttask=task.New(self,function()
+                        SetV2(self,2,90,true,false)
+                        _set_a(self,0.012,0,false)
+                        for _=1,_infinite do
+                            task._Wait(18)
+                            last=New(_straight,butterfly,COLOR_GREEN,self.x,self.y,1,ran:Float(0,360),false,0,true,true,0,false,0,0,0,false)
+                            PlaySound("tan02",0.1,self.x/256,false)
+                        end
+                    end)
+                end)
+            end)
+            last=New(EnemySimple,19,5,150,-230,{1,0,1},1,false,true,true,function(self)
+                task.New(self,function()
+                    lasttask=task.New(self,function()
+                        SetV2(self,2,90,true,false)
+                        _set_a(self,0.012,180,false)
+                        for _=1,_infinite do
+                            task._Wait(15)
+                            last=New(_straight,butterfly,COLOR_GREEN,self.x,self.y,1,ran:Float(0,360),false,0,true,true,0,false,0,0,0,false)
+                            PlaySound("tan02",0.1,self.x/256,false)
+                        end
+                    end)
+                end)
+            end)
+            --[[ 
+            ]]
+        end
+        for _=1,9 do
+            task._Wait(20)
+            last=New(EnemySimple,6,5,205,ran:Float(0,80),{2,0,0},1,false,true,true,function(self)
+                task.New(self,function()
+                    lasttask=task.New(self,function()
+                        SetV2(self,ran:Float(3.5,5),180,false,false)
+                    end)
+                end)
+            end)
+            last=New(EnemySimple,6,5,205,ran:Float(0,80),{2,0,0},1,false,true,true,function(self)
+                task.New(self,function()
+                    lasttask=task.New(self,function()
+                        SetV2(self,ran:Float(3.5,5),180,false,false)
+                    end)
+                end)
+            end)
+            last=New(EnemySimple,6,5,-205,ran:Float(0,80),{2,0,0},1,false,true,true,function(self)
+                task.New(self,function()
+                    lasttask=task.New(self,function()
+                        SetV2(self,ran:Float(3.5,5),0,false,false)
+                    end)
+                end)
+            end)
+            last=New(EnemySimple,6,5,-205,ran:Float(0,80),{2,0,0},1,false,true,true,function(self)
+                task.New(self,function()
+                    lasttask=task.New(self,function()
+                        SetV2(self,ran:Float(3.5,5),0,false,false)
+                    end)
+                end)
+            end)
+            --[[ 挡枪小妖精
+            ]]
+        end
+        task._Wait(180)
+        PlaySound("kira01",0.1,self.x/256,false)
+        last=New(_editor_class["straght"],-200,160,350,4)
+        do
+            local self = last
+            lasttask=task.New(self,function()
+                task._Wait(15)
+                do local c,_d_c=(0),(20) for _=1,6 do
+                    task._Wait(10)
+                    do local a,_d_a,b,_d_b=(0),(36),(0),(15) for _=1,10 do
+                        last=New(_straight,ball_mid_c,COLOR_RED,self.x+30*cos(a),self.y+30*sin(a),2,0,true,0,true,true,0,false,0,0,3,false)
+                        last=New(_straight,ball_mid_c,COLOR_BLUE,self.x+30*cos(a-36),self.y+30*sin(a-36),2,270+c,false,0,true,true,0,false,0,0,3,false)
+                    a=a+_d_a b=b+_d_b end end
+                c=c+_d_c end end
+            end)
+            --[[ 
+            ]]
+        end
+        task._Wait(180)
+        last=New(_editor_class["bigone"],0,240,_)
+        task._Wait(180)
+        for _=1,2 do
+            task._Wait(60)
+            last=New(_editor_class["awm1"],200,150,180)
+            do
+                local self = last
+                lasttask=task.New(self,function()
+                    _set_a(self,0.03,90,false)
+                end)
+            end
+            last=New(_editor_class["awm1"],-200,150,0)
+            do
+                local self = last
+                lasttask=task.New(self,function()
+                    _set_a(self,0.05,90,false)
+                end)
+            end
+            --[[ 氛围组自机狙小妖精
+            ]]
+        end
+        task._Wait(180)
+        --[[ 下面三项也是一样的大蝴蝶和氛围组狙
+        ]]
+        last=New(EnemySimple,9,100,100,240,{30,10,10},100,true,true,true,function(self)
+            task.New(self,function()
+                lasttask=task.New(self,function()
+                    task.MoveTo(110,150,60,MOVE_NORMAL)
+                    for _=1,10 do
+                        do local a,_d_a=(10),(ran:Float(15,30)) for _=1,3 do
+                            task._Wait(20)
+                            PlaySound("tan01",0.1,self.x/256,false)
+                            do local b,_d_b=(0),(1.5) for _=1,5 do
+                                last=New(_straight,silence,COLOR_ORANGE,self.x,self.y,3,b+a,false,0,true,true,0,false,0.5,b+a,4.5,false)
+                                last=New(_straight,silence,COLOR_ORANGE,self.x,self.y,3,b+a+60,false,0,true,true,0,false,0.5,b+a+60,4.5,false)
+                                last=New(_straight,silence,COLOR_ORANGE,self.x,self.y,3,b+a+120,false,0,true,true,0,false,0.5,b+a+120,4.5,false)
+                                last=New(_straight,silence,COLOR_ORANGE,self.x,self.y,3,b+a+180,false,0,true,true,0,false,0.5,b+a+180,4.5,false)
+                                last=New(_straight,silence,COLOR_ORANGE,self.x,self.y,3,b+a+240,false,0,true,true,0,false,0.5,b+a+240,4.5,false)
+                                last=New(_straight,silence,COLOR_ORANGE,self.x,self.y,3,b+a+300,false,0,true,true,0,false,0.5,b+a+300,4.5,false)
+                                last=New(_straight,silence,COLOR_ORANGE,self.x,self.y,3,b+a+330,false,0,true,true,0,false,0.5,b+a+300,4.5,false)
+                                last=New(_straight,silence,COLOR_ORANGE,self.x,self.y,3,b+a+270,false,0,true,true,0,false,0.5,b+a+240,4.5,false)
+                                last=New(_straight,silence,COLOR_ORANGE,self.x,self.y,3,b+a+210,false,0,true,true,0,false,0.5,b+a+180,4.5,false)
+                                last=New(_straight,silence,COLOR_ORANGE,self.x,self.y,3,b+a+150,false,0,true,true,0,false,0.5,b+a+120,4.5,false)
+                                last=New(_straight,silence,COLOR_ORANGE,self.x,self.y,3,b+a+90,false,0,true,true,0,false,0.5,b+a+60,4.5,false)
+                                last=New(_straight,silence,COLOR_ORANGE,self.x,self.y,3,b+a+30,false,0,true,true,0,false,0.5,b+a,4.5,false)
+                            b=b+_d_b end end
+                        a=a+_d_a end end
+                        PlaySound("tan02",0.1,self.x/256,false)
+                        last=New(_editor_class["scar"],self.x,self.y,40)
+                    end
+                    SetV2(self,3,90,false,false)
+                end)
+            end)
+        end)
+        last=New(EnemySimple,9,100,-100,240,{30,10,10},100,true,true,true,function(self)
+            task.New(self,function()
+                lasttask=task.New(self,function()
+                    task.MoveTo(-110,150,60,MOVE_NORMAL)
+                    for _=1,10 do
+                        do local a,_d_a=(10),(ran:Float(15,30)) for _=1,3 do
+                            task._Wait(20)
+                            PlaySound("tan01",0.1,self.x/256,false)
+                            do local b,_d_b=(0),(1.5) for _=1,5 do
+                                last=New(_straight,silence,COLOR_ORANGE,self.x,self.y,3,b+a,false,0,true,true,0,false,0.5,b+a,4.5,false)
+                                last=New(_straight,silence,COLOR_ORANGE,self.x,self.y,3,b+a+60,false,0,true,true,0,false,0.5,b+a+60,4.5,false)
+                                last=New(_straight,silence,COLOR_ORANGE,self.x,self.y,3,b+a+120,false,0,true,true,0,false,0.5,b+a+120,4.5,false)
+                                last=New(_straight,silence,COLOR_ORANGE,self.x,self.y,3,b+a+180,false,0,true,true,0,false,0.5,b+a+180,4.5,false)
+                                last=New(_straight,silence,COLOR_ORANGE,self.x,self.y,3,b+a+240,false,0,true,true,0,false,0.5,b+a+240,4.5,false)
+                                last=New(_straight,silence,COLOR_ORANGE,self.x,self.y,3,b+a+300,false,0,true,true,0,false,0.5,b+a+300,4.5,false)
+                                last=New(_straight,silence,COLOR_ORANGE,self.x,self.y,3,b+a+330,false,0,true,true,0,false,0.5,b+a+300,4.5,false)
+                                last=New(_straight,silence,COLOR_ORANGE,self.x,self.y,3,b+a+270,false,0,true,true,0,false,0.5,b+a+240,4.5,false)
+                                last=New(_straight,silence,COLOR_ORANGE,self.x,self.y,3,b+a+210,false,0,true,true,0,false,0.5,b+a+180,4.5,false)
+                                last=New(_straight,silence,COLOR_ORANGE,self.x,self.y,3,b+a+150,false,0,true,true,0,false,0.5,b+a+120,4.5,false)
+                                last=New(_straight,silence,COLOR_ORANGE,self.x,self.y,3,b+a+90,false,0,true,true,0,false,0.5,b+a+60,4.5,false)
+                                last=New(_straight,silence,COLOR_ORANGE,self.x,self.y,3,b+a+30,false,0,true,true,0,false,0.5,b+a,4.5,false)
+                            b=b+_d_b end end
+                        a=a+_d_a end end
+                        PlaySound("tan02",0.1,self.x/256,false)
+                        last=New(_editor_class["scar"],self.x,self.y,-40)
+                    end
+                    SetV2(self,3,90,false,false)
+                end)
+            end)
+        end)
+        for _=1,2 do
+            task._Wait(30)
+            last=New(_editor_class["awm1"],200,150,180)
+            do
+                local self = last
+                lasttask=task.New(self,function()
+                    _set_a(self,0.03,90,false)
+                end)
+            end
+            last=New(_editor_class["awm1"],-200,150,0)
+            do
+                local self = last
+                lasttask=task.New(self,function()
+                    _set_a(self,0.05,90,false)
+                end)
+            end
+            task._Wait(30)
+            last=New(_editor_class["awm2"],-200,150,0)
+            do
+                local self = last
+                lasttask=task.New(self,function()
+                    _set_a(self,0.05,90,false)
+                end)
+            end
+            last=New(_editor_class["awm2"],200,150,180)
+            do
+                local self = last
+                lasttask=task.New(self,function()
+                    _set_a(self,0.03,90,false)
+                end)
+            end
+        end
+        task._Wait(300)
+        do local awm,_d_awm=(-190),(38) for _=1,10 do
+            task._Wait(15)
+            last=New(EnemySimple,28,10,awm,220,{1,0,1},10,false,true,true,function(self)
+                task.New(self,function()
+                    lasttask=task.New(self,function()
+                        task.MoveTo(awm,170,30,MOVE_NORMAL)
+                        for _=1,10 do
+                            task._Wait(1)
+                            PlaySound("tan02",0.1,self.x/256,false)
+                            do local a,_d_a=(-30),(30) for _=1,3 do
+                                last=New(_straight,ellipse,COLOR_RED,self.x,self.y,5,a,true,0,true,true,0,false,0,0,0,false)
+                            a=a+_d_a end end
+                        end
+                        task._Wait(60)
+                        SetV2(self,3,90,true,false)
+                    end)
+                end)
+            end)
+            --[[ 自机狙鬼火
+            ]]
+        awm=awm+_d_awm end end
+        task._Wait(90)
+        PlaySound("old_kira01",0.1,self.x/256,false)
+        last=New(_editor_class["straght"],200,100,165,6)
+        do
+            local self = last
+            lasttask=task.New(self,function()
+                task._Wait(30)
+                do local c,_d_c=(0),(ran:Float(-10,10)) for _=1,10 do
+                    task._Wait(4)
+                    PlaySound("tan02",0.1,self.x/256,false)
+                    do local a,_d_a,b,_d_b=(5.5),(-0.44),(0),(15) for _=1,10 do
+                        last=New(_straight,arrow_big,COLOR_ORANGE,self.x+c,self.y+c,a,0,true,0,true,true,0,false,0,0,3,false)
+                        last=New(_straight,arrow_big,COLOR_ORANGE,self.x+c+70,self.y+c,a,20,true,0,true,true,0,false,0,0,3,false)
+                    a=a+_d_a b=b+_d_b end end
+                c=c+_d_c end end
+            end)
+            --[[ 激光留下奇偶狙
+            ]]
+        end
+        task._Wait(60)
+        do local awm,_d_awm=(190),(-38) for _=1,10 do
+            task._Wait(15)
+            last=New(EnemySimple,28,15,awm,220,{1,0,1},10,false,true,true,function(self)
+                task.New(self,function()
+                    lasttask=task.New(self,function()
+                        task.MoveTo(awm,170,30,MOVE_NORMAL)
+                        for _=1,10 do
+                            task._Wait(1)
+                            PlaySound("tan02",0.1,self.x/256,false)
+                            do local a,_d_a=(-30),(30) for _=1,3 do
+                                last=New(_straight,ellipse,COLOR_RED,self.x,self.y,5,a,true,0,true,true,0,false,0,0,0,false)
+                            a=a+_d_a end end
+                        end
+                        task._Wait(60)
+                        SetV2(self,3,90,true,false)
+                    end)
+                end)
+            end)
+            --[[ 自机狙鬼火
+            ]]
+        awm=awm+_d_awm end end
+        task._Wait(220)
+        last=New(EnemySimple,26,180,150,240,{30,10,5},30,true,true,true,function(self)
+            task.New(self,function()
+                lasttask=task.New(self,function()
+                    task.MoveTo(160,100,20,MOVE_NORMAL)
+                    for _=1,_infinite do
+                        SetV2(self,1,180,false,false)
+                        do local a1,_d_a1=(50),(60) for _=1,_infinite do
+                            task._Wait(30)
+                            do local a,_d_a=(0),(18) for _=1,20 do
+                                last=New(_editor_class["scar2"],self.x,self.y,a)
+                            a=a+_d_a end end
+                            PlaySound("tan02",0.1,self.x/256,false)
+                            last=New(_editor_class["scar1"],self.x,self.y,a1,4)
+                            task._Wait(30)
+                            do local a,_d_a=(0),(18) for _=1,20 do
+                                last=New(_editor_class["scar3"],self.x,self.y,a)
+                            a=a+_d_a end end
+                        a1=a1+_d_a1 end end
+                    end
+                end)
+                --[[ 阴阳玉发射固定弹与狙
+                ]]
+            end)
+        end)
+        task._Wait(120)
+        for _=1,2 do
+            for _=1,2 do
+                last=New(_editor_class["awm2"],-200,ran:Float(150,200),340)
+                last=New(_editor_class["awm2"],200,ran:Float(150,200),200)
+                task._Wait(40)
+                last=New(_editor_class["awm3"],200,ran:Float(150,200),200)
+                last=New(_editor_class["awm3"],-200,ran:Float(150,200),340)
+            end
+            --[[ 氛围组自机狙
+            ]]
+        end
+        task._Wait(240)
+        last=New(EnemySimple,26,180,-150,240,{30,10,5},30,true,true,true,function(self)
+            task.New(self,function()
+                lasttask=task.New(self,function()
+                    task.MoveTo(-160,100,20,MOVE_NORMAL)
+                    for _=1,_infinite do
+                        SetV2(self,1,0,false,false)
+                        do local a1,_d_a1=(120),(60) for _=1,_infinite do
+                            task._Wait(30)
+                            do local a,_d_a=(0),(18) for _=1,20 do
+                                last=New(_editor_class["scar2"],self.x,self.y,a)
+                            a=a+_d_a end end
+                            PlaySound("tan02",0.1,self.x/256,false)
+                            last=New(_editor_class["scar1"],self.x,self.y,a1,4)
+                            task._Wait(30)
+                            do local a,_d_a=(0),(18) for _=1,20 do
+                                last=New(_editor_class["scar3"],self.x,self.y,a)
+                            a=a+_d_a end end
+                        a1=a1+_d_a1 end end
+                    end
+                end)
+                --[[ 同上阴阳玉
+                ]]
+            end)
+        end)
+        task._Wait(260)
+        last=New(EnemySimple,26,140,150,240,{20,10,10},30,true,true,true,function(self)
+            task.New(self,function()
+                lasttask=task.New(self,function()
+                    task.MoveTo(160,100,20,MOVE_NORMAL)
+                    for _=1,_infinite do
+                        SetV2(self,1,180,false,false)
+                        do local a1,_d_a1=(50),(60) for _=1,_infinite do
+                            task._Wait(30)
+                            do local a,_d_a=(0),(18) for _=1,20 do
+                                last=New(_editor_class["scar2"],self.x,self.y,a)
+                            a=a+_d_a end end
+                            PlaySound("tan02",0.1,self.x/256,false)
+                            last=New(_editor_class["scar1"],self.x,self.y,a1,4)
+                            task._Wait(30)
+                            do local a,_d_a=(0),(18) for _=1,20 do
+                                last=New(_editor_class["scar3"],self.x,self.y,a)
+                            a=a+_d_a end end
+                        a1=a1+_d_a1 end end
+                    end
+                end)
+                --[[ 同上阴阳玉
+                ]]
+            end)
+        end)
+        last=New(EnemySimple,26,140,-150,240,{20,10,10},30,true,true,true,function(self)
+            task.New(self,function()
+                lasttask=task.New(self,function()
+                    task.MoveTo(-160,100,20,MOVE_NORMAL)
+                    for _=1,_infinite do
+                        SetV2(self,1,0,false,false)
+                        do local a1,_d_a1=(120),(60) for _=1,_infinite do
+                            task._Wait(30)
+                            do local a,_d_a=(0),(18) for _=1,20 do
+                                last=New(_editor_class["scar2"],self.x,self.y,a)
+                            a=a+_d_a end end
+                            PlaySound("tan02",0.1,self.x/256,false)
+                            last=New(_editor_class["scar1"],self.x,self.y,a1,4)
+                            task._Wait(30)
+                            do local a,_d_a=(0),(18) for _=1,20 do
+                                last=New(_editor_class["scar3"],self.x,self.y,a)
+                            a=a+_d_a end end
+                        a1=a1+_d_a1 end end
+                    end
+                end)
+                --[[ 同上阴阳玉
+                ]]
+            end)
+        end)
+        task._Wait(240)
+        for _=1,3 do
+            task._Wait(60)
+            last=New(_editor_class["awm1"],-200,120,10)
+            last=New(_editor_class["awm1"],200,120,170)
+            task._Wait(45)
+            last=New(_editor_class["awm3"],-200,130,10)
+            last=New(_editor_class["awm3"],200,130,170)
+            --[[ 氛围组狙
+            ]]
+        end
+        task._Wait(200)
+        PlaySound("old_kira01",0.1,self.x/256,false)
+        last=New(_editor_class["straght"],-200,140,345,6)
+        do
+            local self = last
+            lasttask=task.New(self,function()
+                task._Wait(10)
+                do local c,_d_c=(0),(20) for _=1,6 do
+                    task._Wait(10)
+                    do local a,_d_a,b,_d_b=(0),(36),(0),(15) for _=1,10 do
+                        last=New(_straight,ball_mid_c,COLOR_RED,self.x+30*cos(a),self.y+30*sin(a),2,0,true,0,true,true,0,false,0,0,3,false)
+                        last=New(_straight,ball_mid_c,COLOR_BLUE,self.x+30*cos(a-36),self.y+30*sin(a-36),2,270+c,false,0,true,true,0,false,0,0,3,false)
+                    a=a+_d_a b=b+_d_b end end
+                c=c+_d_c end end
+            end)
+            --[[ 蓝色固定与红色狙的激光
+            ]]
+        end
+        task._Wait(60)
+        for _=1,7 do
+            PlaySound("kira01",0.1,self.x/256,false)
+            last=New(_editor_class["straght"],200,ran:Float(100,160),ran:Float(165,195),8)
+            do
+                local self = last
+                lasttask=task.New(self,function()
+                    do local a,_d_a,b,_d_b=(200),(-60),(0),(ran:Float(-5,5)) for _=1,13 do
+                        task._Wait(4)
+                        last=New(_straight,arrow_big,COLOR_ORANGE,self.x+ran:Float(-30,30),self.y+ran:Float(-20,20),0,270,false,0,true,true,0,false,0,0,3,false)
+                        do
+                            local self = last
+                            _set_a(self,0.05,270,false)
+                        end
+                    a=a+_d_a b=b+_d_b end end
+                end)
+            end
+            task._Wait(30)
+            PlaySound("kira01",0.1,self.x/256,false)
+            last=New(_editor_class["straght"],-200,ran:Float(100,150),ran:Float(-18,18),12)
+            do
+                local self = last
+                lasttask=task.New(self,function()
+                    do local a,_d_a,b,_d_b=(200),(-60),(0),(ran:Float(-5,5)) for _=1,13 do
+                        task._Wait(2)
+                        last=New(_straight,arrow_big,COLOR_ORANGE,self.x+ran:Float(-30,30),self.y+ran:Float(-20,20),0,270,false,0,true,true,0,false,0,0,3.5,false)
+                        do
+                            local self = last
+                            _set_a(self,0.1,270,false)
+                        end
+                    a=a+_d_a b=b+_d_b end end
+                end)
+            end
+            task._Wait(30)
+            --[[ 激光来回发射，留下随机位置下落的子弹
+            ]]
+        end
+        task._Wait(180)
+        last=New(EnemySimple,1,100,0,230,{20,10,15},10,false,true,true,function(self)
+            task.New(self,function()
+                lasttask=task.New(self,function()
+                    SetV2(self,6,270,false,false)
+                    _set_a(self,0.1,90,false)
+                    for _=1,15 do
+                        task._Wait(4)
+                        PlaySound("tan00",0.1,self.x/256,false)
+                        do local a,_d_a=(0),(45) for _=1,8 do
+                            last=New(_straight,arrow_small,COLOR_GOLDEN_YELLOW,self.x,self.y,5,a,false,0,true,true,0,false,0,0,0,false)
+                        a=a+_d_a end end
+                    end
+                    _set_a(self,0,0,false)
+                    SetV2(self,0,0,false,false)
+                    for _=1,40 do
+                        task._Wait(4)
+                        PlaySound("tan00",0.1,self.x/256,false)
+                        do local a,_d_a=(0),(45) for _=1,8 do
+                            last=New(_straight,arrow_small,COLOR_GOLDEN_YELLOW,self.x,self.y,5,a,false,0,true,true,0,false,0,0,0,false)
+                        a=a+_d_a end end
+                    end
+                    SetV2(self,3,90,false,false)
+                end)
+                --[[ 殿ex式八向弹妖精
+                ]]
+            end)
+        end)
+        task._Wait(90)
+        last=New(EnemySimple,1,100,90,230,{20,10,15},10,false,true,true,function(self)
+            task.New(self,function()
+                lasttask=task.New(self,function()
+                    SetV2(self,6,270,false,false)
+                    _set_a(self,0.1,90,false)
+                    for _=1,10 do
+                        task._Wait(4)
+                        PlaySound("tan00",0.1,self.x/256,false)
+                        do local a,_d_a=(0),(45) for _=1,8 do
+                            last=New(_straight,arrow_small,COLOR_GOLDEN_YELLOW,self.x,self.y,5,a,false,0,true,true,0,false,0,0,0,false)
+                        a=a+_d_a end end
+                    end
+                    _set_a(self,0,0,false)
+                    SetV2(self,0,0,false,false)
+                    for _=1,40 do
+                        task._Wait(4)
+                        PlaySound("tan00",0.1,self.x/256,false)
+                        do local a,_d_a=(0),(45) for _=1,8 do
+                            last=New(_straight,arrow_small,COLOR_GOLDEN_YELLOW,self.x,self.y,5,a,false,0,true,true,0,false,0,0,0,false)
+                        a=a+_d_a end end
+                    end
+                    SetV2(self,3,90,false,false)
+                end)
+                --[[ 殿ex式八向弹妖精
+                ]]
+            end)
+        end)
+        task._Wait(120)
+        last=New(EnemySimple,1,100,0,230,{20,10,15},10,false,true,true,function(self)
+            task.New(self,function()
+                lasttask=task.New(self,function()
+                    SetV2(self,6,270,true,false)
+                    _set_a(self,0.1,90,false)
+                    for _=1,15 do
+                        task._Wait(4)
+                        PlaySound("tan00",0.1,self.x/256,false)
+                        do local a,_d_a=(0),(45) for _=1,8 do
+                            last=New(_straight,arrow_small,COLOR_GOLDEN_YELLOW,self.x,self.y,5,a,false,0,true,true,0,false,0,0,0,false)
+                        a=a+_d_a end end
+                    end
+                    _set_a(self,0,0,false)
+                    SetV2(self,0,0,false,false)
+                    for _=1,40 do
+                        task._Wait(4)
+                        PlaySound("tan00",0.1,self.x/256,false)
+                        do local a,_d_a=(0),(45) for _=1,8 do
+                            last=New(_straight,arrow_small,COLOR_GOLDEN_YELLOW,self.x,self.y,5,a,false,0,true,true,0,false,0,0,0,false)
+                        a=a+_d_a end end
+                    end
+                    SetV2(self,3,90,false,false)
+                end)
+                --[[ 殿ex式八向弹妖精
+                ]]
+            end)
+        end)
+        task._Wait(120)
+        last=New(EnemySimple,1,100,-90,230,{20,10,15},10,false,true,true,function(self)
+            task.New(self,function()
+                lasttask=task.New(self,function()
+                    SetV2(self,6,270,false,false)
+                    _set_a(self,0.1,90,false)
+                    for _=1,14 do
+                        task._Wait(4)
+                        PlaySound("tan00",0.1,self.x/256,false)
+                        do local a,_d_a=(0),(45) for _=1,8 do
+                            last=New(_straight,arrow_small,COLOR_GOLDEN_YELLOW,self.x,self.y,5,a,false,0,true,true,0,false,0,0,0,false)
+                        a=a+_d_a end end
+                    end
+                    _set_a(self,0,0,false)
+                    SetV2(self,0,0,false,false)
+                    for _=1,40 do
+                        task._Wait(4)
+                        PlaySound("tan00",0.1,self.x/256,false)
+                        do local a,_d_a=(0),(45) for _=1,8 do
+                            last=New(_straight,arrow_small,COLOR_GOLDEN_YELLOW,self.x,self.y,5,a,false,0,true,true,0,false,0,0,0,false)
+                        a=a+_d_a end end
+                    end
+                    SetV2(self,3,90,true,false)
+                end)
+                --[[ 殿ex式八向弹妖精
+                ]]
+            end)
+        end)
+        last=New(EnemySimple,1,100,-150,230,{20,10,15},10,false,true,true,function(self)
+            task.New(self,function()
+                lasttask=task.New(self,function()
+                    SetV2(self,6,270,false,false)
+                    _set_a(self,0.1,90,false)
+                    for _=1,14 do
+                        task._Wait(4)
+                        PlaySound("tan00",0.1,self.x/256,false)
+                        do local a,_d_a=(0),(45) for _=1,8 do
+                            last=New(_straight,arrow_small,COLOR_GOLDEN_YELLOW,self.x,self.y,5,a,false,0,true,true,0,false,0,0,0,false)
+                        a=a+_d_a end end
+                    end
+                    _set_a(self,0,0,false)
+                    SetV2(self,0,0,false,false)
+                    for _=1,40 do
+                        task._Wait(4)
+                        PlaySound("tan00",0.1,self.x/256,false)
+                        do local a,_d_a=(0),(45) for _=1,8 do
+                            last=New(_straight,arrow_small,COLOR_GOLDEN_YELLOW,self.x,self.y,5,a,false,0,true,true,0,false,0,0,0,false)
+                        a=a+_d_a end end
+                    end
+                    SetV2(self,3,90,false,false)
+                end)
+                --[[ 殿ex式八向弹妖精
+                ]]
+            end)
+        end)
+        task._Wait(120)
+        last=New(EnemySimple,1,100,-90,230,{20,10,15},10,false,true,true,function(self)
+            task.New(self,function()
+                lasttask=task.New(self,function()
+                    SetV2(self,6,270,false,false)
+                    _set_a(self,0.1,90,false)
+                    for _=1,10 do
+                        task._Wait(4)
+                        PlaySound("tan00",0.1,self.x/256,false)
+                        do local a,_d_a=(0),(45) for _=1,8 do
+                            last=New(_straight,arrow_small,COLOR_GOLDEN_YELLOW,self.x,self.y,5,a,false,0,true,true,0,false,0,0,0,false)
+                        a=a+_d_a end end
+                    end
+                    _set_a(self,0,0,false)
+                    SetV2(self,0,0,false,false)
+                    for _=1,70 do
+                        task._Wait(4)
+                        PlaySound("tan00",0.1,self.x/256,false)
+                        do local a,_d_a=(0),(45) for _=1,8 do
+                            last=New(_straight,arrow_small,COLOR_GOLDEN_YELLOW,self.x,self.y,5,a,false,0,true,true,0,false,0,0,0,false)
+                        a=a+_d_a end end
+                    end
+                    SetV2(self,3,90,true,false)
+                end)
+                --[[ 殿ex式八向弹妖精
+                ]]
+            end)
+        end)
+        last=New(EnemySimple,1,100,90,230,{20,10,15},10,false,true,true,function(self)
+            task.New(self,function()
+                lasttask=task.New(self,function()
+                    SetV2(self,6,270,false,false)
+                    _set_a(self,0.1,90,false)
+                    for _=1,10 do
+                        task._Wait(4)
+                        PlaySound("tan00",0.1,self.x/256,false)
+                        do local a,_d_a=(0),(45) for _=1,8 do
+                            last=New(_straight,arrow_small,COLOR_GOLDEN_YELLOW,self.x,self.y,5,a,false,0,true,true,0,false,0,0,0,false)
+                        a=a+_d_a end end
+                    end
+                    _set_a(self,0,0,false)
+                    SetV2(self,0,0,false,false)
+                    for _=1,40 do
+                        task._Wait(4)
+                        PlaySound("tan00",0.1,self.x/256,false)
+                        do local a,_d_a=(0),(45) for _=1,8 do
+                            last=New(_straight,arrow_small,COLOR_GOLDEN_YELLOW,self.x,self.y,5,a,false,0,true,true,0,false,0,0,0,false)
+                        a=a+_d_a end end
+                    end
+                    SetV2(self,3,90,false,false)
+                end)
+                --[[ 殿ex式八向弹妖精
+                ]]
+            end)
+        end)
+        task._Wait(60)
+        last=New(_editor_class["bigone"],0,240,_)
+        --[[ 第一只大蝴蝶
+        ]]
+        task._Wait(120)
+        last=New(EnemySimple,26,160,150,240,{30,10,5},30,true,true,true,function(self)
+            task.New(self,function()
+                lasttask=task.New(self,function()
+                    task.MoveTo(100,150,20,MOVE_NORMAL)
+                    for _=1,_infinite do
+                        SetV2(self,0.5,180,false,false)
+                        do local a1,_d_a1=(50),(60) for _=1,_infinite do
+                            task._Wait(30)
+                            do local a,_d_a=(0),(18) for _=1,20 do
+                                last=New(_editor_class["scar2"],self.x,self.y,a)
+                            a=a+_d_a end end
+                            PlaySound("tan02",0.1,self.x/256,false)
+                            last=New(_editor_class["scar1"],self.x,self.y,a1,4)
+                            task._Wait(30)
+                            PlaySound("tan02",0.1,self.x/256,false)
+                            do local a,_d_a=(0),(18) for _=1,20 do
+                                last=New(_editor_class["scar3"],self.x,self.y,a)
+                            a=a+_d_a end end
+                        a1=a1+_d_a1 end end
+                    end
+                end)
+                --[[ 阴阳玉双向夹击
+                ]]
+            end)
+        end)
+        last=New(EnemySimple,26,160,-150,240,{30,10,5},30,true,true,true,function(self)
+            task.New(self,function()
+                lasttask=task.New(self,function()
+                    task.MoveTo(-100,150,20,MOVE_NORMAL)
+                    for _=1,_infinite do
+                        SetV2(self,0.5,0,false,false)
+                        do local a1,_d_a1=(120),(60) for _=1,_infinite do
+                            task._Wait(30)
+                            do local a,_d_a=(0),(18) for _=1,20 do
+                                last=New(_editor_class["scar2"],self.x,self.y,a)
+                            a=a+_d_a end end
+                            PlaySound("tan02",0.1,self.x/256,false)
+                            last=New(_editor_class["scar1"],self.x,self.y,a1,4)
+                            task._Wait(30)
+                            PlaySound("tan02",0.1,self.x/256,false)
+                            do local a,_d_a=(0),(18) for _=1,20 do
+                                last=New(_editor_class["scar3"],self.x,self.y,a)
+                            a=a+_d_a end end
+                        a1=a1+_d_a1 end end
+                    end
+                end)
+                --[[ 阴阳玉双向夹击
+                ]]
+            end)
+        end)
+        lstg.tmpvar.bg.flag = true
+        task._Wait(300)
+        for _,unit in ObjList(GROUP_ENEMY) do
+            _kill(unit,true)
+        end
+        for _,unit in ObjList(GROUP_NONTJT) do
+            _kill(unit,true)
+        end
+        _clear_bullet(true,false)
+        task._Wait(300)
         local _boss_wait=true
         local _ref=New(_editor_class["Aya"],_editor_class["Aya"].cards)
         last=_ref

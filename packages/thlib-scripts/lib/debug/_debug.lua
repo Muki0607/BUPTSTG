@@ -18,7 +18,7 @@ _debug = {
     skip_loading = true, --跳过转场加载界面（也可按S键跳过）
     bgm_debug = false, --bgm名debug，显示所有bgm名
     music_room_debug = false, --音乐室debug，显示相关信息
-    full_window_title = true, --显示完整窗口标题信息（包括FPS，Obj数信息）
+    full_window_title = false, --显示完整窗口标题信息（包括FPS，Obj数信息）
     exception_handler_disabled = true, --关闭全局异常捕获，方便debug
     l10n_tryexcept_disabled = true, --关闭l10n加载文件时的异常捕获
 }

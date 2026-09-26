@@ -97,23 +97,33 @@ end
 function lib.pre_start:render()
     SetViewMode('ui')
     lib.DrawTips(self, { l10n.ui.tips.select, l10n.ui.tips.back }, { l10n.ui.tips.select_diff, l10n.ui.tips.back })
-    DrawText('menuttf', 'Rank Select', self.x + screen.width * 0.25, self.y + screen.height * 0.3, 1.25,
+    DrawText('menuttf', 'Rank Select', self.x + screen.width * 0.25, self.y + screen.height * 0.315, 1.25,
         Color(255, 47, 45, 42), Color(255, 255, 255, 255), 'centerpoint')
     DrawText('menuttf', 'Player Select', self.x - screen.width * 0.2, self.y - screen.height * 0.2, 1.25,
         Color(255, 47, 45, 42), Color(255, 255, 255, 255), 'centerpoint')
     local d = -60
     local diff = { '志愿服务程度的挑战', '单人完成大作业程度的挑战', '上台假装老师程度的挑战', '科研创新程度的挑战' }
     for i = 1, 4 do
-        DrawText('main_font_zh_cn', '邮专级', self.x + screen.width * 0.25, self.y + screen.height * 0.225 + (i - 1) * d, 1.25,
-            Color(255, 255, 255, 255), Color(255, 47, 45, 42), 'centerpoint')
-        DrawText('menuttf', 'BUPT Mode', self.x + screen.width * 0.25, self.y + screen.height * 0.19 + (i - 1) * d, 0.5,
-            Color(255, 255, 68, 68), Color(255, 47, 45, 42), 'centerpoint')
-        DrawText('main_font_zh_cn', diff[i], self.x + screen.width * 0.25, self.y + screen.height * 0.165 + (i - 1) * d, 0.75,
-            Color(255, 255, 255, 255), Color(255, 47, 45, 42), 'centerpoint')
+        DrawText('menuttf', '邮专级', self.x + screen.width * 0.35, self.y + screen.height * 0.255 + (i - 1) * d, 1.25,
+            Color(255, 255, 255, 255), Color(255, 47, 45, 42), 'right')
+        DrawText('menuttf', 'Hard Mode', self.x + screen.width * 0.35, self.y + screen.height * 0.2 + (i - 1) * d, 0.5,
+            Color(255, 255, 68, 68), Color(255, 47, 45, 42), 'right')
+        DrawText('menuttf', diff[i], self.x + screen.width * 0.35, self.y + screen.height * 0.175 + (i - 1) * d, 0.5,
+            Color(255, 255, 255, 255), Color(255, 47, 45, 42), 'right')
         if i == self.pos then
-            DrawText('menuttf', '▶', self.x + screen.width * 0.15, self.y + screen.height * 0.225 + (i - 1) * d, 0.75,
+            DrawText('menuttf', '▶', self.x + screen.width * 0.2, self.y + screen.height * 0.225 + (i - 1) * d - 3, 0.75,
                 Color(255, 47, 45, 42), Color(255, 255, 255, 255))
         end
+    end
+    local text = l10n.ui.player_select[1]
+    DrawText('menuttf', text[2], self.x - screen.width * 0.1 + 5, self.y + screen.height * 0.125, 1.25,
+        Color(255, 255, 255, 255), Color(255, 0, 0, 0), 'centerpoint')
+    d = -30
+    for i = 1, 4 do
+        DrawText('menuttf', text[3][i], self.x - screen.width * 0.3, self.y - screen.height * 0.175 - (5 - i) * d, 0.75,
+            Color(255, 255, 255, 255), Color(255, 0, 0, 0))
+        DrawText('menuttf', text[4][i], self.x - screen.width * 0.325, self.y - screen.height * 0.2 - 5 - (5 - i) * d, 0.5,
+            Color(255, 255, 255, 255), Color(255, 0, 0, 0))
     end
     
     SetViewMode('world')

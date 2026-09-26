@@ -22,7 +22,7 @@ function lib.scene:init()
     if not scoredata.music_record then
         scoredata.music_record = {}
     end
-    if aic.misc.GetCurrentBGM() ~= 'bgm0' then
+    if aic.misc.GetCurrentBGM() ~= 'bgm1' then
         _play_music('bgm1', nil, false)
     end
     self.class = lib.scene

@@ -81,7 +81,9 @@ function stage.group.frame(self)
             ext.rep_over = true
             lstg.tmpvar.pause_menu_text = { 'Replay Again', 'Return to Title', nil }
         else
-            _play_music(deathmusic)
+            scoredata.music_record[deathmusic] = true
+            LoadMusicRecord(deathmusic)
+            PlayMusic(deathmusic, 1.0)
             ext.pop_pause_menu = true
             lstg.tmpvar.death = true
             lstg.tmpvar.pause_menu_text = { 'Continue', 'Quit and Save Replay', 'Restart' }
