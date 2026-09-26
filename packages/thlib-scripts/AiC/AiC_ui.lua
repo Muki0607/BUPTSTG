@@ -721,7 +721,7 @@ function lib.player_pointer:init()
     self.scale = 1
     self.x = 0
     self.y = 0
-    self.layer = LAYER_TOP + 0.1
+    self.layer = LAYER_TOP + 1
     self.bound = false
 end
 

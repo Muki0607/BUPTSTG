@@ -48,9 +48,11 @@ function lib.scene:frame()
     task.Do(self)
 end
 
----绘制底层大背景desk（1:1，不缩放）
+---绘制底层大背景desk
+---desk.png已缩小到原来的1/4（为省内存），这里用4倍放大补偿，
+---保持与缩放前完全一致的显示效果
 function lib.scene:render()
     SetViewMode('ui')
-    Render('desk', self.x, self.y, 0, 1, 1)
+    Render('desk', self.x, self.y)
     SetViewMode('world')
 end

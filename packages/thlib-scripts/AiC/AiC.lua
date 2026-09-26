@@ -37,7 +37,7 @@ aic = {}
 
 ---东方梦摇篮版本号
 ---@type string
-aic.version = '1.00a'
+aic.version = '1.00b'
 
 ---东方梦摇篮DLC标志
 ---@type boolean

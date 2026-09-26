@@ -132,7 +132,7 @@ _editor_class["NB_Portrait_AI"].init=function(self,_x,_y,img,s,dx)
     self.colli=false
     self._servants={}
     self._blend,self._a,self._r,self._g,self._b='',255,255,255,255
-    s=s or 0.05
+    s=s or 0.1
     dx = dx or 0
     self.hscale=s
     self.vscale=s
@@ -228,6 +228,78 @@ _editor_class["aya_charge"].init=function(self,_x,_y,type, t, r, g, b)
             a=a+_d_a b=b+_d_b end end
             _del(self,true)
         end)
+    end
+end
+_editor_class["staff"]=Class(_object)
+_editor_class["staff"].init=function(self,_x,_y,_)
+    self.x,self.y=_x,_y
+    self.img="img_void"
+    self.layer=LAYER_TOP
+    self.group=GROUP_GHOST
+    self.hide=false
+    self.bound=false
+    self.navi=false
+    self.hp=10
+    self.maxhp=10
+    self.colli=true
+    self._servants={}
+    self._blend,self._a,self._r,self._g,self._b='',255,255,255,255
+    self.x = screen.width / 2
+    self.y = 0
+    self.texty = 0
+    self.layer = LAYER_TOP + 114514
+    self.alpha=0
+    lasttask=task.New(self,function()
+        do
+            local _beg_al=0 local al=_beg_al local _end_al=255 local _d_al=(_end_al-_beg_al)/(60)
+            for _=1,60 do
+                self.alpha=al
+                task._Wait(1)
+                al=al+_d_al
+            end
+        end
+        SetV2(self,1,90,true,false)
+    end)
+end
+_editor_class["staff"].frame=function(self)
+    self.class.base.frame(self)
+    local dy=(screen.height * #dialog.staff / (58 * 60))
+    if not self.finished then
+        if KeyIsDown('shoot') then
+            self.texty = self.texty + dy * 3
+        else
+            self.texty = self.texty + dy
+        end
+    end
+    if self.texty >= screen.height * (#dialog.staff + 0.5) then
+        self.finished = true
+    else
+    end
+end
+_editor_class["staff"].render=function(self)
+    self.class.base.render(self)
+    do
+    SetViewMode('ui')
+        SetImageState('white', '', Color(255, 0, 0, 0))
+        RenderRect('white', 0, screen.width, 0, screen.height)
+        SetImageState('white', '', Color(255, 255, 255, 255))
+        local d=(100)
+        for i, v in ipairs(dialog.staff) do
+            if #v == 2 then
+                DrawText('main_font_zh_cn', v[1], self.x, self.texty - screen.height * i, 2.5, nil, nil, 'centerpoint')
+                DrawText('main_font_zh_cn', v[2], self.x, self.texty - screen.height * i - 35, 1.5, nil, nil, 'centerpoint')
+            elseif #v == 3 then
+                DrawText('main_font_zh_cn', v[1], self.x, self.texty - screen.height * i, 2, nil, nil, 'centerpoint')
+                DrawText('main_font_zh_cn', v[2], self.x, self.texty - screen.height * i - 25, 1, nil, nil, 'centerpoint')
+                DrawText('main_font_zh_cn', v[3], self.x, self.texty - screen.height * i - 85, 2, nil, nil, 'centerpoint')
+            else
+                DrawText('main_font_zh_cn', v[1], self.x, self.texty - screen.height * i, 2, nil, nil, 'centerpoint')
+                DrawText('main_font_zh_cn', v[2], self.x, self.texty - screen.height * i - 25, 1, nil, nil, 'centerpoint')
+                DrawText('main_font_zh_cn', v[3], self.x, self.texty - screen.height * i - 55, 2, nil, nil, 'centerpoint')
+                DrawText('main_font_zh_cn', v[4], self.x, self.texty - screen.height * i - 90, 0.75, nil, nil, 'centerpoint')
+            end
+        end
+        SetViewMode('world')
     end
 end
 _editor_class["straght"]=Class(laser)
@@ -3197,786 +3269,16 @@ stage.group.DefStageFunc('SpellCard@Hard','init',function(self)
         New(HM_hzc4_background)
         LoadMusicRecord("bgm2")
         _play_music("bgm2")
-        PlaySound("kira01",0.1,self.x/256,false)
-        last=New(_editor_class["straght"],-200,100,10,10)
+        LoadMusicRecord("bgm4")
+        _play_music("bgm4")
+        last=New(_editor_class["staff"],0,0,_)
+        player.lock = true
+        for _=1,_infinite do
+            if last.finished then break end
+            task._Wait(1)
+        end
+        player.lock = false
         task._Wait(60)
-        for _=1,2 do
-            task._Wait(60)
-            last=New(_editor_class["awm1"],200,150,180)
-            last=New(_editor_class["awm1"],-200,150,0)
-            last=New(EnemySimple,6,5,205,ran:Float(0,80),{2,0,0},1,false,true,true,function(self)
-                task.New(self,function()
-                    lasttask=task.New(self,function()
-                        SetV2(self,ran:Float(3.5,5),180,false,false)
-                    end)
-                end)
-            end)
-            last=New(EnemySimple,6,5,205,ran:Float(0,80),{2,0,0},1,false,true,true,function(self)
-                task.New(self,function()
-                    lasttask=task.New(self,function()
-                        SetV2(self,ran:Float(3.5,5),180,false,false)
-                    end)
-                end)
-            end)
-            last=New(EnemySimple,6,5,-205,ran:Float(0,80),{2,0,0},1,false,true,true,function(self)
-                task.New(self,function()
-                    lasttask=task.New(self,function()
-                        SetV2(self,ran:Float(3.5,5),0,false,false)
-                    end)
-                end)
-            end)
-            last=New(EnemySimple,6,5,-205,ran:Float(0,80),{2,0,0},1,false,true,true,function(self)
-                task.New(self,function()
-                    lasttask=task.New(self,function()
-                        SetV2(self,ran:Float(3.5,5),0,false,false)
-                    end)
-                end)
-            end)
-            task._Wait(45)
-            last=New(_editor_class["awm2"],200,150,180)
-            last=New(_editor_class["awm2"],-200,150,0)
-            last=New(_editor_class["awm3"],0,200,270)
-            last=New(EnemySimple,6,5,-205,ran:Float(0,80),{2,0,0},1,false,true,true,function(self)
-                task.New(self,function()
-                    lasttask=task.New(self,function()
-                        SetV2(self,ran:Float(3.5,5),0,false,false)
-                    end)
-                end)
-            end)
-            last=New(EnemySimple,6,5,205,ran:Float(0,80),{2,0,0},1,false,true,true,function(self)
-                task.New(self,function()
-                    lasttask=task.New(self,function()
-                        SetV2(self,ran:Float(3.5,5),180,false,false)
-                    end)
-                end)
-            end)
-            task._Wait(20)
-            --[[ 两波自机狙小妖精和挡枪小妖精
-            ]]
-        end
-        task._Wait(60)
-        last=New(_editor_class["straght"],200,100,170,4)
-        do
-            local self = last
-            lasttask=task.New(self,function()
-                do local a,_d_a,b,_d_b=(200),(-60),(0),(ran:Float(-5,5)) for _=1,13 do
-                    task._Wait(8)
-                    last=New(_straight,grain_a,COLOR_RED,self.x+ran:Float(-30,30),self.y+ran:Float(-20,20),1,ran:Float(75,105),false,0,true,true,0,false,0,0,3,false)
-                    do
-                        local self = last
-                        SetV2(self,1,ran:Float(75,105),true,false)
-                        _set_g(self,0.05)
-                    end
-                a=a+_d_a b=b+_d_b end end
-            end)
-            --[[ 激光穿过，留下米弹
-            ]]
-        end
-        PlaySound("kira01",0.1,self.x/256,false)
-        task._Wait(60)
-        for _=1,9 do
-            task._Wait(20)
-            last=New(EnemySimple,19,5,-150,-230,{1,0,1},1,false,true,true,function(self)
-                task.New(self,function()
-                    lasttask=task.New(self,function()
-                        SetV2(self,2,90,true,false)
-                        _set_a(self,0.012,0,false)
-                        for _=1,_infinite do
-                            task._Wait(18)
-                            last=New(_straight,butterfly,COLOR_GREEN,self.x,self.y,1,ran:Float(0,360),false,0,true,true,0,false,0,0,0,false)
-                            PlaySound("tan02",0.1,self.x/256,false)
-                        end
-                    end)
-                end)
-            end)
-            last=New(EnemySimple,19,5,150,-230,{1,0,1},1,false,true,true,function(self)
-                task.New(self,function()
-                    lasttask=task.New(self,function()
-                        SetV2(self,2,90,true,false)
-                        _set_a(self,0.012,180,false)
-                        for _=1,_infinite do
-                            task._Wait(15)
-                            last=New(_straight,butterfly,COLOR_GREEN,self.x,self.y,1,ran:Float(0,360),false,0,true,true,0,false,0,0,0,false)
-                            PlaySound("tan02",0.1,self.x/256,false)
-                        end
-                    end)
-                end)
-            end)
-            --[[ 
-            ]]
-        end
-        for _=1,9 do
-            task._Wait(20)
-            last=New(EnemySimple,6,5,205,ran:Float(0,80),{2,0,0},1,false,true,true,function(self)
-                task.New(self,function()
-                    lasttask=task.New(self,function()
-                        SetV2(self,ran:Float(3.5,5),180,false,false)
-                    end)
-                end)
-            end)
-            last=New(EnemySimple,6,5,205,ran:Float(0,80),{2,0,0},1,false,true,true,function(self)
-                task.New(self,function()
-                    lasttask=task.New(self,function()
-                        SetV2(self,ran:Float(3.5,5),180,false,false)
-                    end)
-                end)
-            end)
-            last=New(EnemySimple,6,5,-205,ran:Float(0,80),{2,0,0},1,false,true,true,function(self)
-                task.New(self,function()
-                    lasttask=task.New(self,function()
-                        SetV2(self,ran:Float(3.5,5),0,false,false)
-                    end)
-                end)
-            end)
-            last=New(EnemySimple,6,5,-205,ran:Float(0,80),{2,0,0},1,false,true,true,function(self)
-                task.New(self,function()
-                    lasttask=task.New(self,function()
-                        SetV2(self,ran:Float(3.5,5),0,false,false)
-                    end)
-                end)
-            end)
-            --[[ 挡枪小妖精
-            ]]
-        end
-        task._Wait(180)
-        PlaySound("kira01",0.1,self.x/256,false)
-        last=New(_editor_class["straght"],-200,160,350,4)
-        do
-            local self = last
-            lasttask=task.New(self,function()
-                task._Wait(15)
-                do local c,_d_c=(0),(20) for _=1,6 do
-                    task._Wait(10)
-                    do local a,_d_a,b,_d_b=(0),(36),(0),(15) for _=1,10 do
-                        last=New(_straight,ball_mid_c,COLOR_RED,self.x+30*cos(a),self.y+30*sin(a),2,0,true,0,true,true,0,false,0,0,3,false)
-                        last=New(_straight,ball_mid_c,COLOR_BLUE,self.x+30*cos(a-36),self.y+30*sin(a-36),2,270+c,false,0,true,true,0,false,0,0,3,false)
-                    a=a+_d_a b=b+_d_b end end
-                c=c+_d_c end end
-            end)
-            --[[ 
-            ]]
-        end
-        task._Wait(180)
-        last=New(_editor_class["bigone"],0,240,_)
-        task._Wait(180)
-        for _=1,2 do
-            task._Wait(60)
-            last=New(_editor_class["awm1"],200,150,180)
-            do
-                local self = last
-                lasttask=task.New(self,function()
-                    _set_a(self,0.03,90,false)
-                end)
-            end
-            last=New(_editor_class["awm1"],-200,150,0)
-            do
-                local self = last
-                lasttask=task.New(self,function()
-                    _set_a(self,0.05,90,false)
-                end)
-            end
-            --[[ 氛围组自机狙小妖精
-            ]]
-        end
-        task._Wait(180)
-        --[[ 下面三项也是一样的大蝴蝶和氛围组狙
-        ]]
-        last=New(EnemySimple,9,100,100,240,{30,10,10},100,true,true,true,function(self)
-            task.New(self,function()
-                lasttask=task.New(self,function()
-                    task.MoveTo(110,150,60,MOVE_NORMAL)
-                    for _=1,10 do
-                        do local a,_d_a=(10),(ran:Float(15,30)) for _=1,3 do
-                            task._Wait(20)
-                            PlaySound("tan01",0.1,self.x/256,false)
-                            do local b,_d_b=(0),(1.5) for _=1,5 do
-                                last=New(_straight,silence,COLOR_ORANGE,self.x,self.y,3,b+a,false,0,true,true,0,false,0.5,b+a,4.5,false)
-                                last=New(_straight,silence,COLOR_ORANGE,self.x,self.y,3,b+a+60,false,0,true,true,0,false,0.5,b+a+60,4.5,false)
-                                last=New(_straight,silence,COLOR_ORANGE,self.x,self.y,3,b+a+120,false,0,true,true,0,false,0.5,b+a+120,4.5,false)
-                                last=New(_straight,silence,COLOR_ORANGE,self.x,self.y,3,b+a+180,false,0,true,true,0,false,0.5,b+a+180,4.5,false)
-                                last=New(_straight,silence,COLOR_ORANGE,self.x,self.y,3,b+a+240,false,0,true,true,0,false,0.5,b+a+240,4.5,false)
-                                last=New(_straight,silence,COLOR_ORANGE,self.x,self.y,3,b+a+300,false,0,true,true,0,false,0.5,b+a+300,4.5,false)
-                                last=New(_straight,silence,COLOR_ORANGE,self.x,self.y,3,b+a+330,false,0,true,true,0,false,0.5,b+a+300,4.5,false)
-                                last=New(_straight,silence,COLOR_ORANGE,self.x,self.y,3,b+a+270,false,0,true,true,0,false,0.5,b+a+240,4.5,false)
-                                last=New(_straight,silence,COLOR_ORANGE,self.x,self.y,3,b+a+210,false,0,true,true,0,false,0.5,b+a+180,4.5,false)
-                                last=New(_straight,silence,COLOR_ORANGE,self.x,self.y,3,b+a+150,false,0,true,true,0,false,0.5,b+a+120,4.5,false)
-                                last=New(_straight,silence,COLOR_ORANGE,self.x,self.y,3,b+a+90,false,0,true,true,0,false,0.5,b+a+60,4.5,false)
-                                last=New(_straight,silence,COLOR_ORANGE,self.x,self.y,3,b+a+30,false,0,true,true,0,false,0.5,b+a,4.5,false)
-                            b=b+_d_b end end
-                        a=a+_d_a end end
-                        PlaySound("tan02",0.1,self.x/256,false)
-                        last=New(_editor_class["scar"],self.x,self.y,40)
-                    end
-                    SetV2(self,3,90,false,false)
-                end)
-            end)
-        end)
-        last=New(EnemySimple,9,100,-100,240,{30,10,10},100,true,true,true,function(self)
-            task.New(self,function()
-                lasttask=task.New(self,function()
-                    task.MoveTo(-110,150,60,MOVE_NORMAL)
-                    for _=1,10 do
-                        do local a,_d_a=(10),(ran:Float(15,30)) for _=1,3 do
-                            task._Wait(20)
-                            PlaySound("tan01",0.1,self.x/256,false)
-                            do local b,_d_b=(0),(1.5) for _=1,5 do
-                                last=New(_straight,silence,COLOR_ORANGE,self.x,self.y,3,b+a,false,0,true,true,0,false,0.5,b+a,4.5,false)
-                                last=New(_straight,silence,COLOR_ORANGE,self.x,self.y,3,b+a+60,false,0,true,true,0,false,0.5,b+a+60,4.5,false)
-                                last=New(_straight,silence,COLOR_ORANGE,self.x,self.y,3,b+a+120,false,0,true,true,0,false,0.5,b+a+120,4.5,false)
-                                last=New(_straight,silence,COLOR_ORANGE,self.x,self.y,3,b+a+180,false,0,true,true,0,false,0.5,b+a+180,4.5,false)
-                                last=New(_straight,silence,COLOR_ORANGE,self.x,self.y,3,b+a+240,false,0,true,true,0,false,0.5,b+a+240,4.5,false)
-                                last=New(_straight,silence,COLOR_ORANGE,self.x,self.y,3,b+a+300,false,0,true,true,0,false,0.5,b+a+300,4.5,false)
-                                last=New(_straight,silence,COLOR_ORANGE,self.x,self.y,3,b+a+330,false,0,true,true,0,false,0.5,b+a+300,4.5,false)
-                                last=New(_straight,silence,COLOR_ORANGE,self.x,self.y,3,b+a+270,false,0,true,true,0,false,0.5,b+a+240,4.5,false)
-                                last=New(_straight,silence,COLOR_ORANGE,self.x,self.y,3,b+a+210,false,0,true,true,0,false,0.5,b+a+180,4.5,false)
-                                last=New(_straight,silence,COLOR_ORANGE,self.x,self.y,3,b+a+150,false,0,true,true,0,false,0.5,b+a+120,4.5,false)
-                                last=New(_straight,silence,COLOR_ORANGE,self.x,self.y,3,b+a+90,false,0,true,true,0,false,0.5,b+a+60,4.5,false)
-                                last=New(_straight,silence,COLOR_ORANGE,self.x,self.y,3,b+a+30,false,0,true,true,0,false,0.5,b+a,4.5,false)
-                            b=b+_d_b end end
-                        a=a+_d_a end end
-                        PlaySound("tan02",0.1,self.x/256,false)
-                        last=New(_editor_class["scar"],self.x,self.y,-40)
-                    end
-                    SetV2(self,3,90,false,false)
-                end)
-            end)
-        end)
-        for _=1,2 do
-            task._Wait(30)
-            last=New(_editor_class["awm1"],200,150,180)
-            do
-                local self = last
-                lasttask=task.New(self,function()
-                    _set_a(self,0.03,90,false)
-                end)
-            end
-            last=New(_editor_class["awm1"],-200,150,0)
-            do
-                local self = last
-                lasttask=task.New(self,function()
-                    _set_a(self,0.05,90,false)
-                end)
-            end
-            task._Wait(30)
-            last=New(_editor_class["awm2"],-200,150,0)
-            do
-                local self = last
-                lasttask=task.New(self,function()
-                    _set_a(self,0.05,90,false)
-                end)
-            end
-            last=New(_editor_class["awm2"],200,150,180)
-            do
-                local self = last
-                lasttask=task.New(self,function()
-                    _set_a(self,0.03,90,false)
-                end)
-            end
-        end
-        task._Wait(300)
-        do local awm,_d_awm=(-190),(38) for _=1,10 do
-            task._Wait(15)
-            last=New(EnemySimple,28,10,awm,220,{1,0,1},10,false,true,true,function(self)
-                task.New(self,function()
-                    lasttask=task.New(self,function()
-                        task.MoveTo(awm,170,30,MOVE_NORMAL)
-                        for _=1,10 do
-                            task._Wait(1)
-                            PlaySound("tan02",0.1,self.x/256,false)
-                            do local a,_d_a=(-30),(30) for _=1,3 do
-                                last=New(_straight,ellipse,COLOR_RED,self.x,self.y,5,a,true,0,true,true,0,false,0,0,0,false)
-                            a=a+_d_a end end
-                        end
-                        task._Wait(60)
-                        SetV2(self,3,90,true,false)
-                    end)
-                end)
-            end)
-            --[[ 自机狙鬼火
-            ]]
-        awm=awm+_d_awm end end
-        task._Wait(90)
-        PlaySound("old_kira01",0.1,self.x/256,false)
-        last=New(_editor_class["straght"],200,100,165,6)
-        do
-            local self = last
-            lasttask=task.New(self,function()
-                task._Wait(30)
-                do local c,_d_c=(0),(ran:Float(-10,10)) for _=1,10 do
-                    task._Wait(4)
-                    PlaySound("tan02",0.1,self.x/256,false)
-                    do local a,_d_a,b,_d_b=(5.5),(-0.44),(0),(15) for _=1,10 do
-                        last=New(_straight,arrow_big,COLOR_ORANGE,self.x+c,self.y+c,a,0,true,0,true,true,0,false,0,0,3,false)
-                        last=New(_straight,arrow_big,COLOR_ORANGE,self.x+c+70,self.y+c,a,20,true,0,true,true,0,false,0,0,3,false)
-                    a=a+_d_a b=b+_d_b end end
-                c=c+_d_c end end
-            end)
-            --[[ 激光留下奇偶狙
-            ]]
-        end
-        task._Wait(60)
-        do local awm,_d_awm=(190),(-38) for _=1,10 do
-            task._Wait(15)
-            last=New(EnemySimple,28,15,awm,220,{1,0,1},10,false,true,true,function(self)
-                task.New(self,function()
-                    lasttask=task.New(self,function()
-                        task.MoveTo(awm,170,30,MOVE_NORMAL)
-                        for _=1,10 do
-                            task._Wait(1)
-                            PlaySound("tan02",0.1,self.x/256,false)
-                            do local a,_d_a=(-30),(30) for _=1,3 do
-                                last=New(_straight,ellipse,COLOR_RED,self.x,self.y,5,a,true,0,true,true,0,false,0,0,0,false)
-                            a=a+_d_a end end
-                        end
-                        task._Wait(60)
-                        SetV2(self,3,90,true,false)
-                    end)
-                end)
-            end)
-            --[[ 自机狙鬼火
-            ]]
-        awm=awm+_d_awm end end
-        task._Wait(220)
-        last=New(EnemySimple,26,180,150,240,{30,10,5},30,true,true,true,function(self)
-            task.New(self,function()
-                lasttask=task.New(self,function()
-                    task.MoveTo(160,100,20,MOVE_NORMAL)
-                    for _=1,_infinite do
-                        SetV2(self,1,180,false,false)
-                        do local a1,_d_a1=(50),(60) for _=1,_infinite do
-                            task._Wait(30)
-                            do local a,_d_a=(0),(18) for _=1,20 do
-                                last=New(_editor_class["scar2"],self.x,self.y,a)
-                            a=a+_d_a end end
-                            PlaySound("tan02",0.1,self.x/256,false)
-                            last=New(_editor_class["scar1"],self.x,self.y,a1,4)
-                            task._Wait(30)
-                            do local a,_d_a=(0),(18) for _=1,20 do
-                                last=New(_editor_class["scar3"],self.x,self.y,a)
-                            a=a+_d_a end end
-                        a1=a1+_d_a1 end end
-                    end
-                end)
-                --[[ 阴阳玉发射固定弹与狙
-                ]]
-            end)
-        end)
-        task._Wait(120)
-        for _=1,2 do
-            for _=1,2 do
-                last=New(_editor_class["awm2"],-200,ran:Float(150,200),340)
-                last=New(_editor_class["awm2"],200,ran:Float(150,200),200)
-                task._Wait(40)
-                last=New(_editor_class["awm3"],200,ran:Float(150,200),200)
-                last=New(_editor_class["awm3"],-200,ran:Float(150,200),340)
-            end
-            --[[ 氛围组自机狙
-            ]]
-        end
-        task._Wait(240)
-        last=New(EnemySimple,26,180,-150,240,{30,10,5},30,true,true,true,function(self)
-            task.New(self,function()
-                lasttask=task.New(self,function()
-                    task.MoveTo(-160,100,20,MOVE_NORMAL)
-                    for _=1,_infinite do
-                        SetV2(self,1,0,false,false)
-                        do local a1,_d_a1=(120),(60) for _=1,_infinite do
-                            task._Wait(30)
-                            do local a,_d_a=(0),(18) for _=1,20 do
-                                last=New(_editor_class["scar2"],self.x,self.y,a)
-                            a=a+_d_a end end
-                            PlaySound("tan02",0.1,self.x/256,false)
-                            last=New(_editor_class["scar1"],self.x,self.y,a1,4)
-                            task._Wait(30)
-                            do local a,_d_a=(0),(18) for _=1,20 do
-                                last=New(_editor_class["scar3"],self.x,self.y,a)
-                            a=a+_d_a end end
-                        a1=a1+_d_a1 end end
-                    end
-                end)
-                --[[ 同上阴阳玉
-                ]]
-            end)
-        end)
-        task._Wait(260)
-        last=New(EnemySimple,26,140,150,240,{20,10,10},30,true,true,true,function(self)
-            task.New(self,function()
-                lasttask=task.New(self,function()
-                    task.MoveTo(160,100,20,MOVE_NORMAL)
-                    for _=1,_infinite do
-                        SetV2(self,1,180,false,false)
-                        do local a1,_d_a1=(50),(60) for _=1,_infinite do
-                            task._Wait(30)
-                            do local a,_d_a=(0),(18) for _=1,20 do
-                                last=New(_editor_class["scar2"],self.x,self.y,a)
-                            a=a+_d_a end end
-                            PlaySound("tan02",0.1,self.x/256,false)
-                            last=New(_editor_class["scar1"],self.x,self.y,a1,4)
-                            task._Wait(30)
-                            do local a,_d_a=(0),(18) for _=1,20 do
-                                last=New(_editor_class["scar3"],self.x,self.y,a)
-                            a=a+_d_a end end
-                        a1=a1+_d_a1 end end
-                    end
-                end)
-                --[[ 同上阴阳玉
-                ]]
-            end)
-        end)
-        last=New(EnemySimple,26,140,-150,240,{20,10,10},30,true,true,true,function(self)
-            task.New(self,function()
-                lasttask=task.New(self,function()
-                    task.MoveTo(-160,100,20,MOVE_NORMAL)
-                    for _=1,_infinite do
-                        SetV2(self,1,0,false,false)
-                        do local a1,_d_a1=(120),(60) for _=1,_infinite do
-                            task._Wait(30)
-                            do local a,_d_a=(0),(18) for _=1,20 do
-                                last=New(_editor_class["scar2"],self.x,self.y,a)
-                            a=a+_d_a end end
-                            PlaySound("tan02",0.1,self.x/256,false)
-                            last=New(_editor_class["scar1"],self.x,self.y,a1,4)
-                            task._Wait(30)
-                            do local a,_d_a=(0),(18) for _=1,20 do
-                                last=New(_editor_class["scar3"],self.x,self.y,a)
-                            a=a+_d_a end end
-                        a1=a1+_d_a1 end end
-                    end
-                end)
-                --[[ 同上阴阳玉
-                ]]
-            end)
-        end)
-        task._Wait(240)
-        for _=1,3 do
-            task._Wait(60)
-            last=New(_editor_class["awm1"],-200,120,10)
-            last=New(_editor_class["awm1"],200,120,170)
-            task._Wait(45)
-            last=New(_editor_class["awm3"],-200,130,10)
-            last=New(_editor_class["awm3"],200,130,170)
-            --[[ 氛围组狙
-            ]]
-        end
-        task._Wait(200)
-        PlaySound("old_kira01",0.1,self.x/256,false)
-        last=New(_editor_class["straght"],-200,140,345,6)
-        do
-            local self = last
-            lasttask=task.New(self,function()
-                task._Wait(10)
-                do local c,_d_c=(0),(20) for _=1,6 do
-                    task._Wait(10)
-                    do local a,_d_a,b,_d_b=(0),(36),(0),(15) for _=1,10 do
-                        last=New(_straight,ball_mid_c,COLOR_RED,self.x+30*cos(a),self.y+30*sin(a),2,0,true,0,true,true,0,false,0,0,3,false)
-                        last=New(_straight,ball_mid_c,COLOR_BLUE,self.x+30*cos(a-36),self.y+30*sin(a-36),2,270+c,false,0,true,true,0,false,0,0,3,false)
-                    a=a+_d_a b=b+_d_b end end
-                c=c+_d_c end end
-            end)
-            --[[ 蓝色固定与红色狙的激光
-            ]]
-        end
-        task._Wait(60)
-        for _=1,7 do
-            PlaySound("kira01",0.1,self.x/256,false)
-            last=New(_editor_class["straght"],200,ran:Float(100,160),ran:Float(165,195),8)
-            do
-                local self = last
-                lasttask=task.New(self,function()
-                    do local a,_d_a,b,_d_b=(200),(-60),(0),(ran:Float(-5,5)) for _=1,13 do
-                        task._Wait(4)
-                        last=New(_straight,arrow_big,COLOR_ORANGE,self.x+ran:Float(-30,30),self.y+ran:Float(-20,20),0,270,false,0,true,true,0,false,0,0,3,false)
-                        do
-                            local self = last
-                            _set_a(self,0.05,270,false)
-                        end
-                    a=a+_d_a b=b+_d_b end end
-                end)
-            end
-            task._Wait(30)
-            PlaySound("kira01",0.1,self.x/256,false)
-            last=New(_editor_class["straght"],-200,ran:Float(100,150),ran:Float(-18,18),12)
-            do
-                local self = last
-                lasttask=task.New(self,function()
-                    do local a,_d_a,b,_d_b=(200),(-60),(0),(ran:Float(-5,5)) for _=1,13 do
-                        task._Wait(2)
-                        last=New(_straight,arrow_big,COLOR_ORANGE,self.x+ran:Float(-30,30),self.y+ran:Float(-20,20),0,270,false,0,true,true,0,false,0,0,3.5,false)
-                        do
-                            local self = last
-                            _set_a(self,0.1,270,false)
-                        end
-                    a=a+_d_a b=b+_d_b end end
-                end)
-            end
-            task._Wait(30)
-            --[[ 激光来回发射，留下随机位置下落的子弹
-            ]]
-        end
-        task._Wait(180)
-        last=New(EnemySimple,1,100,0,230,{20,10,15},10,false,true,true,function(self)
-            task.New(self,function()
-                lasttask=task.New(self,function()
-                    SetV2(self,6,270,false,false)
-                    _set_a(self,0.1,90,false)
-                    for _=1,15 do
-                        task._Wait(4)
-                        PlaySound("tan00",0.1,self.x/256,false)
-                        do local a,_d_a=(0),(45) for _=1,8 do
-                            last=New(_straight,arrow_small,COLOR_GOLDEN_YELLOW,self.x,self.y,5,a,false,0,true,true,0,false,0,0,0,false)
-                        a=a+_d_a end end
-                    end
-                    _set_a(self,0,0,false)
-                    SetV2(self,0,0,false,false)
-                    for _=1,40 do
-                        task._Wait(4)
-                        PlaySound("tan00",0.1,self.x/256,false)
-                        do local a,_d_a=(0),(45) for _=1,8 do
-                            last=New(_straight,arrow_small,COLOR_GOLDEN_YELLOW,self.x,self.y,5,a,false,0,true,true,0,false,0,0,0,false)
-                        a=a+_d_a end end
-                    end
-                    SetV2(self,3,90,false,false)
-                end)
-                --[[ 殿ex式八向弹妖精
-                ]]
-            end)
-        end)
-        task._Wait(90)
-        last=New(EnemySimple,1,100,90,230,{20,10,15},10,false,true,true,function(self)
-            task.New(self,function()
-                lasttask=task.New(self,function()
-                    SetV2(self,6,270,false,false)
-                    _set_a(self,0.1,90,false)
-                    for _=1,10 do
-                        task._Wait(4)
-                        PlaySound("tan00",0.1,self.x/256,false)
-                        do local a,_d_a=(0),(45) for _=1,8 do
-                            last=New(_straight,arrow_small,COLOR_GOLDEN_YELLOW,self.x,self.y,5,a,false,0,true,true,0,false,0,0,0,false)
-                        a=a+_d_a end end
-                    end
-                    _set_a(self,0,0,false)
-                    SetV2(self,0,0,false,false)
-                    for _=1,40 do
-                        task._Wait(4)
-                        PlaySound("tan00",0.1,self.x/256,false)
-                        do local a,_d_a=(0),(45) for _=1,8 do
-                            last=New(_straight,arrow_small,COLOR_GOLDEN_YELLOW,self.x,self.y,5,a,false,0,true,true,0,false,0,0,0,false)
-                        a=a+_d_a end end
-                    end
-                    SetV2(self,3,90,false,false)
-                end)
-                --[[ 殿ex式八向弹妖精
-                ]]
-            end)
-        end)
-        task._Wait(120)
-        last=New(EnemySimple,1,100,0,230,{20,10,15},10,false,true,true,function(self)
-            task.New(self,function()
-                lasttask=task.New(self,function()
-                    SetV2(self,6,270,true,false)
-                    _set_a(self,0.1,90,false)
-                    for _=1,15 do
-                        task._Wait(4)
-                        PlaySound("tan00",0.1,self.x/256,false)
-                        do local a,_d_a=(0),(45) for _=1,8 do
-                            last=New(_straight,arrow_small,COLOR_GOLDEN_YELLOW,self.x,self.y,5,a,false,0,true,true,0,false,0,0,0,false)
-                        a=a+_d_a end end
-                    end
-                    _set_a(self,0,0,false)
-                    SetV2(self,0,0,false,false)
-                    for _=1,40 do
-                        task._Wait(4)
-                        PlaySound("tan00",0.1,self.x/256,false)
-                        do local a,_d_a=(0),(45) for _=1,8 do
-                            last=New(_straight,arrow_small,COLOR_GOLDEN_YELLOW,self.x,self.y,5,a,false,0,true,true,0,false,0,0,0,false)
-                        a=a+_d_a end end
-                    end
-                    SetV2(self,3,90,false,false)
-                end)
-                --[[ 殿ex式八向弹妖精
-                ]]
-            end)
-        end)
-        task._Wait(120)
-        last=New(EnemySimple,1,100,-90,230,{20,10,15},10,false,true,true,function(self)
-            task.New(self,function()
-                lasttask=task.New(self,function()
-                    SetV2(self,6,270,false,false)
-                    _set_a(self,0.1,90,false)
-                    for _=1,14 do
-                        task._Wait(4)
-                        PlaySound("tan00",0.1,self.x/256,false)
-                        do local a,_d_a=(0),(45) for _=1,8 do
-                            last=New(_straight,arrow_small,COLOR_GOLDEN_YELLOW,self.x,self.y,5,a,false,0,true,true,0,false,0,0,0,false)
-                        a=a+_d_a end end
-                    end
-                    _set_a(self,0,0,false)
-                    SetV2(self,0,0,false,false)
-                    for _=1,40 do
-                        task._Wait(4)
-                        PlaySound("tan00",0.1,self.x/256,false)
-                        do local a,_d_a=(0),(45) for _=1,8 do
-                            last=New(_straight,arrow_small,COLOR_GOLDEN_YELLOW,self.x,self.y,5,a,false,0,true,true,0,false,0,0,0,false)
-                        a=a+_d_a end end
-                    end
-                    SetV2(self,3,90,true,false)
-                end)
-                --[[ 殿ex式八向弹妖精
-                ]]
-            end)
-        end)
-        last=New(EnemySimple,1,100,-150,230,{20,10,15},10,false,true,true,function(self)
-            task.New(self,function()
-                lasttask=task.New(self,function()
-                    SetV2(self,6,270,false,false)
-                    _set_a(self,0.1,90,false)
-                    for _=1,14 do
-                        task._Wait(4)
-                        PlaySound("tan00",0.1,self.x/256,false)
-                        do local a,_d_a=(0),(45) for _=1,8 do
-                            last=New(_straight,arrow_small,COLOR_GOLDEN_YELLOW,self.x,self.y,5,a,false,0,true,true,0,false,0,0,0,false)
-                        a=a+_d_a end end
-                    end
-                    _set_a(self,0,0,false)
-                    SetV2(self,0,0,false,false)
-                    for _=1,40 do
-                        task._Wait(4)
-                        PlaySound("tan00",0.1,self.x/256,false)
-                        do local a,_d_a=(0),(45) for _=1,8 do
-                            last=New(_straight,arrow_small,COLOR_GOLDEN_YELLOW,self.x,self.y,5,a,false,0,true,true,0,false,0,0,0,false)
-                        a=a+_d_a end end
-                    end
-                    SetV2(self,3,90,false,false)
-                end)
-                --[[ 殿ex式八向弹妖精
-                ]]
-            end)
-        end)
-        task._Wait(120)
-        last=New(EnemySimple,1,100,-90,230,{20,10,15},10,false,true,true,function(self)
-            task.New(self,function()
-                lasttask=task.New(self,function()
-                    SetV2(self,6,270,false,false)
-                    _set_a(self,0.1,90,false)
-                    for _=1,10 do
-                        task._Wait(4)
-                        PlaySound("tan00",0.1,self.x/256,false)
-                        do local a,_d_a=(0),(45) for _=1,8 do
-                            last=New(_straight,arrow_small,COLOR_GOLDEN_YELLOW,self.x,self.y,5,a,false,0,true,true,0,false,0,0,0,false)
-                        a=a+_d_a end end
-                    end
-                    _set_a(self,0,0,false)
-                    SetV2(self,0,0,false,false)
-                    for _=1,70 do
-                        task._Wait(4)
-                        PlaySound("tan00",0.1,self.x/256,false)
-                        do local a,_d_a=(0),(45) for _=1,8 do
-                            last=New(_straight,arrow_small,COLOR_GOLDEN_YELLOW,self.x,self.y,5,a,false,0,true,true,0,false,0,0,0,false)
-                        a=a+_d_a end end
-                    end
-                    SetV2(self,3,90,true,false)
-                end)
-                --[[ 殿ex式八向弹妖精
-                ]]
-            end)
-        end)
-        last=New(EnemySimple,1,100,90,230,{20,10,15},10,false,true,true,function(self)
-            task.New(self,function()
-                lasttask=task.New(self,function()
-                    SetV2(self,6,270,false,false)
-                    _set_a(self,0.1,90,false)
-                    for _=1,10 do
-                        task._Wait(4)
-                        PlaySound("tan00",0.1,self.x/256,false)
-                        do local a,_d_a=(0),(45) for _=1,8 do
-                            last=New(_straight,arrow_small,COLOR_GOLDEN_YELLOW,self.x,self.y,5,a,false,0,true,true,0,false,0,0,0,false)
-                        a=a+_d_a end end
-                    end
-                    _set_a(self,0,0,false)
-                    SetV2(self,0,0,false,false)
-                    for _=1,40 do
-                        task._Wait(4)
-                        PlaySound("tan00",0.1,self.x/256,false)
-                        do local a,_d_a=(0),(45) for _=1,8 do
-                            last=New(_straight,arrow_small,COLOR_GOLDEN_YELLOW,self.x,self.y,5,a,false,0,true,true,0,false,0,0,0,false)
-                        a=a+_d_a end end
-                    end
-                    SetV2(self,3,90,false,false)
-                end)
-                --[[ 殿ex式八向弹妖精
-                ]]
-            end)
-        end)
-        task._Wait(60)
-        last=New(_editor_class["bigone"],0,240,_)
-        --[[ 第一只大蝴蝶
-        ]]
-        task._Wait(120)
-        last=New(EnemySimple,26,160,150,240,{30,10,5},30,true,true,true,function(self)
-            task.New(self,function()
-                lasttask=task.New(self,function()
-                    task.MoveTo(100,150,20,MOVE_NORMAL)
-                    for _=1,_infinite do
-                        SetV2(self,0.5,180,false,false)
-                        do local a1,_d_a1=(50),(60) for _=1,_infinite do
-                            task._Wait(30)
-                            do local a,_d_a=(0),(18) for _=1,20 do
-                                last=New(_editor_class["scar2"],self.x,self.y,a)
-                            a=a+_d_a end end
-                            PlaySound("tan02",0.1,self.x/256,false)
-                            last=New(_editor_class["scar1"],self.x,self.y,a1,4)
-                            task._Wait(30)
-                            PlaySound("tan02",0.1,self.x/256,false)
-                            do local a,_d_a=(0),(18) for _=1,20 do
-                                last=New(_editor_class["scar3"],self.x,self.y,a)
-                            a=a+_d_a end end
-                        a1=a1+_d_a1 end end
-                    end
-                end)
-                --[[ 阴阳玉双向夹击
-                ]]
-            end)
-        end)
-        last=New(EnemySimple,26,160,-150,240,{30,10,5},30,true,true,true,function(self)
-            task.New(self,function()
-                lasttask=task.New(self,function()
-                    task.MoveTo(-100,150,20,MOVE_NORMAL)
-                    for _=1,_infinite do
-                        SetV2(self,0.5,0,false,false)
-                        do local a1,_d_a1=(120),(60) for _=1,_infinite do
-                            task._Wait(30)
-                            do local a,_d_a=(0),(18) for _=1,20 do
-                                last=New(_editor_class["scar2"],self.x,self.y,a)
-                            a=a+_d_a end end
-                            PlaySound("tan02",0.1,self.x/256,false)
-                            last=New(_editor_class["scar1"],self.x,self.y,a1,4)
-                            task._Wait(30)
-                            PlaySound("tan02",0.1,self.x/256,false)
-                            do local a,_d_a=(0),(18) for _=1,20 do
-                                last=New(_editor_class["scar3"],self.x,self.y,a)
-                            a=a+_d_a end end
-                        a1=a1+_d_a1 end end
-                    end
-                end)
-                --[[ 阴阳玉双向夹击
-                ]]
-            end)
-        end)
-        lstg.tmpvar.bg.flag = true
-        task._Wait(300)
-        for _,unit in ObjList(GROUP_ENEMY) do
-            _kill(unit,true)
-        end
-        for _,unit in ObjList(GROUP_NONTJT) do
-            _kill(unit,true)
-        end
-        _clear_bullet(true,false)
-        task._Wait(300)
-        local _boss_wait=true
-        local _ref=New(_editor_class["Aya"],_editor_class["Aya"].cards)
-        last=_ref
-        if _boss_wait then while IsValid(_ref) do task.Wait() end end
-        task._Wait(180)
     end)
     task.New(self,function()
         while coroutine.status(self.task[1])~='dead' do task.Wait() end
