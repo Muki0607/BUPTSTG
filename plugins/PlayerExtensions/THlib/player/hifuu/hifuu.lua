@@ -143,7 +143,8 @@ function hifuu_player:init(slot)
     self.water_max_radius  = 500 -- 水面最大作用半径（世界坐标，用于消弹与伤害范围）
     ---
     self.spellname         = { '以太「量子隧穿」', '境界「另一侧的月」' }
-    self.default_deathtime         = 15
+    self.deathtime         = 15
+    self.default_deathtime = self.deathtime
 end
 
 -------------------------------------------------------

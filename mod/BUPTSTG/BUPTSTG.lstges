@@ -145,7 +145,7 @@
 9,{"$type":".General.Code, LuaSTGEditorSharp","Attributes":[{"attrCap":"Code","attrInput":"self.hscale = a\r\nself.vscale = a","EditWindow":"code"}],"AttributeCount":1}
 9,{"$type":".Task.TaskWait, ","Attributes":[{"attrCap":"Time","attrInput":"1","EditWindow":"yield"}],"AttributeCount":1}
 8,{"$type":".Object.Del, ","Attributes":[{"attrCap":"Target","attrInput":"self","EditWindow":"target"},{"attrCap":"Trigger event","attrInput":"true","EditWindow":"bool"}],"AttributeCount":2}
-3,{"$type":".Object.ObjectDefine, ","Attributes":[{"attrCap":"Name","attrInput":"staff","EditWindow":""},{"attrCap":"Difficulty","attrInput":"All","EditWindow":"objDifficulty"}],"AttributeCount":2}
+3,{"$type":".Object.ObjectDefine, ","Attributes":[{"attrCap":"Name","attrInput":"staff","EditWindow":""},{"attrCap":"Difficulty","attrInput":"All","EditWindow":"objDifficulty"}],"AttributeCount":2,"IsExpanded":false}
 4,{"$type":".Object.ObjectInit, ","Attributes":[{"attrCap":"Parameter List","attrInput":"","EditWindow":""},{"attrCap":"Image","attrInput":"\"img_void\"","EditWindow":"objimage"},{"attrCap":"Layer","attrInput":"LAYER_TOP","EditWindow":"layer"},{"attrCap":"Group","attrInput":"GROUP_GHOST","EditWindow":"group"},{"attrCap":"Hide","attrInput":"false","EditWindow":"bool"},{"attrCap":"Bound","attrInput":"false","EditWindow":"bool"},{"attrCap":"Auto Rotation","attrInput":"false","EditWindow":"bool"},{"attrCap":"HP","attrInput":"10","EditWindow":""},{"attrCap":"Collision","attrInput":"true","EditWindow":"bool"}],"AttributeCount":9}
 5,{"$type":".General.Code, LuaSTGEditorSharp","Attributes":[{"attrCap":"Code","attrInput":"self.x = screen.width / 2\r\nself.y = 0\r\nself.texty = 0\r\nself.layer = LAYER_TOP + 114514","EditWindow":"code"}],"AttributeCount":1}
 5,{"$type":".General.Code, LuaSTGEditorSharp","Attributes":[{"attrCap":"Code","attrInput":"self.alpha=0","EditWindow":"code"}],"AttributeCount":1}
@@ -158,7 +158,7 @@
 6,{"$type":".Object.SetVelocity, ","Attributes":[{"attrCap":"Target","attrInput":"self","EditWindow":"target"},{"attrCap":"Velocity","attrInput":"1","EditWindow":"velocity"},{"attrCap":"Angle","attrInput":"90","EditWindow":"rotation"},{"attrCap":"Aim to Player","attrInput":"false","EditWindow":"bool"},{"attrCap":"Set Rotation","attrInput":"true","EditWindow":"bool"}],"AttributeCount":5}
 4,{"$type":".Object.CallBackFunc, ","Attributes":[{"attrCap":"Event type","attrInput":"frame","EditWindow":"event"}],"AttributeCount":1}
 5,{"$type":".Object.DefaultAction, ","Attributes":[]}
-5,{"$type":".Data.LocalVar, ","Attributes":[{"$type":".DependencyAttrItem, ","attrCap":"Number of Var","attrInput":"1","EditWindow":""},{"attrCap":"Var 1 name","attrInput":"dy","EditWindow":""},{"attrCap":"Var 1 init value","attrInput":"screen.height * #dialog.staff / (58 * 60)","EditWindow":"target"}],"AttributeCount":3,"IsSelected":true}
+5,{"$type":".Data.LocalVar, ","Attributes":[{"$type":".DependencyAttrItem, ","attrCap":"Number of Var","attrInput":"1","EditWindow":""},{"attrCap":"Var 1 name","attrInput":"dy","EditWindow":""},{"attrCap":"Var 1 init value","attrInput":"screen.height * #dialog.staff / (58 * 60)","EditWindow":"target"}],"AttributeCount":3}
 5,{"$type":".General.IfNode, LuaSTGEditorSharp","Attributes":[{"attrCap":"Condition","attrInput":"not self.finished","EditWindow":""}],"AttributeCount":1}
 6,{"$type":".General.IfThen, LuaSTGEditorSharp","Attributes":[]}
 7,{"$type":".General.IfNode, LuaSTGEditorSharp","Attributes":[{"attrCap":"Condition","attrInput":"KeyIsDown('shoot')","EditWindow":""}],"AttributeCount":1}
@@ -1957,7 +1957,7 @@
 5,{"$type":".General.Folder, LuaSTGEditorSharp","Attributes":[{"attrCap":"Name","attrInput":"Initialize","EditWindow":""}],"AttributeCount":1,"IsExpanded":false}
 6,{"$type":".Stage.StageBG, ","Attributes":[{"attrCap":"Background","attrInput":"HM_hzc4_background","EditWindow":"BG"}],"AttributeCount":1}
 6,{"$type":".Audio.PlayBGM, ","Attributes":[{"attrCap":"Name","attrInput":"\"bgm2\"","EditWindow":"BGM"},{"attrCap":"Time","attrInput":"","EditWindow":""},{"attrCap":"Set stage time","attrInput":"false","EditWindow":"bool"}],"AttributeCount":3}
-5,{"$type":".General.Folder, LuaSTGEditorSharp","Attributes":[{"attrCap":"Name","attrInput":"middle","EditWindow":""}],"AttributeCount":1,"IsExpanded":false,"IsBanned":true}
+5,{"$type":".General.Folder, LuaSTGEditorSharp","Attributes":[{"attrCap":"Name","attrInput":"middle","EditWindow":""}],"AttributeCount":1,"IsExpanded":false,"IsSelected":true}
 6,{"$type":".Audio.PlaySE, ","Attributes":[{"attrCap":"Name","attrInput":"\"kira01\"","EditWindow":"se"},{"attrCap":"Volume","attrInput":"0.1","EditWindow":""},{"attrCap":"Pan","attrInput":"self.x/256","EditWindow":""},{"attrCap":"Ignore default volume","attrInput":"false","EditWindow":"bool"}],"AttributeCount":4}
 6,{"$type":".Laser.CreateLaser, ","Attributes":[{"attrCap":"Name","attrInput":"\"straght\"","EditWindow":"laserDef"},{"attrCap":"Position","attrInput":"-200,100","EditWindow":"position"},{"attrCap":"Parameters","attrInput":"10,10","EditWindow":"laserParam"}],"AttributeCount":3}
 6,{"$type":".Task.TaskWait, ","Attributes":[{"attrCap":"Time","attrInput":"60","EditWindow":"yield"}],"AttributeCount":1}
@@ -2446,8 +2446,8 @@
 7,{"$type":".Object.Kill, ","Attributes":[{"attrCap":"Target","attrInput":"unit","EditWindow":"target"},{"attrCap":"Trigger event","attrInput":"true","EditWindow":"bool"}],"AttributeCount":2}
 6,{"$type":".Bullet.BulletClear, ","Attributes":[{"attrCap":"Convert to faith","attrInput":"true","EditWindow":"bool"},{"attrCap":"Clear indestructible","attrInput":"false","EditWindow":"bool"}],"AttributeCount":2}
 6,{"$type":".Task.TaskWait, ","Attributes":[{"attrCap":"Time","attrInput":"300","EditWindow":"yield"}],"AttributeCount":1}
-5,{"$type":".Boss.CreateBoss, ","Attributes":[{"attrCap":"Name","attrInput":"\"Aya\"","EditWindow":"bossDef"},{"attrCap":"Wait","attrInput":"true","EditWindow":"bool"}],"AttributeCount":2,"IsBanned":true}
-5,{"$type":".Task.TaskWait, ","Attributes":[{"attrCap":"Time","attrInput":"180","EditWindow":"yield"}],"AttributeCount":1,"IsBanned":true}
+5,{"$type":".Boss.CreateBoss, ","Attributes":[{"attrCap":"Name","attrInput":"\"Aya\"","EditWindow":"bossDef"},{"attrCap":"Wait","attrInput":"true","EditWindow":"bool"}],"AttributeCount":2}
+5,{"$type":".Task.TaskWait, ","Attributes":[{"attrCap":"Time","attrInput":"180","EditWindow":"yield"}],"AttributeCount":1}
 5,{"$type":".Audio.PlayBGM, ","Attributes":[{"attrCap":"Name","attrInput":"\"bgm4\"","EditWindow":"BGM"},{"attrCap":"Time","attrInput":"","EditWindow":""},{"attrCap":"Set stage time","attrInput":"false","EditWindow":"bool"}],"AttributeCount":3}
 5,{"$type":".Object.CreateObject, ","Attributes":[{"attrCap":"Name","attrInput":"\"staff\"","EditWindow":"objectDef"},{"attrCap":"Position","attrInput":"0,0","EditWindow":"position"},{"attrCap":"Parameters","attrInput":"","EditWindow":"objectParam"}],"AttributeCount":3}
 5,{"$type":".General.Code, LuaSTGEditorSharp","Attributes":[{"attrCap":"Code","attrInput":"player.lock = true","EditWindow":"code"}],"AttributeCount":1}
